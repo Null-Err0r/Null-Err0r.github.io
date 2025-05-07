@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -15,11 +15,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
       min-height: 100vh;
-    }
-    img {
-      max-width: 100%;
     }
     a {
       color: #58a6ff;
@@ -28,16 +24,24 @@
     a:hover {
       text-decoration: underline;
     }
-    .stats, .visitor, .footer {
+    .stats, .visitor, .projects, .other-projects {
       text-align: center;
       margin-top: 2rem;
-    }
-    .badges {
-      margin-top: 1rem;
     }
     .badges a {
       margin: 0 0.5rem;
       display: inline-block;
+    }
+    .project-list {
+      list-style: none;
+      padding: 0;
+    }
+    .project-list li {
+      margin: 0.5rem 0;
+    }
+    .footer img {
+      margin-top: 2rem;
+      max-width: 100%;
     }
   </style>
 </head>
@@ -45,29 +49,79 @@
 
   <div class="stats">
     <p>
-      <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=e01a&layout=compact&theme=tokyonight" alt="top langs" />
+      <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=e01a&layout=compact&theme=tokyonight" alt="Top Languages" />
     </p>
     <p>
-      <img src="https://github-readme-stats.vercel.app/api?username=e01a&show_icons=true&theme=tokyonight" alt="stats" />
+      <img src="https://github-readme-stats.vercel.app/api?username=e01a&show_icons=true&theme=tokyonight" alt="GitHub Stats" />
     </p>
   </div>
 
   <div class="visitor">
-    <p>:eyes: Visitor No. :eyes:</p>
-    <img src="https://profile-counter.glitch.me/E01A/count.svg" alt="visitor count" />
+    <p>👁️👁️ Visitor No. 👁️👁️</p>
+    <img src="https://profile-counter.glitch.me/E01A/count.svg" alt="Visitor Count" />
+  </div>
+
+  <div class="projects">
+    <h2>🔧 پروژه‌های مهم</h2>
+    <ul class="project-list">
+      <li>
+        <a href="https://github.com/E01A/Advanced-Mic-Camera-Monitor" target="_blank">
+          Advanced Mic Camera Monitor
+        </a> - مانیتورینگ پیشرفته میکروفن و دوربین با تشخیص ناهنجاری‌ها
+      </li>
+      <li>
+        <a href="https://github.com/E01A/Hiden-Text-Detector" target="_blank">
+          Hidden Text Detector
+        </a> - شناسایی و استخراج داده‌های مخفی از فایل‌ها با تکنیک‌های مختلف
+      </li>
+      <li>
+        <a href="https://github.com/E01A/YouTube-Downloader" target="_blank">
+          YouTube Downloader
+        </a> - ابزار گرافیکی برای دانلود ویدیو و استخراج صدا از یوتیوب
+      </li>
+    </ul>
+  </div>
+
+  <div class="other-projects">
+    <h2>📂 سایر پروژه‌ها</h2>
+    <ul id="repo-list" class="project-list"></ul>
   </div>
 
   <div class="footer">
-    <img src="https://raw.githubusercontent.com/Trilokia/Trilokia/379277808c61ef204768a61bbc5d25bc7798ccf1/bottom_header.svg" alt="decorative" />
-    <br/><br/>
     <p>I'm ( Esmaeil Asadi &lt;=&gt; اسـمـاعـیـل اسـدی )</p>
     <div class="badges">
       <a href="https://t.me/E0_1A">
         <img src="https://img.shields.io/badge/Telegram-black?style=for-the-badge&logo=Telegram" alt="Telegram" />
       </a>
     </div>
+    <img src="https://raw.githubusercontent.com/Trilokia/Trilokia/379277808c61ef204768a61bbc5d25bc7798ccf1/bottom_header.svg" alt="Decorative" />
   </div>
+
+  <script>
+    // Fetch other repositories dynamically
+    fetch('https://api.github.com/users/E01A/repos')
+      .then(response => response.json())
+      .then(data => {
+        const repoList = document.getElementById('repo-list');
+        const importantRepos = [
+          'Advanced-Mic-Camera-Monitor',
+          'Hiden-Text-Detector',
+          'YouTube-Downloader'
+        ];
+        data.forEach(repo => {
+          if (!importantRepos.includes(repo.name)) {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = repo.html_url;
+            a.textContent = repo.name;
+            a.target = '_blank';
+            li.appendChild(a);
+            repoList.appendChild(li);
+          }
+        });
+      })
+      .catch(error => console.error('Error fetching repositories:', error));
+  </script>
 
 </body>
 </html>
-
