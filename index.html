@@ -4,33 +4,69 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>e01a | Esmaeil Asadi</title>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Montserrat:wght@600&display=swap" rel="stylesheet">
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body {
-      background-color: #0d1117;
-      color: #c9d1d9;
-      font-family: 'Fira Code', monospace;
+      background: linear-gradient(45deg, #0a0a0a, #1a1a1a);
+      color: #e0e0e0;
+      font-family: 'Roboto Mono', monospace;
       margin: 0;
-      padding: 2rem;
+      padding: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: flex-start;
       min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
     }
+   
+    #particles-js {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 2;
+      background: radial-gradient(circle at center, rgba(255, 255, 255, 0.02) 0%, transparent 70%);
+      will-change: transform, opacity;
+      animation: subtlePulse 10s ease-in-out infinite;
+    }
+
     a {
-      color: #58a6ff;
+      color: #b0b0b0;
       text-decoration: none;
+      transition: color 0.3s ease, text-shadow 0.3s ease;
+      position: relative;
     }
     a:hover {
-      text-decoration: underline;
+      color: #ffffff;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
     }
-    .stats, .visitor, .projects, .other-projects {
+    .center {
       text-align: center;
+    }
+    .stats, .visitor, .projects, .other-projects, .intro {
       margin-top: 2rem;
+      width: 90%;
+      max-width: 800px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #404040;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      transition: box-shadow 0.3s ease;
+    }
+    .stats:hover, .visitor:hover, .projects:hover, .other-projects:hover, .intro:hover {
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
     }
     .badges a {
       margin: 0 0.5rem;
       display: inline-block;
+      filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.3));
     }
     .project-list {
       list-style: none;
@@ -38,67 +74,139 @@
     }
     .project-list li {
       margin: 0.5rem 0;
+      padding: 0.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #404040;
+      border-radius: 5px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .project-list li:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
+    }
+    .project-item {
+      margin: 1rem 0;
+      padding: 1rem;
+      border: 1px solid #404040;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      transition: box-shadow 0.3s ease;
+    }
+    .project-item:hover {
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+    }
+    .marquee-container {
+      overflow: hidden;
+      height: 9rem;
+      position: relative;
+      border: 1px solid #404040;
+      border-radius: 8px;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    .marquee-track {
+      display: flex;
+      flex-direction: column;
+      animation: scrollY 15s linear infinite;
+    }
+    .marquee-track > div {
+      padding: 1rem;
+      border-bottom: 1px solid #404040;
+    }
+    @keyframes scrollY {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-100%); }
+    }
+    h1, h2 {
+      font-family: 'Montserrat', sans-serif;
+      color: #ffffff;
+      text-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
     }
     .footer img {
-      margin-top: 2rem;
+      margin-top: 3rem;
       max-width: 100%;
+      filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.3));
     }
   </style>
 </head>
 <body>
+  <!-- ذرات پس‌زمینه -->
+  <div id="particles-js"></div>
 
-  <div class="stats">
-    <p>
-      <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=e01a&layout=compact&theme=tokyonight" alt="Top Languages" />
-    </p>
-    <p>
-      <img src="https://github-readme-stats.vercel.app/api?username=e01a&show_icons=true&theme=tokyonight" alt="GitHub Stats" />
-    </p>
-  </div>
-
-  <div class="visitor">
-    <p>👁️👁️ Visitor No. 👁️👁️</p>
-    <img src="https://profile-counter.glitch.me/E01A/count.svg" alt="Visitor Count" />
-  </div>
-
-  <div class="projects">
-    <h2>🔧 پروژه‌های مهم</h2>
-    <ul class="project-list">
-      <li>
-        <a href="https://github.com/E01A/Advanced-Mic-Camera-Monitor" target="_blank">
-          Advanced Mic Camera Monitor
-        </a> - مانیتورینگ پیشرفته میکروفن و دوربین با تشخیص ناهنجاری‌ها
-      </li>
-      <li>
-        <a href="https://github.com/E01A/Hiden-Text-Detector" target="_blank">
-          Hidden Text Detector
-        </a> - شناسایی و استخراج داده‌های مخفی از فایل‌ها با تکنیک‌های مختلف
-      </li>
-      <li>
-        <a href="https://github.com/E01A/YouTube-Downloader" target="_blank">
-          YouTube Downloader
-        </a> - ابزار گرافیکی برای دانلود ویدیو و استخراج صدا از یوتیوب
-      </li>
-    </ul>
-  </div>
-
-  <div class="other-projects">
-    <h2>📂 سایر پروژه‌ها</h2>
-    <ul id="repo-list" class="project-list"></ul>
-  </div>
-
-  <div class="footer">
-    <p>I'm ( Esmaeil Asadi &lt;=&gt; اسـمـاعـیـل اسـدی )</p>
+  <div class="intro center">
+    <h1>اسـمـاعـیـل اسـدی</h1>
     <div class="badges">
       <a href="https://t.me/E0_1A">
         <img src="https://img.shields.io/badge/Telegram-black?style=for-the-badge&logo=Telegram" alt="Telegram" />
       </a>
     </div>
+  </div>
+
+  <div class="stats center">
+    <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=e01a&layout=compact&theme=gruvbox" alt="Top Languages" />
+    <br>
+    <img src="https://github-readme-stats.vercel.app/api?username=e01a&show_icons=true&theme=gruvbox" alt="GitHub Stats" />
+  </div>
+
+  <div class="visitor center">
+    <p>👁️👁️ Visitor No. 👁️👁️</p>
+    <img src="https://profile-counter.glitch.me/E01A/count.svg" alt="Visitor Count" />
+  </div>
+
+  <div class="projects">
+    <h2 class="center">🔧</h2>
+    <div class="marquee-container">
+      <div class="marquee-track">
+        <div>
+          <a href="https://github.com/E01A/Advanced-Mic-Camera-Monitor" target="_blank">Advanced Mic Camera Monitor</a>
+          <p>🛡️ مانیتورینگ میکروفن و دوربین در پس‌زمینه برای کشف جاسوسی احتمالی</p>
+        </div>
+        <div>
+          <a href="https://github.com/E01A/Hiden-Text-Detector" target="_blank">Hidden Text Detector</a>
+          <p>🔍 کشف متون پنهان در صفحات یا تصاویر با تکنیک‌های بینایی ماشین</p>
+        </div>
+        <div>
+          <a href="https://github.com/E01A/YouTube-Downloader" target="_blank">YouTube Downloader</a>
+          <p>📥 دانلودر گرافیکی ویدیو از یوتیوب با رابط کاربری ساده و حرفه‌ای</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="other-projects">
+    <h2 class="center">📂</h2>
+    <ul id="repo-list" class="project-list center"></ul>
+  </div>
+
+  <div class="footer center">
     <img src="https://raw.githubusercontent.com/Trilokia/Trilokia/379277808c61ef204768a61bbc5d25bc7798ccf1/bottom_header.svg" alt="Decorative" />
   </div>
 
+  <!-- کتابخانه particles.js -->
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
   <script>
-    // Fetch other repositories dynamically
+    // تنظیم ذرات
+    particlesJS('particles-js', {
+      particles: {
+        number: { value: 50, density: { enable: true, value_area: 1000 } },
+        color: { value: '#b0b0b0' },
+        shape: { type: 'circle', stroke: { width: 0, color: '#000000' } },
+        opacity: { value: 0.3, random: true },
+        size: { value: 2, random: true },
+        line_linked: { enable: true, distance: 200, color: '#b0b0b0', opacity: 0.2, width: 1 },
+        move: { enable: true, speed: 1, direction: 'none', random: false, straight: false, out_mode: 'out', bounce: false }
+      },
+      interactivity: {
+        detect_on: 'canvas',
+        events: { onhover: { enable: true, mode: 'repulse' }, onclick: { enable: true, mode: 'push' }, resize: true },
+        modes: { repulse: { distance: 150, duration: 0.4 }, push: { particles_nb: 3 } }
+      },
+      retina_detect: true
+    });
+  </script>
+
+  <script>
     fetch('https://api.github.com/users/E01A/repos')
       .then(response => response.json())
       .then(data => {
@@ -106,7 +214,9 @@
         const importantRepos = [
           'Advanced-Mic-Camera-Monitor',
           'Hiden-Text-Detector',
-          'YouTube-Downloader'
+          'YouTube-Downloader',
+          'E01A',
+          'e01a.github.io'
         ];
         data.forEach(repo => {
           if (!importantRepos.includes(repo.name)) {
@@ -122,6 +232,5 @@
       })
       .catch(error => console.error('Error fetching repositories:', error));
   </script>
-
 </body>
 </html>
