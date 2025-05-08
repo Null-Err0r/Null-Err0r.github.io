@@ -128,8 +128,16 @@
       max-width: 100%;
       filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.3));
     }
+    .responsive-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1rem auto;
+}
+
   </style>
 </head>
+
 <body>
 
   <div id="particles-js"></div>
@@ -146,11 +154,12 @@
   <div class="stats center">
     <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=e01a&layout=compact&theme=gruvbox" alt="Top Languages" />
     <br>
-    <img src="https://github-readme-stats.vercel.app/api?username=e01a&show_icons=true&theme=gruvbox" alt="GitHub Stats" />
+    <img class="responsive-img" src="https://github-readme-stats.vercel.app/api?username=e01a&show_icons=true&theme=gruvbox" alt="GitHub Stats" />
     <br>
-    <img src="https://github-readme-activity-graph.vercel.app/graph?username=e01a&theme=gruvbox" alt="Activity Graph" />
+    <img class="responsive-img" src="https://github-readme-activity-graph.vercel.app/graph?username=e01a&theme=gruvbox" alt="Activity Graph" />
     <br>
-    <img src="https://streak-stats.demolab.com?user=e01a&theme=gruvbox" alt="GitHub Streak" />
+    <img class="responsive-img" src="https://streak-stats.demolab.com?user=e01a&theme=gruvbox" alt="GitHub Streak" />
+    
   </div>
 
   <div class="visitor center">
