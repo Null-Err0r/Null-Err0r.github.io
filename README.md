@@ -6,8 +6,9 @@
   <img src="https://github-readme-stats.vercel.app/api?username=e01a&show_icons=true&theme=tokyonight" alt="stats" />
 </p>
 <p align="center">
-  <img src="https://github-readme-activity-graph.cyclic.app/graph?username=e01a&theme=tokyo-night" alt="Activity Graph" />
+  <img src="https://github-readme-activity-graph.vercel.app/graph?username=e01a&theme=tokyo-night" alt="Activity Graph" />
 </p>
+
 <p align="center">
   <img src="https://github-readme-streak-stats.herokuapp.com/?user=e01a&theme=tokyonight" alt="GitHub Streak" />
 </p>
