@@ -5,6 +5,12 @@
 <p align="center">
   <img src="https://github-readme-stats.vercel.app/api?username=e01a&show_icons=true&theme=tokyonight" alt="stats" />
 </p>
+<p align="center">
+  <img src="https://github-readme-activity-graph.cyclic.app/graph?username=e01a&theme=tokyo-night" alt="Activity Graph" />
+</p>
+<p align="center">
+  <img src="https://github-readme-streak-stats.herokuapp.com/?user=e01a&theme=tokyonight" alt="GitHub Streak" />
+</p>
 <p align="center"> 
   :eyes: Visitor No. :eyes:<br>
   <img src="https://profile-counter.glitch.me/E01A/count.svg" />
