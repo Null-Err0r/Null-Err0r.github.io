@@ -126,21 +126,21 @@
       color: #ffffffaa;
     }
 
-    .lang-buttons {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 10px;
-      justify-content: flex-end;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      background-color: #04130cdd;
-      padding: 5px 0;
-    }
+  .lang-buttons {
+    display: flex !important;
+    flex-wrap: wrap;
+    justify-content: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 6px 0;
+    background-color: #04130cdd;
+  }
 
-    html[lang="en"] .lang-buttons {
-      justify-content: flex-start;
-    }
+  .lang-btn {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+  }
 
     .lang-btn {
       padding: 5px 12px;
@@ -443,10 +443,18 @@
     padding: 6px;
   }
 
-  .lang-buttons {
-    margin-bottom: 8px;
-    padding: 4px 0;
-  }
+ .lang-buttons {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  justify-content: flex-end;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #04130cdd;
+  padding: 5px 0;
+}
+
 
   .lang-btn {
     font-size: 0.8rem;
