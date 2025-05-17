@@ -86,10 +86,11 @@
       line-height: 1.4;
       font-size: 1rem;
       user-select: text;
-      margin: 10px 0;
+      margin: 60px 0 10px;
       color: #ffffff;
       text-align: inherit;
-      max-height: calc(100vh - 150px); /* Adjusted to accommodate lang-buttons */
+      max-height: calc(100vh - 180px);
+      padding-bottom: 20px;
     }
 
     #output a {
@@ -127,22 +128,25 @@
 
     .lang-buttons {
       display: flex;
-      gap: 8px;
-      justify-content: flex-end;
-      z-index: 10;
+      gap: 12px;
+      justify-content: center;
+      width: 100%;
+      z-index: 100;
       background-color: #04130cdd;
-      padding: 5px 0;
-      margin-bottom: 8px;
+      padding: 10px;
+      margin: 10px 0;
+      position: sticky;
+      top: 0;
     }
 
     html[lang="en"] .lang-buttons {
-      justify-content: flex-start;
+      justify-content: center;
     }
 
     .lang-btn {
-      padding: 5px 12px;
+      padding: 8px 16px;
       font-family: 'Vazirmatn', 'Fira Mono', monospace;
-      font-size: 0.9rem;
+      font-size: 1rem;
       color: #ffffff;
       background-color: #002a17;
       border: 1.5px solid #ffffff;
@@ -150,6 +154,8 @@
       cursor: pointer;
       user-select: none;
       transition: background-color 0.3s ease;
+      min-width: 100px;
+      text-align: center;
     }
 
     .lang-btn:hover {
@@ -416,6 +422,7 @@
     body.mobile #terminal {
       width: 100vw;
       padding: 8px;
+      padding-top: 60px;
       height: 100%;
       min-height: 100vh;
       overflow-y: auto;
@@ -440,7 +447,7 @@
     body.mobile #output, body.mobile #panel-content {
       font-size: 0.9rem;
       line-height: 1.3;
-      margin: 8px 0;
+      margin: 60px 0 10px;
       max-height: none;
       width: 100%;
     }
@@ -452,15 +459,25 @@
     }
 
     body.mobile .lang-buttons {
-      margin: 0 0 8px 0;
-      padding: 4px 0;
-      width: 100%;
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 12px;
       justify-content: center;
+      align-items: center;
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      background-color: #04130cdd;
+      z-index: 100;
+      position: sticky;
+      top: 0;
     }
 
     body.mobile .lang-btn {
-      font-size: 0.8rem;
-      padding: 4px 10px;
+      font-size: 1rem;
+      padding: 8px 16px;
+      min-width: 100px;
+      text-align: center;
     }
 
     body.mobile #close-panel {
@@ -559,23 +576,23 @@
     function initParticles() {
       console.log('Initializing particles.js...');
       if (typeof particlesJS === 'undefined') {
-        console.error('particles.js not loaded. Check if js/particles.min.js exists.');
+        console.warn('particles.js not loaded. Particle effects will be disabled.');
         return;
       }
       particlesJS('particles-js', {
         particles: {
-          number: { value: 50, density: { enable: true, value_area: 1000 } },
+          number: { value: 20, density: { enable: true, value_area: 1000 } },
           color: { value: '#b0b0b0' },
           shape: { type: 'circle', stroke: { width: 0, color: '#000000' } },
-          opacity: { value: 0.3, random: true },
+          opacity: { value: 0.2, random: true },
           size: { value: 2, random: true },
-          line_linked: { enable: true, distance: 200, color: '#b0b0b0', opacity: 0.2, width: 1 },
-          move: { enable: true, speed: 1, direction: 'none', random: false, straight: false, out_mode: 'out', bounce: false }
+          line_linked: { enable: true, distance: 100, color: '#b0b0b0', opacity: 0.1, width: 1 },
+          move: { enable: true, speed: 0.5, direction: 'none', random: false, straight: false, out_mode: 'out', bounce: false }
         },
         interactivity: {
           detect_on: 'canvas',
-          events: { onhover: { enable: true, mode: 'repulse' }, onclick: { enable: true, mode: 'push' }, resize: true },
-          modes: { repulse: { distance: 150, duration: 0.4 }, push: { particles_nb: 3 } }
+          events: { onhover: { enable: false }, onclick: { enable: true, mode: 'push' }, resize: true },
+          modes: { push: { particles_nb: 2 } }
         },
         retina_detect: true
       }, function() {
@@ -586,6 +603,10 @@
     // Attract particles to input on typing
     function attractParticlesToInput() {
       console.log('Attracting particles to input...');
+      if (typeof particlesJS === 'undefined') {
+        console.warn('particles.js not available. Cannot attract particles.');
+        return;
+      }
       const inputRect = document.getElementById('commandInput').getBoundingClientRect();
       const canvas = document.querySelector('#particles-js canvas');
       if (canvas && window.pJSDom && window.pJSDom[0] && window.pJSDom[0].pJS) {
@@ -595,7 +616,7 @@
         pJS.particles.move.attract = {
           enable: true,
           position: { x: x, y: y },
-          distance: 150
+          distance: 100
         };
         setTimeout(() => {
           pJS.particles.move.attract.enable = false;
@@ -606,13 +627,11 @@
       }
     }
 
-    // Initialize particles only on non-mobile devices
+    // Initialize particles for all devices
     try {
-      if (!isMobileDevice()) {
-        initParticles();
-      }
+      initParticles();
     } catch (err) {
-      console.error('Error initializing particles.js:', err);
+      console.warn('Error initializing particles.js. Particle effects disabled:', err);
     }
 
     const input = document.getElementById('commandInput');
@@ -667,7 +686,7 @@
     };
 
     function makeLinksClickable(text) {
-      const urlRegex = /(?<!["'=])(https?:\/\/[^\s<>"']+)/g;
+      const urlRegex = /(?<!["'=])(https?:\/\/[^\s<>“']+)/g;
       return text.replace(urlRegex, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
     }
 
@@ -675,7 +694,7 @@
       output.innerHTML = makeLinksClickable(`${messages[lang].welcome}\n${messages[lang].promptHelp}\n\n`);
       input.value = '';
       input.focus();
-      output.scrollTop = 0; // Ensure output starts at the top
+      output.scrollTop = 0;
       closePanel();
     }
 
@@ -773,7 +792,7 @@
             <img src="https://profile-counter.glitch.me/E0x1A/count.svg" alt="Visitor Count" />
           </div>
           <div class="stats center">
-            <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=E0x1A&layout=compact&theme=gruvbox" alt="Top Languages" class="responsive-img" />
+            <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=E0x1A&layout=compact&theme=gruvbox" alt="Top Languages" class="rıesponsive-img" />
             <br>
             <img src="https://github-readme-stats.vercel.app/api?username=E0x1A&show_icons=true&theme=gruvbox" alt="GitHub Stats" class="responsive-img" />
             <br>
@@ -911,7 +930,7 @@
         if (commandSet[cmd]) {
           console.log('Executing command:', cmd);
           const res = await commandSet[cmd]();
-          if (cmd !== 'clear' && cmd !== 'پاک' && cmd !== 'about' && cmd !== 'درباره' && cmd !== 'projects' && cmd !== 'پروژه‌ها' && res) {
+          if (cmd !== 'clear' && cmd !== 'پاک کن' && cmd !== 'about' && cmd !== 'مشخصات' && cmd !== 'projects' && cmd !== 'کارها' && res) {
             output.innerHTML += makeLinksClickable(`> ${cmd}\n${res}\n\n`);
           }
         } else {
@@ -923,9 +942,7 @@
     });
 
     input.addEventListener('input', () => {
-      if (!isMobileDevice()) {
-        attractParticlesToInput();
-      }
+      attractParticlesToInput();
     });
 
     window.onload = () => {
