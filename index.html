@@ -410,78 +410,112 @@
       height: auto;
     }
 
-    @media (max-width: 600px) {
-      #terminal {
-        padding: 8px;
-      }
+    /* Mobile-specific styles */
+    body.mobile {
+      overflow-y: auto;
+    }
 
-      .split #terminal {
-        width: 100vw;
-      }
+    body.mobile #terminal {
+      width: 100vw;
+      padding: 8px;
+      height: 100%;
+      min-height: 100vh;
+    }
 
-      #panel {
-        width: 100vw;
-        border-radius: 0;
-        padding: 8px;
-      }
+    body.mobile .split #terminal {
+      width: 100vw;
+    }
 
-      #output, #panel-content {
-        font-size: 0.9rem;
-        line-height: 1.3;
-        max-height: calc(100vh - 100px);
-      }
+    body.mobile #panel {
+      display: none;
+      width: 100vw;
+      height: 100%;
+      min-height: 100vh;
+      border-radius: 0;
+      padding: 8px;
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
 
-      #commandInput {
-        font-size: 1rem;
-        padding: 6px;
-      }
+    body.mobile #output, body.mobile #panel-content {
+      font-size: 0.9rem;
+      line-height: 1.3;
+      max-height: none;
+      width: 100%;
+    }
 
-      .lang-buttons {
-        margin-bottom: 8px;
-        padding: 4px 0;
-      }
+    body.mobile #commandInput {
+      font-size: 1rem;
+      padding: 6px;
+      width: 100%;
+    }
 
-      .lang-btn {
-        font-size: 0.8rem;
-        padding: 4px 10px;
-      }
+    body.mobile .lang-buttons {
+      margin-bottom: 8px;
+      padding: 4px 0;
+      width: 100%;
+      justify-content: center;
+    }
 
-      #close-panel {
-        font-size: 0.8rem;
-        padding: 3px 6px;
-      }
+    body.mobile .lang-btn {
+      font-size: 0.8rem;
+      padding: 4px 10px;
+    }
 
-      #panel-content iframe {
-        height: calc(100% - 30px);
-      }
+    body.mobile #close-panel {
+      font-size: 0.8rem;
+      padding: 3px 6px;
+    }
 
-      .progress-container {
-        width: 120px;
-        height: 12px;
-        bottom: 10px;
-      }
+    body.mobile #panel-content iframe {
+      width: 100%;
+      height: 100%;
+    }
 
-      .project-list-container > div {
-        width: 95%;
-        padding: 8px;
-      }
+    body.mobile .progress-container {
+      width: 120px;
+      height: 12px;
+      bottom: 10px;
+    }
 
-      .project-list-container a {
-        font-size: 0.9rem;
-      }
+    body.mobile .project-list-container {
+      width: 100%;
+    }
 
-      .project-list-container p {
-        font-size: 0.7rem;
-      }
+    body.mobile .project-list-container > div {
+      width: 100%;
+      max-width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+    }
 
-      .responsive-img, .visitor img {
-        max-width: 95%;
-        margin: 5px 0;
-      }
+    body.mobile .project-list-container a {
+      font-size: 0.9rem;
+    }
 
-      .visitor p {
-        font-size: 0.9rem;
-      }
+    body.mobile .project-list-container p {
+      font-size: 0.7rem;
+    }
+
+    body.mobile .responsive-img, body.mobile .visitor img {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      margin: 5px 0;
+    }
+
+    body.mobile .visitor p {
+      font-size: 0.9rem;
+    }
+
+    body.mobile .projects h2,
+    body.mobile .other-projects h2,
+    body.mobile .stats,
+    body.mobile .visitor,
+    body.mobile .footer {
+      width: 100%;
+      text-align: center;
     }
   </style>
 </head>
@@ -511,6 +545,16 @@
 
   <script src="js/particles.min.js"></script>
   <script>
+    // Detect mobile device
+    function isMobileDevice() {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+
+    // Apply mobile class if on mobile
+    if (isMobileDevice()) {
+      document.body.classList.add('mobile');
+    }
+
     // Initialize particles
     function initParticles() {
       console.log('Initializing particles.js...');
@@ -562,9 +606,11 @@
       }
     }
 
-    // Initialize particles on load
+    // Initialize particles only on non-mobile devices
     try {
-      initParticles();
+      if (!isMobileDevice()) {
+        initParticles();
+      }
     } catch (err) {
       console.error('Error initializing particles.js:', err);
     }
@@ -723,7 +769,7 @@
         return `
           <div class="visitor center">
             <p>👁️👁️Visitor No.👁️👁️</p>
-<img src="https://profile-counter.glitch.me/E0x1A/count.svg" alt="Visitor Count" />
+            <img src="https://profile-counter.glitch.me/E0x1A/count.svg" alt="Visitor Count" />
           </div>
           <div class="stats center">
             <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=E0x1A&layout=compact&theme=gruvbox" alt="Top Languages" class="responsive-img" />
@@ -786,7 +832,6 @@
           initTerminal();
           return '';
         },
-   
         'quote': () => {
           const arr = quotes.en;
           return arr[Math.floor(Math.random() * arr.length)];
@@ -811,8 +856,7 @@
         'پاک کن': () => {
           initTerminal();
           return '';
-      },
-     
+        },
         'جمله': () => {
           const arr = quotes.fa;
           return arr[Math.floor(Math.random() * arr.length)];
@@ -878,7 +922,9 @@
     });
 
     input.addEventListener('input', () => {
-      attractParticlesToInput();
+      if (!isMobileDevice()) {
+        attractParticlesToInput();
+      }
     });
 
     window.onload = () => {
