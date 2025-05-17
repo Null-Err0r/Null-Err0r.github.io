@@ -2,8 +2,8 @@
 <html lang="fa">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>MR. SAM</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Mr. SAM</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Fira+Mono&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet" />
@@ -11,6 +11,7 @@
   <style>
     html, body {
       height: 100%;
+      min-height: 100vh;
       margin: 0;
       padding: 0;
       background-color: #0a1f14;
@@ -23,19 +24,32 @@
       direction: rtl;
       display: flex;
       position: relative;
+      touch-action: manipulation;
     }
 
     #particles-js {
-      position: absolute;
+      position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
       z-index: -1;
+      background: radial-gradient(circle at center, rgba(255, 255, 255, 0.02) 0%, transparent 70%);
+      animation: subtlePulse 10s ease-in-out infinite;
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    @keyframes subtlePulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.8; }
+      100% { opacity: 1; }
     }
 
     #particles-js canvas {
-      filter: blur(2px); /* Glow effect */
+      display: block;
+      visibility: visible;
+      opacity: 1;
     }
 
     html[lang="en"] {
@@ -49,11 +63,12 @@
       display: flex;
       flex-direction: column;
       background-color: #04130cdd;
-      padding: 20px;
+      padding: 10px;
       box-sizing: border-box;
       text-align: right;
       transition: width 0.3s ease;
       z-index: 1;
+      overflow: hidden;
     }
 
     html[lang="en"] #terminal {
@@ -68,12 +83,13 @@
       flex-grow: 1;
       overflow-y: auto;
       white-space: pre-wrap;
-      line-height: 1.5;
-      font-size: 1.1rem;
+      line-height: 1.4;
+      font-size: 1rem;
       user-select: text;
-      margin-bottom: 12px;
+      margin: 0 0 10px 0;
       color: #ffffff;
       text-align: inherit;
+      max-height: calc(100vh - 120px);
     }
 
     #output a {
@@ -92,13 +108,17 @@
       background: transparent;
       color: #ffffff;
       font-family: 'Vazirmatn', 'Fira Mono', monospace;
-      font-size: 1.2rem;
-      padding: 10px 8px 6px 8px;
+      font-size: 1.1rem;
+      padding: 8px;
       outline: none;
       width: 100%;
       box-sizing: border-box;
       user-select: text;
       text-align: inherit;
+      position: sticky;
+      bottom: 0;
+      z-index: 10;
+      background-color: #04130cdd;
     }
 
     #commandInput::placeholder {
@@ -107,9 +127,14 @@
 
     .lang-buttons {
       display: flex;
-      gap: 10px;
-      margin-top: 10px;
+      gap: 8px;
+      margin-bottom: 10px;
       justify-content: flex-end;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background-color: #04130cdd;
+      padding: 5px 0;
     }
 
     html[lang="en"] .lang-buttons {
@@ -117,13 +142,13 @@
     }
 
     .lang-btn {
-      padding: 7px 15px;
+      padding: 5px 12px;
       font-family: 'Vazirmatn', 'Fira Mono', monospace;
-      font-size: 1rem;
+      font-size: 0.9rem;
       color: #ffffff;
       background-color: #002a17;
       border: 1.5px solid #ffffff;
-      border-radius: 6px;
+      border-radius: 5px;
       cursor: pointer;
       user-select: none;
       transition: background-color 0.3s ease;
@@ -145,15 +170,15 @@
       height: 100vh;
       background-color: #04130cdd;
       color: #ffffff;
-      padding: 20px;
+      padding: 10px;
       box-sizing: border-box;
       overflow-y: auto;
       text-align: right;
       font-family: 'Vazirmatn', 'Fira Mono', monospace;
-      font-size: 1.1rem;
-      line-height: 1.5;
+      font-size: 1rem;
+      line-height: 1.4;
       position: relative;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
       border-radius: 8px;
       animation: slideIn 0.3s ease;
       z-index: 1;
@@ -197,13 +222,13 @@
       position: absolute;
       top: 10px;
       right: 10px;
-      padding: 5px 10px;
+      padding: 4px 8px;
       background-color: #002a17;
       border: 1.5px solid #ffffff;
       border-radius: 4px;
       color: #ffffff;
       font-family: 'Vazirmatn', 'Fira Mono', monospace;
-      font-size: 1rem;
+      font-size: 0.9rem;
       cursor: pointer;
       user-select: none;
       z-index: 1000;
@@ -220,17 +245,17 @@
 
     .progress-container {
       position: absolute;
-      bottom: 20px;
+      bottom: 15px;
       left: 50%;
       transform: translateX(-50%);
-      width: 200px;
-      height: 20px;
+      width: 150px;
+      height: 15px;
       background-color: #022a1c;
-      border-radius: 10px;
+      border-radius: 8px;
       overflow: hidden;
       z-index: 1001;
       display: none;
-      box-shadow: 0 0 10px rgba(0, 204, 122, 0.5);
+      box-shadow: 0 0 8px rgba(0, 204, 122, 0.5);
     }
 
     .progress-bar {
@@ -246,62 +271,62 @@
 
     #output::-webkit-scrollbar,
     #panel::-webkit-scrollbar {
-      width: 10px;
+      width: 8px;
     }
 
     #output::-webkit-scrollbar-track,
     #panel::-webkit-scrollbar-track {
       background: #022a1c;
-      border-radius: 8px;
+      border-radius: 6px;
     }
 
     #output::-webkit-scrollbar-thumb,
     #panel::-webkit-scrollbar-thumb {
       background: #ffffffcc;
-      border-radius: 8px;
+      border-radius: 6px;
     }
 
     /* Visitor Counter Styles */
     .visitor {
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       text-align: center;
     }
 
     .visitor p {
-      font-size: 1.2rem;
+      font-size: 1rem;
       color: #00ffcc;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .visitor img {
       max-width: 100%;
       height: auto;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 204, 122, 0.3);
+      border-radius: 6px;
+      box-shadow: 0 0 8px rgba(0, 204, 122, 0.3);
     }
 
     /* Stats Section Styles */
     .stats {
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       text-align: center;
     }
 
     .responsive-img {
       max-width: 100%;
       height: auto;
-      margin: 10px 0;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 204, 122, 0.3);
+      margin: 8px 0;
+      border-radius: 6px;
+      box-shadow: 0 0 8px rgba(0, 204, 122, 0.3);
     }
 
     /* Projects Section Styles */
     .projects {
-      margin-bottom: 20px;
+      margin-bottom: 15px;
     }
 
     .projects h2 {
-      font-size: 1.5rem;
-      margin-bottom: 10px;
+      font-size: 1.3rem;
+      margin-bottom: 8px;
       color: #00ffcc;
       text-align: center;
     }
@@ -314,19 +339,19 @@
     }
 
     .project-list-container > div {
-      margin: 10px 0;
-      padding: 15px;
+      margin: 8px 0;
+      padding: 12px;
       background-color: #022a1c;
       border: 1px solid #00cc7a;
-      border-radius: 8px;
-      width: 80%;
-      max-width: 400px;
+      border-radius: 6px;
+      width: 90%;
+      max-width: 350px;
       text-align: center;
     }
 
     .project-list-container a {
       color: #00ffcc;
-      font-size: 1.2rem;
+      font-size: 1rem;
       text-decoration: none;
       font-weight: bold;
     }
@@ -338,17 +363,17 @@
 
     .project-list-container p {
       color: #ffffff;
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       margin-top: 5px;
     }
 
     .other-projects {
-      margin-bottom: 20px;
+      margin-bottom: 15px;
     }
 
     .other-projects h2 {
-      font-size: 1.5rem;
-      margin-bottom: 10px;
+      font-size: 1.3rem;
+      margin-bottom: 8px;
       color: #00ffcc;
       text-align: center;
     }
@@ -361,13 +386,13 @@
     }
 
     .project-list li {
-      margin: 10px 0;
+      margin: 8px 0;
     }
 
     .project-list a {
       color: #00cc7a;
       text-decoration: none;
-      font-size: 1rem;
+      font-size: 0.9rem;
     }
 
     .project-list a:hover {
@@ -377,7 +402,7 @@
 
     .footer {
       text-align: center;
-      margin-top: 20px;
+      margin-top: 15px;
     }
 
     .footer img {
@@ -386,53 +411,76 @@
     }
 
     @media (max-width: 600px) {
+      #terminal {
+        padding: 8px;
+      }
+
       .split #terminal {
         width: 100vw;
       }
+
       #panel {
         width: 100vw;
         border-radius: 0;
+        padding: 8px;
       }
+
       #output, #panel-content {
-        font-size: 1rem;
+        font-size: 0.9rem;
         line-height: 1.3;
+        max-height: calc(100vh - 100px);
       }
+
       #commandInput {
-        font-size: 1.1rem;
-        padding: 8px 6px 5px 6px;
+        font-size: 1rem;
+        padding: 6px;
       }
+
+      .lang-buttons {
+        margin-bottom: 8px;
+        padding: 4px 0;
+      }
+
       .lang-btn {
-        font-size: 0.9rem;
-        padding: 6px 14px;
+        font-size: 0.8rem;
+        padding: 4px 10px;
       }
+
       #close-panel {
-        font-size: 0.9rem;
-        padding: 4px 8px;
+        font-size: 0.8rem;
+        padding: 3px 6px;
       }
+
       #panel-content iframe {
         height: calc(100% - 30px);
       }
+
       .progress-container {
-        width: 150px;
-        height: 15px;
-        bottom: 15px;
+        width: 120px;
+        height: 12px;
+        bottom: 10px;
       }
+
       .project-list-container > div {
-        width: 90%;
-        padding: 10px;
+        width: 95%;
+        padding: 8px;
       }
+
       .project-list-container a {
-        font-size: 1rem;
+        font-size: 0.9rem;
       }
+
       .project-list-container p {
-        font-size: 0.8rem;
+        font-size: 0.7rem;
       }
+
       .responsive-img, .visitor img {
-        max-width: 90%;
+        max-width: 95%;
         margin: 5px 0;
       }
+
       .visitor p {
-        font-size: 1rem;
+        font-size: 0.9rem;
       }
     }
   </style>
@@ -440,6 +488,10 @@
 <body>
   <div id="particles-js"></div>
   <div id="terminal" role="main" aria-label="Terminal Portfolio">
+    <div class="lang-buttons">
+      <button class="lang-btn active" id="langFaBtn" aria-label="تغییر به فارسی" aria-pressed="true">فارسی</button>
+      <button class="lang-btn" id="langEnBtn" aria-label="Switch to English" aria-pressed="false">English</button>
+    </div>
     <pre id="output" aria-live="polite" aria-atomic="false"></pre>
     <input
       type="text"
@@ -451,93 +503,71 @@
       spellcheck="false"
       inputmode="text"
     />
-    <div class="lang-buttons">
-      <button class="lang-btn active" id="langFaBtn" aria-label="تغییر به فارسی" aria-pressed="true">فارسی</button>
-      <button class="lang-btn" id="langEnBtn" aria-label="Switch to English" aria-pressed="false">English</button>
-    </div>
   </div>
   <div id="panel" role="dialog" aria-label="Content Panel">
     <button id="close-panel" aria-label="Close panel">X</button>
     <div id="panel-content"></div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/tsparticles@3.5.0/tsparticles.bundle.min.js"></script>
+  <script src="js/particles.min.js"></script>
   <script>
-    // Initialize tsParticles
-    let particlesInstance = null;
+    // Initialize particles
     function initParticles() {
-      particlesInstance = tsParticles.load("particles-js", {
+      console.log('Initializing particles.js...');
+      if (typeof particlesJS === 'undefined') {
+        console.error('particles.js not loaded. Check if js/particles.min.js exists.');
+        return;
+      }
+      particlesJS('particles-js', {
         particles: {
-          number: { value: 100, density: { enable: true, value_area: 800 } },
-          color: { value: ["#00ffcc", "#33ff99"] },
-          shape: { type: ["circle", "triangle"], stroke: { width: 0 } },
-          opacity: { value: 0.8, random: true, anim: { enable: true, speed: 1 } },
-          size: { value: 4, random: true, anim: { enable: true, speed: 2 } },
-          line_linked: {
-            enable: true,
-            distance: 150,
-            color: "#00ffcc",
-            opacity: 0.6,
-            width: 1
-          },
-          move: {
-            enable: true,
-            speed: 3,
-            direction: "none",
-            random: true,
-            straight: false,
-            out_mode: "out",
-            bounce: false,
-            attract: { enable: false }
-          },
-          shadow: {
-            enable: true,
-            color: "#00ffcc",
-            blur: 5,
-            offset: { x: 0, y: 0 }
-          }
+          number: { value: 50, density: { enable: true, value_area: 1000 } },
+          color: { value: '#b0b0b0' },
+          shape: { type: 'circle', stroke: { width: 0, color: '#000000' } },
+          opacity: { value: 0.3, random: true },
+          size: { value: 2, random: true },
+          line_linked: { enable: true, distance: 200, color: '#b0b0b0', opacity: 0.2, width: 1 },
+          move: { enable: true, speed: 1, direction: 'none', random: false, straight: false, out_mode: 'out', bounce: false }
         },
         interactivity: {
-          detect_on: "canvas",
-          events: {
-            onhover: { enable: true, mode: "grab" },
-            onclick: { enable: true, mode: "push" },
-            resize: true
-          },
-          modes: {
-            grab: { distance: 200, line_linked: { opacity: 0.7 } },
-            push: { particles_nb: 4 }
-          }
+          detect_on: 'canvas',
+          events: { onhover: { enable: true, mode: 'repulse' }, onclick: { enable: true, mode: 'push' }, resize: true },
+          modes: { repulse: { distance: 150, duration: 0.4 }, push: { particles_nb: 3 } }
         },
-        retina_detect: true,
-        background: { color: "#0a1f14" },
-        fullScreen: { enable: true },
-        fps_limit: 60,
-        webgl: { enable: true }
+        retina_detect: true
+      }, function() {
+        console.log('particles.js loaded successfully');
       });
     }
 
     // Attract particles to input on typing
     function attractParticlesToInput() {
+      console.log('Attracting particles to input...');
       const inputRect = document.getElementById('commandInput').getBoundingClientRect();
       const canvas = document.querySelector('#particles-js canvas');
-      if (canvas && particlesInstance) {
+      if (canvas && window.pJSDom && window.pJSDom[0] && window.pJSDom[0].pJS) {
         const x = inputRect.left + inputRect.width / 2;
         const y = inputRect.top + inputRect.height / 2;
-        particlesInstance.then(p => {
-          p.particles.move.attract = {
-            enable: true,
-            position: { x, y },
-            strength: 100
-          };
-          setTimeout(() => {
-            p.particles.move.attract.enable = false;
-          }, 1000);
-        });
+        const pJS = window.pJSDom[0].pJS;
+        pJS.particles.move.attract = {
+          enable: true,
+          position: { x: x, y: y },
+          distance: 150
+        };
+        setTimeout(() => {
+          pJS.particles.move.attract.enable = false;
+          console.log('Attraction stopped');
+        }, 1000);
+      } else {
+        console.warn('Canvas or pJS not found');
       }
     }
 
-    initParticles();
+    // Initialize particles on load
+    try {
+      initParticles();
+    } catch (err) {
+      console.error('Error initializing particles.js:', err);
+    }
 
     const input = document.getElementById('commandInput');
     const output = document.getElementById('output');
@@ -572,38 +602,25 @@
     const messages = {
       en: {
         welcome: ` Welcome <`,
-        promptHelp: ` .Type 'help' to get started <`,
-        helpText: `Available commands:\n- about: Who am I\n- projects: Show my projects\n- clear: Clear the terminal\n- date: Show current date and time\n- quote: Show a motivational quote`,
+        promptHelp: `... Type 'help' to get started <`,
+        helpText: `Available commands:\n- about: Who am I\n- projects: Show my projects\n- quote: Show a motivational quote`,
         projectsLoading: `Fetching projects from GitHub...`,
         projectsError: `Error fetching projects. Visit: https://github.com/e0x1a`,
-        clearMsg: `Terminal cleared.`,
         langSwitched: `.Language switched to English`,
         cmdNotFound: `Command not found. Type 'help' to see available commands.`,
       },
       fa: {
         welcome: `>  خوش آمدید`,
-        promptHelp: `> برای شروع 'help' را تایپ کنید.`,
-        helpText: `دستورات موجود:\n- about: درباره من\n- projects: پروژه‌ها\n- clear: پاک کردن ترمینال\n- date: نمایش تاریخ و زمان\n- quote: نمایش جمله انگیزشی`,
+        promptHelp: `> برای شروع 'راهنما' را تایپ کنید.`,
+        helpText: `دستورات موجود:\n- مشخصات: درباره من\n- کارها: نمایش پروژه‌ها\n- جمله: نمایش جمله انگیزشی`,
         projectsLoading: `در حال دریافت پروژه‌ها از GitHub...`,
         projectsError: `خطا در دریافت پروژه‌ها. به این آدرس مراجعه کنید: https://github.com/e0x1a`,
-        clearMsg: `ترمینال پاک شد.`,
         langSwitched: `زبان به فارسی تغییر کرد.`,
-        cmdNotFound: `دستور یافت نشد. برای مشاهده دستورات 'help' را تایپ کنید.`,
+        cmdNotFound: `دستور یافت نشد. برای مشاهده دستورات 'راهنما' را تایپ کنید.`,
       }
     };
 
-    function getIranTime() {
-      return new Date().toLocaleString('fa-IR', { timeZone: 'Asia/Tehran' });
-    }
-
-    function getLocalTime() {
-      const date = new Date();
-      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      return `${date.toString()} (TimeZone: ${tz})`;
-    }
-
     function makeLinksClickable(text) {
-      // Only convert plain URLs to links, preserve HTML tags
       const urlRegex = /(?<!["'=])(https?:\/\/[^\s<>"']+)/g;
       return text.replace(urlRegex, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
     }
@@ -721,15 +738,15 @@
             <h2 class="center">🔧</h2>
             <div class="project-list-container">
               <div>
-                <a href="https://github.com/E0x1A/Advanced-Mic-Camera-Monitor" target="_blank">     Advanced Mic Camera Monitor</a>
+                <a href="https://github.com/E0x1A/Advanced-Mic-Camera-Monitor" target="_blank">Advanced Mic Camera Monitor</a>
                 <p>🛡️ مانیتورینگ میکروفن و دوربین در پس‌زمینه برای کشف جاسوسی احتمالی</p>
               </div>
               <div>
-                <a href="https://github.com/E0x1A/Hiden-Text-Detector" target="_blank">       Hidden Text Detector</a>
+                <a href="https://github.com/E0x1A/Hiden-Text-Detector" target="_blank">Hidden Text Detector</a>
                 <p>🔍 کشف متون پنهان در صفحات یا تصاویر با تکنیک‌های بینایی ماشین</p>
               </div>
               <div>
-                <a href="https://github.com/E0x1A/YouTube-Downloader" target="_blank">       YouTube Downloader</a>
+                <a href="https://github.com/E0x1A/YouTube-Downloader" target="_blank">YouTube Downloader</a>
                 <p>📥 دانلودر گرافیکی ویدیو از یوتیوب با رابط کاربری ساده و حرفه‌ای</p>
               </div>
             </div>
@@ -749,32 +766,57 @@
     }
 
     const commands = {
-      help: () => messages[lang].helpText,
-      about: () => {
-        if (!cachedAboutContent) {
-          cachedAboutContent = '<iframe src="https://bio.site/EsmaeilAsadi" title="About Esmaeil Asadi"></iframe>';
+      en: {
+        'help': () => messages.en.helpText,
+        'about': () => {
+          if (!cachedAboutContent) {
+            cachedAboutContent = '<iframe src="https://bio.site/EsmaeilAsadi" title="About Esmaeil Asadi"></iframe>';
+          }
+          openPanel(cachedAboutContent, 'about');
+          return '';
+        },
+        'projects': async () => {
+          if (!cachedProjectsContent) {
+            cachedProjectsContent = await fetchProjects();
+          }
+          openPanel(cachedProjectsContent, 'projects');
+          return '';
+        },
+        'clear': () => {
+          initTerminal();
+          return '';
+        },
+   
+        'quote': () => {
+          const arr = quotes.en;
+          return arr[Math.floor(Math.random() * arr.length)];
         }
-        openPanel(cachedAboutContent, 'about');
-        return '';
       },
-      projects: async () => {
-        if (!cachedProjectsContent) {
-          cachedProjectsContent = await fetchProjects();
+      fa: {
+        'راهنما': () => messages.fa.helpText,
+        'مشخصات': () => {
+          if (!cachedAboutContent) {
+            cachedAboutContent = '<iframe src="https://bio.site/EsmaeilAsadi" title="About Esmaeil Asadi"></iframe>';
+          }
+          openPanel(cachedAboutContent, 'مشخصات');
+          return '';
+        },
+        'کارها': async () => {
+          if (!cachedProjectsContent) {
+            cachedProjectsContent = await fetchProjects();
+          }
+          openPanel(cachedProjectsContent, 'کارها');
+          return '';
+        },
+        'پاک کن': () => {
+          initTerminal();
+          return '';
+      },
+     
+        'جمله': () => {
+          const arr = quotes.fa;
+          return arr[Math.floor(Math.random() * arr.length)];
         }
-        openPanel(cachedProjectsContent, 'projects');
-        return '';
-      },
-      clear: () => {
-        initTerminal();
-        return '';
-      },
-      date: () => {
-        return (lang === 'fa' ? 'زمان ایران: ' : 'Iran time: ') + getIranTime() + '\n' +
-               (lang === 'fa' ? 'زمان سیستم شما: ' : 'Your local time: ') + getLocalTime();
-      },
-      quote: () => {
-        const arr = quotes[lang];
-        return arr[Math.floor(Math.random() * arr.length)];
       }
     };
 
@@ -811,19 +853,20 @@
       if (e.key === 'Enter') {
         e.preventDefault();
         const cmd = input.value.trim().toLowerCase();
-        console.log('Command entered:', cmd); // Debugging
+        console.log('Command entered:', cmd);
 
         if (!cmd) {
-          output.innerHTML += makeLinksClickable(`> ${cmd}\nلطفاً یک دستور وارد کنید.\n\n`);
+          output.innerHTML += makeLinksClickable(`> ${cmd}\n${lang === 'fa' ? 'لطفاً یک دستور وارد کنید.' : 'Please enter a command.'}\n\n`);
           input.value = '';
           output.scrollTop = output.scrollHeight;
           return;
         }
 
-        if (commands[cmd]) {
-          console.log('Executing command:', cmd); // Debugging
-          const res = await commands[cmd]();
-          if (cmd !== 'clear' && cmd !== 'about' && cmd !== 'projects' && res) {
+        const commandSet = commands[lang];
+        if (commandSet[cmd]) {
+          console.log('Executing command:', cmd);
+          const res = await commandSet[cmd]();
+          if (cmd !== 'clear' && cmd !== 'پاک' && cmd !== 'about' && cmd !== 'درباره' && cmd !== 'projects' && cmd !== 'پروژه‌ها' && res) {
             output.innerHTML += makeLinksClickable(`> ${cmd}\n${res}\n\n`);
           }
         } else {
