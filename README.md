@@ -14,7 +14,7 @@
 </p>
 <p align="center"> 
   :eyes: Visitor No. :eyes:<br>
-  <img src="https://profile-counter.glitch.me/E01A/count.svg" />
+  <img src="https://profile-counter.glitch.me/E0x1A/count.svg" />
 </p>
 <img src="https://raw.githubusercontent.com/Trilokia/Trilokia/379277808c61ef204768a61bbc5d25bc7798ccf1/bottom_header.svg" >
 <br>
