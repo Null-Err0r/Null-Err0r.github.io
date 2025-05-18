@@ -320,7 +320,7 @@
       height: 100%;
       margin: 8px 0;
       border-radius: 6px;
-      box-shadow: 0 0 8px rgba(0, 204, 122, 0.3);
+      box-shadow: 0 0 8px rgba(0, 204, 122 g, 0.3);
     }
 
     /* Projects Section Styles */
@@ -646,24 +646,117 @@
     let currentPanelCommand = null;
     let cachedProjectsContent = null;
     let cachedAboutContent = null;
+    let commandHistory = [];
+    let historyIndex = -1;
+
 
     const quotes = {
       en: [
-        "“Code is like humor. When you have to explain it, it’s bad.” – Cory House",
-        "“Talk is cheap. Show me the code.” – Linus Torvalds",
-        "“Programs must be written for people to read, and only incidentally for machines to execute.” – Harold Abelson",
-        "“The most disastrous thing that you can ever learn is your first programming language.” – Alan Kay",
-        "“Any fool can write code that a computer can understand. Good programmers write code that humans can understand.” – Martin Fowler"
+        "Code is like humor. When you have to explain it, it’s bad. – Cory House",
+        "Programs must be written for people to read, and only incidentally for machines to execute. – Harold Abelson",
+        "Any fool can write code that a computer can understand. Good programmers write code that humans can understand. – Martin Fowler",
+        "The best way to predict the future is to invent it. – Alan Kay",
+        "First, solve the problem. Then, write the code. – John Johnson",
+        "Good code is its own best documentation. – Steve McConnell",
+        "Simplicity is the soul of efficiency. – Austin Freeman",
+        "Programming isn’t about what you know; it’s about what you can figure out. – Chris Pine",
+        "Clean code always looks like it was written by someone who cares. – Robert C. Martin",
+        "The only way to learn a new programming language is by writing programs in it. – Dennis Ritchie",
+        "Talk is cheap. Show me the code. – Linus Torvalds",
+        "Before software can be reusable, it first has to be usable. – Ralph Johnson",
+        "Controlling complexity is the essence of computer programming. – Brian Kernighan",
+        "Java is to JavaScript what car is to Carpet. – Chris Heilmann",
+        "Walking on water and developing software from a specification are easy if both are frozen. – Edward V. Berard",
+        "The most disastrous thing that you can ever learn is your first programming language. – Alan Kay",
+        "A good programmer is someone who always looks both ways before crossing a one-way street. – Doug Linder",
+        "In order to be irreplaceable, one must always be different." ,
+        "Don’t comment bad code—rewrite it. – Brian Kernighan",
+        "If debugging is the process of removing bugs, then programming must be the process of putting them in. – Edsger Dijkstra",
+        "Make it work, make it right, make it fast. – Kent Beck",
+        "Any code of your own that you haven’t looked at for six or more months might as well have been written by someone else. – Eagleson’s Law",
+        "The purpose of software engineering is to control complexity, not to create it. – Pamela Zave",
+        "Optimism is an occupational hazard of programming: feedback is the treatment. – Kent Beck",
+        "There are only two kinds of programming languages: those people always bitch about and those nobody uses. – Bjarne Stroustrup",
+        "It’s not a bug – it’s an undocumented feature. – Anonymous",
+        "Programming can be fun, and so can cryptography; however, they should not be combined. – Kreitzberg and Shneiderman",
+        "The best error message is the one that never shows up. – Thomas Fuchs",
+        "Premature optimization is the root of all evil. – Donald Knuth",
+        "A language that doesn’t affect the way you think about programming is not worth knowing. – Alan Perlis",
+        "Simplicity does not precede complexity, but follows it. – Alan Perlis",
+        "A program that has not been tested does not work. – Bjarne Stroustrup",
+        "Code never lies, comments sometimes do. – Ron Jeffries",
+        "Deleted code is debugged code. – Jeff Sickel",
+        "You can’t have great software without a great team. – Joel Spolsky",
+        "Experience is the name everyone gives to their mistakes. – Oscar Wilde",
+        "There is no Ctrl+Z in production. – Anonymous",
+        "The best way to get a project done faster is to start sooner. – Jim Highsmith",
+        "Programming is the art of algorithm design and the craft of debugging errant code. – Ellen Ullman",
+        "The trouble with programmers is that you can never tell what a programmer is doing until it’s too late. – Seymour Cray",
+        "Software is a gas; it expands to fill its container. – Nathan Myhrvold",
+        "A primary cause of complexity is that software vendors uncritically adopt almost any feature that users want. – Niklaus Wirth",
+        "A computer is like a violin. You can imagine that it can make a beautiful sound, but it takes practice.– Sam Aaron",
+        "Programming is thinking, not typing. – Casey Patton",
+        "Programming is the closest thing we have to magic. – Anonymous",
+        "Low-level programming is good for the programmer’s soul. – John Carmack",
+        "When you program well, you feel like you’re building something alive. – Donald Knuth",
+        "Every programming language teaches you a new way of thinking. – Alan Perlis",
+        "The goal of learning to code isn’t to write code. It’s to understand the world better. – Cory House"
+        
       ],
       fa: [
-        "«کدنویسی مثل شوخی است. وقتی مجبور باشی توضیحش بدهی، یعنی بد است.» – کوری هاوس",
-        "«حرف زدن آسان است. کد را به من نشان بده.» – لینوس توروالدز",
-        "«برنامه‌ها باید برای خواندن انسان‌ها نوشته شوند، و تنها به صورت اتفاقی برای اجرا توسط ماشین‌ها.» – هارولد آبِل‌سون",
-        "«بدترین چیزی که می‌توانی یاد بگیری، زبان برنامه‌نویسی اولت است.» – آلن کی",
-        "«هر کسی می‌تواند کدی بنویسد که کامپیوتر بفهمد، برنامه‌نویسان خوب کدی می‌نویسند که انسان‌ها بفهمند.» – مارتین فاولر"
+   "کدنویسی مثل شوخی است. وقتی مجبور باشی توضیحش بدهی، یعنی بد است. – کوری هاوس",
+   "صحبت کردن ارزان است. کد را به من نشان بده.– لینوس توروالدز",
+   "برنامه‌نویسی هنر طراحی الگوریتم و مهارت رفع اشکال کدهای خطا است.– الن اولمن",
+   "برنامه‌نویسی ترکیبی از باغبانی و جراحی است.",
+   "برنامه‌نویسی مهارتی است که بهترین راه یادگیری آن، تمرین و مثال است، نه کتاب‌ها.– آلن تورینگ",
+   "برنامه‌نویسی درباره‌ی آنچه می‌دانید نیست؛ درباره‌ی آن چیزی است که می‌توانید کشف کنید.– کریس پاین",
+   "برنامه‌نویسی هنر سازماندهی پیچیدگی و تسلط بر چندگانگی است.– ادسخر دیکسترا",
+   "برنامه‌نویسی یکی از دشوارترین شاخه‌های ریاضیات کاربردی است؛ ریاضی‌دانان ضعیف بهتر است در ریاضیات محض باقی بمانند.– ادسخر دیکسترا",
+   "برنامه‌نویسی سطح پایین برای روح برنامه‌نویس مفید است.– جان کارمک",
+   "برنامه‌نویسی هنر طراحی الگوریتم و مهارت رفع اشکال کدهای خطا است.– الن اولمن",
+   "برنامه‌نویسی ترکیبی از باغبانی و جراحی است." ,
+   "اول مسئله را حل کن، سپس کد را بنویس.– جان جانسون",
+   "برنامه‌نویسی درباره‌ی تایپ کردن نیست، بلکه درباره‌ی تفکر است.– منبع ناشناس",
+   "برنامه‌نویسی هنر طراحی الگوریتم و مهارت رفع اشکال کدهای خطا است.– الن اولمن",
+   "برنامه‌نویسی ترکیبی از باغبانی و جراحی است.",
+   "برنامه‌نویسی مهارتی است که بهترین راه یادگیری آن، تمرین و مثال است، نه کتاب‌ها.– آلن تورینگ",
+   "برنامه‌نویسی درباره‌ی آنچه می‌دانید نیست؛ درباره‌ی آن چیزی است که می‌توانید کشف کنید.– کریس پاین",
+   "برنامه‌نویسی هنر سازماندهی پیچیدگی و تسلط بر چندگانگی است.– ادسخر دیکسترا",
+   "برنامه‌نویسی یکی از دشوارترین شاخه‌های ریاضیات کاربردی است؛ ریاضی‌دانان ضعیف بهتر است در ریاضیات محض باقی بمانند.– ادسخر دیکسترا",
+   "برنامه‌نویسی سطح پایین برای روح برنامه‌نویس مفید است.– جان کارمک",
+   "برنامه‌نویسی هنر طراحی الگوریتم و مهارت رفع اشکال کدهای خطا است.– الن اولمن",
+   "اگر اشکال‌زدایی فرآیند حذف باگ‌هاست، پس برنامه‌نویسی باید فرآیند وارد کردن آن‌ها باشد.– ادسخر دیکسترا",
+   "اشکال‌زدایی دو برابر سخت‌تر از نوشتن کد در وهله اول است. بنابراین، اگر کد را به هوشمندانه‌ترین شکل ممکن بنویسید، به‌طور پیش‌فرض برای اشکال‌زدایی آن به اندازه کافی باهوش نیستید.– برایان کرنیگان",
+   "بهینه‌سازی زودهنگام ریشه‌ی تمام شرور است.– دانلد کنوت",
+   "برنامه‌نویسان مقدار زیادی زمان را صرف فکر کردن یا نگرانی درباره سرعت بخش‌های غیر بحرانی برنامه‌هایشان می‌کنند، و این تلاش‌ها در واقع تأثیر منفی قوی در هنگام اشکال‌زدایی و نگهداری دارند.– دانلد کنوت",
+   "قبل از بهینه‌سازی، از یک پروفایلر برای شناسایی نقاط داغ برنامه استفاده کنید.– مایک مورتون",
+   "در برنامه‌های غیر وابسته به I/O، کمتر از چهار درصد از برنامه معمولاً بیش از نیمی از زمان اجرا را مصرف می‌کند.– دانلد کنوت",
+   "برنامه‌نویسان مقدار زیادی زمان را صرف فکر کردن یا نگرانی درباره سرعت بخش‌های غیر بحرانی برنامه‌هایشان می‌کنند، و این تلاش‌ها در واقع تأثیر منفی قوی در هنگام اشکال‌زدایی و نگهداری دارند.– دانلد کنوت",
+   "بهینه‌سازی زودهنگام ریشه‌ی تمام شرور است.– دانلد کنوت",
+   "برنامه‌نویسان مقدار زیادی زمان را صرف فکر کردن یا نگرانی درباره سرعت بخش‌های غیر بحرانی برنامه‌هایشان می‌کنند، و این تلاش‌ها در واقع تأثیر منفی قوی در هنگام اشکال‌زدایی و نگهداری دارند.– دانلد کنوت",
+   "بهینه‌سازی زودهنگام ریشه‌ی تمام شرور است.– دانلد کنوت",
+   "کد خوب بهترین مستندات خودش است. وقتی می‌خواهید یک توضیح اضافه کنید، از خود بپرسید: چگونه می‌توانم کد را بهبود دهم تا این توضیح لازم نباشد؟– استیو مک‌کانل",
+   "کد هرگز دروغ نمی‌گوید، اما توضیحات گاهی اوقات این کار را می‌کنند.– ران جفریز",
+   "اگر کد و توضیحات با هم تناقض داشته باشند، احتمالاً هر دو اشتباه هستند.– نورم شرایر",
+   "برنامه‌ها باید برای خواندن انسان‌ها نوشته شوند، و تنها به صورت اتفاقی برای اجرا توسط ماشین‌ها.– هارولد آبِل‌سون و جرالد ساسمن",
+   "هر کسی می‌تواند کدی بنویسد که کامپیوتر بفهمد، برنامه‌نویسان خوب کدی می‌نویسند که انسان‌ها بفهمند.– مارتین فاولر",
+   "کد هرگز دروغ نمی‌گوید، اما توضیحات گاهی اوقات این کار را می‌کنند.– ران جفریز",
+   "اگر کد و توضیحات با هم تناقض داشته باشند، احتمالاً هر دو اشتباه هستند.– نورم شرایر",
+   "برنامه‌ها باید برای خواندن انسان‌ها نوشته شوند، و تنها به صورت اتفاقی برای اجرا توسط ماشین‌ها.– هارولد آبِل‌سون و جرالد ساسمن",
+   "هر کسی می‌تواند کدی بنویسد که کامپیوتر بفهمد، برنامه‌نویسان خوب کدی می‌نویسند که انسان‌ها بفهمند.– مارتین فاولر",
+   "برنامه‌نویسی هنر طراحی الگوریتم و مهارت رفع اشکال کدهای خطا است.– الن اولمن",
+   "برنامه‌نویسی ترکیبی از باغبانی و جراحی است.",
+   "برنامه‌نویسی مهارتی است که بهترین راه یادگیری آن، تمرین و مثال است، نه کتاب‌ها.– آلن تورینگ",
+   "برنامه‌نویسی درباره‌ی آنچه می‌دانید نیست؛ درباره‌ی آن چیزی است که می‌توانید کشف کنید.– کریس پاین",
+   "برنامه‌نویسی هنر سازماندهی پیچیدگی و تسلط بر چندگانگی است.– ادسخر دیکسترا",
+   "برنامه‌نویسی یکی از دشوارترین شاخه‌های ریاضیات کاربردی است؛ ریاضی‌دانان ضعیف بهتر است در ریاضیات محض باقی بمانند.– ادسخر دیکسترا",
+   "برنامه‌نویسی سطح پایین برای روح برنامه‌نویس مفید است.– جان کارمک",
+   "وقتی خوب برنامه‌نویسی می‌کنید، احساس می‌کنید انگار در حال ساختن چیزی زنده هستید.– دونالد کنوت",
+   "هر زبان برنامه‌نویسی، طرز تفکر جدیدی به تو می‌آموزد.– آلن پرلیس",
+   "هدف نهایی از یادگیری برنامه‌نویسی این نیست که فقط کد بنویسی، بلکه این است که دنیا را بهتر درک کنی.– کوری هاوس"
+        
       ]
     };
-
     const messages = {
       en: {
         welcome: ` Welcome <`,
@@ -792,7 +885,7 @@
             <img src="https://profile-counter.glitch.me/E0x1A/count.svg" alt="Visitor Count" />
           </div>
           <div class="stats center">
-            <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=E0x1A&layout=compact&theme=gruvbox" alt="Top Languages" class="rıesponsive-img" />
+            <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=E0x1A&layout=compact&theme=gruvbox" alt="Top Languages" class="responsive-img" />
             <br>
             <img src="https://github-readme-stats.vercel.app/api?username=E0x1A&show_icons=true&theme=gruvbox" alt="GitHub Stats" class="responsive-img" />
             <br>
@@ -916,7 +1009,7 @@
     input.addEventListener('keydown', async (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
-        const cmd = input.value.trim().toLowerCase();
+        const cmd = input.value.trim();
         console.log('Command entered:', cmd);
 
         if (!cmd) {
@@ -926,11 +1019,15 @@
           return;
         }
 
+        // Add command to history
+        commandHistory.push(cmd);
+        historyIndex = commandHistory.length;
+
         const commandSet = commands[lang];
-        if (commandSet[cmd]) {
+        if (commandSet[cmd.toLowerCase()]) {
           console.log('Executing command:', cmd);
-          const res = await commandSet[cmd]();
-          if (cmd !== 'clear' && cmd !== 'پاک کن' && cmd !== 'about' && cmd !== 'مشخصات' && cmd !== 'projects' && cmd !== 'کارها' && res) {
+          const res = await commandSet[cmd.toLowerCase()]();
+          if (cmd.toLowerCase() !== 'clear' && cmd.toLowerCase() !== 'پاک کن' && cmd.toLowerCase() !== 'about' && cmd.toLowerCase() !== 'مشخصات' && cmd.toLowerCase() !== 'projects' && cmd.toLowerCase() !== 'کارها' && res) {
             output.innerHTML += makeLinksClickable(`> ${cmd}\n${res}\n\n`);
           }
         } else {
@@ -938,12 +1035,42 @@
         }
         input.value = '';
         output.scrollTop = output.scrollHeight;
+      } else if (e.key === 'ArrowUp') {
+        if (historyIndex > 0) {
+          historyIndex--;
+          input.value = commandHistory[historyIndex] || '';
+          // Move cursor to end of input
+          setTimeout(() => input.setSelectionRange(input.value.length, input.value.length), 0);
+        }
+      } else if (e.key === 'ArrowDown') {
+        if (historyIndex < commandHistory.length - 1) {
+          historyIndex++;
+          input.value = commandHistory[historyIndex] || '';
+          // Move cursor to end of input
+          setTimeout(() => input.setSelectionRange(input.value.length, input.value.length), 0);
+        } else {
+          historyIndex = commandHistory.length;
+          input.value = '';
+        }
       }
     });
 
     input.addEventListener('input', () => {
       attractParticlesToInput();
     });
+
+    // Handle back button on mobile
+    if (isMobileDevice()) {
+      window.addEventListener('popstate', (event) => {
+        if (panel.style.display === 'block') {
+          closePanel();
+          // Prevent default back navigation
+          history.pushState(null, null, window.location.href);
+        }
+      });
+      // Initialize history state
+      history.pushState(null, null, window.location.href);
+    }
 
     window.onload = () => {
       initTerminal();
