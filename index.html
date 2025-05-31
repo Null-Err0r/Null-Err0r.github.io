@@ -30,16 +30,21 @@
     /* ✅ QR Code Banner (اصلاح‌شده) */
     #qrcode-banner {
       position: fixed;
-      top: 100px; /* فاصله کافی از بالای صفحه برای نیفتادن روی دکمه‌ها */
+      top: 100px; /* Desktop: فاصله کافی از بالای صفحه برای نیفتادن روی دکمه‌ها */
       inset-inline-end: 10px; /* راست در RTL و چپ در LTR */
-      width: 240px;
+      width: 160px;
       max-width: 60vw;
-      z-index: 999;
+      z-index: 999; /* Base z-index */
       background-color: rgba(0, 0, 0, 0.4);
       padding: 5px;
       border-radius: 8px;
       box-shadow: 0 0 8px rgba(0, 255, 150, 0.5);
       transition: all 0.3s ease;
+    }
+
+    /* ✅ Hide QR code when side panel is open */
+    body.split #qrcode-banner {
+      display: none;
     }
 
     #qrcode-banner img {
@@ -85,7 +90,7 @@
       display: flex;
       flex-direction: column;
       background-color: #04130cdd;
-      padding: 10px;
+      padding: 10px; /* Default padding */
       box-sizing: border-box;
       text-align: right;
       transition: width 0.3s ease;
@@ -108,10 +113,10 @@
       line-height: 1.4;
       font-size: 1rem;
       user-select: text;
-      margin: 260px 0 10px;
+      margin: 190px 0 10px; /* Desktop: Large margin to place welcome text below QR */
       color: #ffffff;
       text-align: inherit;
-      max-height: calc(100vh - 180px);
+      max-height: calc(100vh - 180px); /* Desktop specific */
       padding-bottom: 20px;
     }
 
@@ -148,16 +153,17 @@
       color: #ffffffaa;
     }
 
+    /* Base styles for lang-buttons (used by desktop and as a base for mobile) */
     .lang-buttons {
       display: flex;
       gap: 12px;
       justify-content: center;
       width: 100%;
-      z-index: 100;
+      z-index: 100; /* Base z-index for desktop flow */
       background-color: #04130cdd;
       padding: 10px;
-      margin: 10px 0;
-      position: sticky;
+      margin: 10px 0; /* Desktop margin */
+      position: sticky; /* Desktop sticky behavior */
       top: 0;
     }
 
@@ -441,21 +447,45 @@
       overflow-y: auto;
     }
 
+    /* ✅ Lang buttons fixed at top for mobile */
+    body.mobile .lang-buttons {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      width: 100%; 
+      margin: 0; /* Override desktop margin */
+      padding: 10px; /* Keep consistent padding */
+      z-index: 1001; /* Above QR and other content */
+      /* justify-content: center; will be inherited or should be ensured */
+    }
+
+    /* ✅ QR Code fixed below lang-buttons for mobile */
+    body.mobile #qrcode-banner {
+      top: 72px; /* Height of .lang-buttons (32px button + 2*10px padding) */
+      z-index: 1000; /* Below lang-buttons, above terminal scroll content */
+    }
+
     body.mobile #terminal {
       width: 100vw;
-      padding: 8px;
-      padding-top: 60px;
+      /* ✅ Adjusted padding-top to clear fixed lang-buttons and qrcode-banner */
+      /* 52px (lang-buttons) + 170px (qrcode-banner) + 10px (gap) = 232px */
+      padding-top: 252px; 
+      padding-left: 8px;
+      padding-right: 8px;
+      padding-bottom: 8px;
       height: 100%;
       min-height: 100vh;
       overflow-y: auto;
     }
 
     body.mobile .split #terminal {
-      width: 100vw;
+      width: 100vw; /* Keep this for when panel is open, though QR is hidden */
     }
 
     body.mobile #panel {
-      display: none;
+      /* Styles for the side panel on mobile */
+      display: none; 
       width: 100vw;
       height: 100%;
       min-height: 100vh;
@@ -464,42 +494,39 @@
       position: fixed;
       top: 0;
       left: 0;
+      /* z-index for panel is 1, ensure it's below QR if QR wasn't hidden */
     }
 
-    body.mobile #output, body.mobile #panel-content {
+    /* ✅ Adjusted margin-top for #output on mobile */
+    body.mobile #output {
       font-size: 0.9rem;
       line-height: 1.3;
-      margin: 60px 0 10px;
+      margin: 10px 0 10px; /* Reduced margin as #terminal padding-top handles clearance */
+      max-height: none; /* Mobile allows full scroll */
+      width: 100%;
+    }
+    
+    /* panel-content on mobile needs to consider its own container's padding if #panel is shown */
+    body.mobile #panel-content {
+      font-size: 0.9rem;
+      line-height: 1.3;
+      margin: 10px 0 10px; /* Default margin for content within panel */
       max-height: none;
       width: 100%;
     }
+
 
     body.mobile #commandInput {
       font-size: 1rem;
       padding: 6px;
       width: 100%;
+      /* position: sticky; bottom: 0; is base style and works */
     }
 
-    body.mobile .lang-buttons {
-      display: flex;
-      flex-wrap: nowrap;
-      gap: 12px;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      background-color: #04130cdd;
-      z-index: 100;
-      position: sticky;
-      top: 0;
-    }
-
-    body.mobile .lang-btn {
-      font-size: 1rem;
-      padding: 8px 16px;
-      min-width: 100px;
-      text-align: center;
+    body.mobile .lang-btn { /* Specific font/padding for mobile buttons if needed, else inherits */
+      font-size: 1rem;    /* Already in base .lang-btn */
+      padding: 8px 16px; /* Already in base .lang-btn */
+      min-width: 100px;   /* Already in base .lang-btn */
     }
 
     body.mobile #close-panel {
@@ -556,10 +583,10 @@
       width: 100%;
       text-align: center;
     }
+    
   </style>
 </head>
 <body>
-  <!-- ✅ QR Code Banner -->
   <div id="qrcode-banner">
     <img src="js/qrcode.png" alt="QR Code" />
   </div>
