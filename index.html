@@ -27,7 +27,7 @@
       touch-action: manipulation;
     }
 
-    /* ✅ QR Code Banner (اصلاح‌شده) */
+
     #qrcode-banner {
       position: fixed;
       top: 100px; /* Desktop: فاصله کافی از بالای صفحه برای نیفتادن روی دکمه‌ها */
@@ -90,7 +90,7 @@
       display: flex;
       flex-direction: column;
       background-color: #04130cdd;
-      padding: 10px; /* Default padding */
+      padding: 10px; 
       box-sizing: border-box;
       text-align: right;
       transition: width 0.3s ease;
@@ -113,10 +113,10 @@
       line-height: 1.4;
       font-size: 1rem;
       user-select: text;
-      margin: 190px 0 10px; /* Desktop: Large margin to place welcome text below QR */
+      margin: 190px 0 10px; 
       color: #ffffff;
       text-align: inherit;
-      max-height: calc(100vh - 180px); /* Desktop specific */
+      max-height: calc(100vh - 180px);
       padding-bottom: 20px;
     }
 
@@ -153,17 +153,17 @@
       color: #ffffffaa;
     }
 
-    /* Base styles for lang-buttons (used by desktop and as a base for mobile) */
+ 
     .lang-buttons {
       display: flex;
       gap: 12px;
       justify-content: center;
       width: 100%;
-      z-index: 100; /* Base z-index for desktop flow */
+      z-index: 100;
       background-color: #04130cdd;
       padding: 10px;
-      margin: 10px 0; /* Desktop margin */
-      position: sticky; /* Desktop sticky behavior */
+      margin: 10px 0; 
+      position: sticky; 
       top: 0;
     }
 
@@ -318,7 +318,6 @@
       border-radius: 6px;
     }
 
-    /* Visitor Counter Styles */
     .visitor {
       margin-bottom: 15px;
       text-align: center;
@@ -337,7 +336,7 @@
       box-shadow: 0 0 8px rgba(0, 204, 122, 0.3);
     }
 
-    /* Stats Section Styles */
+  
     .stats {
       margin-bottom: 15px;
       text-align: center;
@@ -351,7 +350,7 @@
       box-shadow: 0 0 8px rgba(0, 204, 122 g, 0.3);
     }
 
-    /* Projects Section Styles */
+  
     .projects {
       margin-bottom: 15px;
     }
@@ -447,30 +446,28 @@
       overflow-y: auto;
     }
 
-    /* ✅ Lang buttons fixed at top for mobile */
+ 
     body.mobile .lang-buttons {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       width: 100%; 
-      margin: 0; /* Override desktop margin */
-      padding: 10px; /* Keep consistent padding */
-      z-index: 1001; /* Above QR and other content */
-      /* justify-content: center; will be inherited or should be ensured */
+      margin: 0;
+      padding: 10px;
+      z-index: 1001;
+     
     }
 
-    /* ✅ QR Code fixed below lang-buttons for mobile */
+
     body.mobile #qrcode-banner {
-      top: 72px; /* Height of .lang-buttons (32px button + 2*10px padding) */
-      z-index: 1000; /* Below lang-buttons, above terminal scroll content */
+      top: 72px; 
+      z-index: 1000; 
     }
 
     body.mobile #terminal {
       width: 100vw;
-      /* ✅ Adjusted padding-top to clear fixed lang-buttons and qrcode-banner */
-      /* 52px (lang-buttons) + 170px (qrcode-banner) + 10px (gap) = 232px */
-      padding-top: 292px; 
+      padding-top: 272px; 
       padding-left: 8px;
       padding-right: 8px;
       padding-bottom: 8px;
@@ -480,11 +477,11 @@
     }
 
     body.mobile .split #terminal {
-      width: 100vw; /* Keep this for when panel is open, though QR is hidden */
+      width: 100vw; 
     }
 
     body.mobile #panel {
-      /* Styles for the side panel on mobile */
+
       display: none; 
       width: 100vw;
       height: 100%;
@@ -494,23 +491,23 @@
       position: fixed;
       top: 0;
       left: 0;
-      /* z-index for panel is 1, ensure it's below QR if QR wasn't hidden */
+    
     }
 
-    /* ✅ Adjusted margin-top for #output on mobile */
+ 
     body.mobile #output {
       font-size: 0.9rem;
       line-height: 1.3;
-      margin: 10px 0 10px; /* Reduced margin as #terminal padding-top handles clearance */
-      max-height: none; /* Mobile allows full scroll */
+      margin: 10px 0 10px; 
+      max-height: none;
       width: 100%;
     }
     
-    /* panel-content on mobile needs to consider its own container's padding if #panel is shown */
+ 
     body.mobile #panel-content {
       font-size: 0.9rem;
       line-height: 1.3;
-      margin: 10px 0 10px; /* Default margin for content within panel */
+      margin: 10px 0 10px; 
       max-height: none;
       width: 100%;
     }
@@ -520,13 +517,13 @@
       font-size: 1rem;
       padding: 6px;
       width: 100%;
-      /* position: sticky; bottom: 0; is base style and works */
+
     }
 
-    body.mobile .lang-btn { /* Specific font/padding for mobile buttons if needed, else inherits */
-      font-size: 1rem;    /* Already in base .lang-btn */
-      padding: 8px 16px; /* Already in base .lang-btn */
-      min-width: 100px;   /* Already in base .lang-btn */
+    body.mobile .lang-btn { 
+      font-size: 1rem;   
+      padding: 8px 16px; 
+      min-width: 100px;   
     }
 
     body.mobile #close-panel {
@@ -615,17 +612,17 @@
 
   <script src="js/particles.min.js"></script>
   <script>
-    // Detect mobile device
+
     function isMobileDevice() {
       return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     }
 
-    // Apply mobile class if on mobile
+
     if (isMobileDevice()) {
       document.body.classList.add('mobile');
     }
 
-    // Initialize particles
+
     function initParticles() {
       console.log('Initializing particles.js...');
       if (typeof particlesJS === 'undefined') {
@@ -653,7 +650,7 @@
       });
     }
 
-    // Attract particles to input on typing
+
     function attractParticlesToInput() {
       console.log('Attracting particles to input...');
       if (typeof particlesJS === 'undefined') {
@@ -680,7 +677,7 @@
       }
     }
 
-    // Initialize particles for all devices
+
     try {
       initParticles();
     } catch (err) {
@@ -933,10 +930,6 @@
         });
         repoListHtml += '</ul>';
         return `
-          <div class="visitor center">
-            <p>👁️👁️Visitor No.👁️👁️</p>
-            <img src="https://profile-counter.glitch.me/null-err0r/count.svg" alt="Visitor Count" />
-          </div>
           <div class="stats center">
             <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=null-err0r&layout=compact&theme=gruvbox" alt="Top Languages" class="responsive-img" />
             <br>
@@ -1092,14 +1085,12 @@
         if (historyIndex > 0) {
           historyIndex--;
           input.value = commandHistory[historyIndex] || '';
-          // Move cursor to end of input
           setTimeout(() => input.setSelectionRange(input.value.length, input.value.length), 0);
         }
       } else if (e.key === 'ArrowDown') {
         if (historyIndex < commandHistory.length - 1) {
           historyIndex++;
           input.value = commandHistory[historyIndex] || '';
-          // Move cursor to end of input
           setTimeout(() => input.setSelectionRange(input.value.length, input.value.length), 0);
         } else {
           historyIndex = commandHistory.length;
@@ -1112,16 +1103,13 @@
       attractParticlesToInput();
     });
 
-    // Handle back button on mobile
     if (isMobileDevice()) {
       window.addEventListener('popstate', (event) => {
         if (panel.style.display === 'block') {
           closePanel();
-          // Prevent default back navigation
           history.pushState(null, null, window.location.href);
         }
       });
-      // Initialize history state
       history.pushState(null, null, window.location.href);
     }
 
