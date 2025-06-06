@@ -445,16 +445,20 @@
       top: 72px;
       z-index: 1000;
     }
-
-    body.mobile #terminal {
-      width: 100vw;
-      padding-top: 292px; 
+    
+   body.mobile #terminal {
+      width: 100vw; 
       padding-left: 8px;
       padding-right: 8px;
       padding-bottom: 8px;
       height: 100%;
       min-height: 100vh;
       overflow-y: auto;
+      transition: padding-top 0.3s ease; 
+    }
+
+    body.mobile.panel-open #terminal {
+       padding-top: 292px;
     }
 
     body.mobile .split #terminal {
@@ -758,15 +762,20 @@
     }
 
     function openPanel(content, command) {
-      if (currentPanelCommand === command) return;
+      if (currentPanelCommand === command && document.body.classList.contains('panel-open')) return; 
+
       document.body.classList.add('split');
-      panel.style.display = 'block';
-      panelContent.innerHTML = `
-        <div class="progress-container" id="progressContainer">
-          <div class="progress-bar" id="progressBar"></div>
-        </div>
-        ${content}
-      `;
+      if (isMobileDevice()) {
+      document.body.classList.add('panel-open'); 
+     }
+  
+     panel.style.display = 'block';
+     panelContent.innerHTML = `
+      <div class="progress-container" id="progressContainer">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      ${content}
+     `;
       currentPanelCommand = command;
 
       const progressContainer = panelContent.querySelector('#progressContainer');
@@ -820,12 +829,16 @@
     }
 
     function closePanel() {
-      document.body.classList.remove('split');
+       document.body.classList.remove('split');
+       if (isMobileDevice()) {
+         document.body.classList.remove('panel-open'); 
+     }
+  
       panel.style.display = 'none';
       panelContent.innerHTML = '';
       currentPanelCommand = null;
-      input.focus();
-    }
+     input.focus();
+   }
 
     async function fetchProjects() {
       const importantRepos = [
