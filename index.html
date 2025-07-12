@@ -333,8 +333,31 @@
       height: 100%;
       margin: 8px 0;
       border-radius: 6px;
-      box-shadow: 0 0 8px rgba(0, 204, 122 g, 0.3);
+      box-shadow: 0 0 8px rgba(0, 204, 122, 0.3);
     }
+    .github-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 8px 0;
+}
+
+.github-stats img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  box-shadow: 0 0 8px rgba(0, 204, 122, 0.3);
+}
+
+.github-stats a {
+  display: block;
+  width: 100%;
+  max-width: 700px;
+}
+
 
     .projects {
       margin-bottom: 15px;
@@ -561,6 +584,35 @@
       text-align: center;
     }
     
+    /* استایل‌های جدید برای تصاویر */
+    .image-container {
+      display: flex; /* تصاویر را در یک ردیف قرار می‌دهد */
+      flex-wrap: wrap; /* در صورت نیاز، تصاویر را به خط بعدی می‌برد */
+      justify-content: center; /* تصاویر را در مرکز تراز می‌کند */
+      align-items: flex-start; /* از ایجاد فضای اضافی بالا و پایین جلوگیری می‌کند */
+      gap: 0; /* فاصله بین تصاویر را حذف می‌کند */
+      padding: 0; /* padding اطراف container را حذف می‌کند */
+      margin: 0; /* margin اطراف container را حذف می‌کند */
+    }
+
+    .image-container img,
+    .image-container picture {
+      display: block; /* نمایش بلوکی برای حذف فضاهای اضافی */
+      max-width: 100%; /* عرض تصویر حداکثر 100% از والد خود باشد */
+      height: auto; /* ارتفاع به صورت خودکار تنظیم می‌شود تا نسبت تصویر حفظ شود */
+      margin: 0; /* margin اطراف تصاویر را حذف می‌کند */
+      padding: 0; /* padding اطراف تصاویر را حذف می‌کند */
+      box-sizing: border-box; /* برای اطمینان از اینکه padding و border در width لحاظ شوند */
+    }
+
+    /* برای دستگاه‌های موبایل: اطمینان از اینکه تصاویر در ستون‌های جداگانه قرار نگیرند */
+    @media (max-width: 768px) {
+      .image-container img,
+      .image-container picture {
+        width: 100%; /* در موبایل، عرض کامل را بگیرد */
+      }
+    }
+
   </style>
 </head>
 
@@ -840,94 +892,90 @@
      input.focus();
    }
 
-    async function fetchProjects() {
-      const importantRepos = [
+async function fetchProjects() {
+      const importantRepoNames = [ // Changed to importantRepoNames for clarity
         'Advanced-Mic-Camera-Monitor',
         'Hiden-Text-Detector',
         'YouTube-Downloader',
-        'null-err0r',
-        'null-err0r.github.io'
+        'Filtering-Analysis-Tool',
+        'TimeZone',
+        'DB-Search-GUI',
+        'null-err0r', // Add your profile repo if you want to exclude it from the "Other Projects" list
+        'null-err0r.github.io' // Add your website repo if you want to exclude it from the "Other Projects" list
       ];
       try {
         const response = await fetch('https://api.github.com/users/null-err0r/repos');
         const data = await response.json();
-        let repoListHtml = '<ul id="repo-list" class="project-list center">';
-        data.forEach(repo => {
-          if (!importantRepos.includes(repo.name)) {
-            repoListHtml += `<li><a href="${repo.html_url}" target="_blank">${repo.name}</a></li>`;
-          }
+
+        let otherRepoListHtml = '<div class="other-projects"><h2 class="center"></h2><ul class="project-list">';
+        
+        // Filter out important, archived, and forked repos for the "Other Projects" list
+        const filteredRepos = data.filter(repo => 
+             !repo.fork
+        );
+
+        // Sort the remaining repositories alphabetically by name
+        filteredRepos.sort((a, b) => a.name.localeCompare(b.name));
+
+        filteredRepos.forEach(repo => {
+            otherRepoListHtml += `<li><a href="${repo.html_url}" target="_blank">${repo.name}</a></li>`;
         });
-        repoListHtml += '</ul>';
+        otherRepoListHtml += '</ul></div>';
+
         return `
-       
-<p align="center">
+<div class="image-container">
   <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=Null-Err0r&layout=pie&theme=dark" alt="Top Languages" />
-</p>
-<!-- GitHub Stats -->
-<p align="center">
   <img src="https://github-readme-stats.vercel.app/api?username=Null-Err0r&rank_icon=github&theme=dark" alt="GitHub Stats" />
-</p>
-<!-- Contribution Time Distribution -->
-<div align="center">
-  <a href="https://next.ossinsight.io/widgets/official/analyze-user-contribution-time-distribution?user_id=19436819&period=all_times" target="_blank" style="display: block;">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://next.ossinsight.io/widgets/official/analyze-user-contribution-time-distribution/thumbnail.png?user_id=19436819&period=all_times&image_size=auto&color_scheme=dark" width="700" height="auto">
-      <img alt="Contribution Time Distribution" src="https://next.ossinsight.io/widgets/official/analyze-user-contribution-time-distribution/thumbnail.png?user_id=19436819&period=all_times&image_size=auto&color_scheme=dark" width="700" height="auto">
-    </picture>
-  </a>
-</div>
 
-<!-- Dashboard Stats -->
-<div align="center">
-  <a href="https://next.ossinsight.io/widgets/official/compose-user-dashboard-stats?user_id=19436819" target="_blank" style="display: block;">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://next.ossinsight.io/widgets/official/compose-user-dashboard-stats/thumbnail.png?user_id=19436819&image_size=auto&color_scheme=dark" width="700" height="auto">
-      <img alt="Dashboard Stats" src="https://next.ossinsight.io/widgets/official/compose-user-dashboard-stats/thumbnail.png?user_id=19436819&image_size=auto&color_scheme=dark" width="700" height="auto">
-    </picture>
-  </a>
-</div>
-<!-- Geographical Activity -->
-<div align="center">
-  <a href="https://next.ossinsight.io/widgets/official/compose-org-activity-map?activity=stars&role=stars&owner_id=19436819&period=past_12_months" target="_blank" style="display: block;">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://next.ossinsight.io/widgets/official/compose-org-activity-map/thumbnail.png?activity=stars&role=stars&owner_id=19436819&period=past_12_months&image_size=4x7&color_scheme=dark" width="700" height="auto">
-      <img alt="Geographical Distribution" src="https://next.ossinsight.io/widgets/official/compose-org-activity-map/thumbnail.png?activity=stars&role=stars&owner_id=19436819&period=past_12_months&image_size=4x7&color_scheme=dark" width="700" height="auto">
-    </picture>
-  </a>
-</div>
-<!-- Activity Graph -->
-<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://next.ossinsight.io/widgets/official/analyze-user-contribution-time-distribution/thumbnail.png?user_id=19436819&period=all_times&image_size=auto&color_scheme=dark">
+    <img alt="Contribution Time" class="responsive-img" src="https://next.ossinsight.io/widgets/official/analyze-user-contribution-time-distribution/thumbnail.png?user_id=19436819&period=all_times&image_size=auto&color_scheme=dark" loading="lazy">
+  </picture>
+
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://next.ossinsight.io/widgets/official/compose-user-dashboard-stats/thumbnail.png?user_id=19436819&image_size=auto&color_scheme=dark">
+    <img alt="Dashboard Stats" class="responsive-img" src="https://next.ossinsight.io/widgets/official/compose-user-dashboard-stats/thumbnail.png?user_id=19436819&image_size=auto&color_scheme=dark" loading="lazy">
+  </picture>
+
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://next.ossinsight.io/widgets/official/compose-org-activity-map/thumbnail.png?activity=stars&role=stars&owner_id=19436819&period=past_12_months&image_size=4x7&color_scheme=dark">
+    <img alt="Geographical Distribution" class="responsive-img" src="https://next.ossinsight.io/widgets/official/compose-org-activity-map/thumbnail.png?user_id=19436819&period=past_12_months&image_size=4x7&color_scheme=dark" loading="lazy">
+  </picture>
+
   <img src="https://github-readme-activity-graph.vercel.app/graph?username=Null-Err0r&theme=high-contrast" alt="Activity Graph" />
-</p>
-<!-- GitHub Streak -->
-<p align="center">
   <img src="https://github-readme-streak-stats.herokuapp.com/?user=Null-Err0r&theme=dark" alt="GitHub Streak" />
-</p>
+</div>
 
-<!-- Visitor Counter -->
-<p align="center">
-  :eyes: Visitor No. :eyes:<br>
-  <img src="https://ghvc.kabelkultur.se/?username=null-err0r" alt="Visitor Counter" />
-</p>
 
           <div class="projects">
             <h2 class="center">📂</h2>
             <div class="project-list-container">
-              <div>
-                <a href="https://github.com/null-err0r/Advanced-Mic-Camera-Monitor" target="_blank">Advanced Mic Camera Monitor</a>
-                <p>🛡️ مانیتورینگ میکروفن و دوربین در پس‌زمینه برای کشف جاسوسی احتمالی</p>
-              </div>
-              <div>
-                <a href="https://github.com/null-err0r/Hiden-Text-Detector" target="_blank">Hidden Text Detector</a>
-                <p>🔍 کشف متون پنهان در صفحات یا تصاویر با تکنیک‌های بینایی ماشین</p>
-              </div>
-                 ${repoListHtml}
-            </div>
+            <div>
+                  <a href="https://github.com/null-err0r/Advanced-Mic-Camera-Monitor" target="_blank">Advanced Mic Camera Monitor</a>
+                  <p>🛡️ مانیتورینگ میکروفن و دوربین برای شناسایی فعالیت‌های مشکوک و جاسوسی</p>
+             </div>
              <div>
-                 <img src="https://raw.githubusercontent.com/Trilokia/Trilokia/379277808c61ef204768a61bbc5d25bc7798ccf1/bottom_header.svg" alt="Decorative" />
-              </div>
+                 <a href="https://github.com/null-err0r/Hiden-Text-Detector" target="_blank">Hidden Text Detector</a>
+                 <p>🧐 کشف متون پنهان در صفحات یا تصاویر با تکنیک‌های بینایی ماشین</p>
+            </div>
+           <div>
+                 <a href="https://github.com/null-err0r/TimeZone" target="_blank">TimeZone</a>
+                 <p>⏰🌍  تایم‌زون‌های سفارشی برای برنامه‌های جداگانه روی اندروید روت‌شده</p>
+           </div>
+           <div>
+                <a href="https://github.com/null-err0r/Filtering-Analysis-Tool" target="_blank">Filtering Analysis Tool</a>
+                <p>🧱 ابزار تحلیل شبکه برای شناسایی فیلترینگ</p>
+           </div>
+           <div>
+                <a href="https://github.com/null-err0r/DB-Search-GUI" target="_blank">DB Search GUI</a>
+                <p>🔎 جستجو در فایل‌های دیتابیس متنی با پشتیبانی از فارسی </p>
+           </div>
+           <div>
+                <a href="https://github.com/null-err0r/YouTube-Downloader" target="_blank">YouTube Downloader</a>
+                <p>▶️ دانلود ویدیو و صدا از یوتیوب با پشتیبانی از کیفیت‌های مختلف و رابط گرافیکی</p>
+            </div>
           </div>
-        `;
+          ${otherRepoListHtml} `;
       } catch (error) {
         console.error('Error fetching repositories:', error);
         return makeLinksClickable(messages[lang].projectsError);
