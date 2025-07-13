@@ -584,32 +584,32 @@
       text-align: center;
     }
     
-    /* استایل‌های جدید برای تصاویر */
+    
     .image-container {
-      display: flex; /* تصاویر را در یک ردیف قرار می‌دهد */
-      flex-wrap: wrap; /* در صورت نیاز، تصاویر را به خط بعدی می‌برد */
-      justify-content: center; /* تصاویر را در مرکز تراز می‌کند */
-      align-items: flex-start; /* از ایجاد فضای اضافی بالا و پایین جلوگیری می‌کند */
-      gap: 0; /* فاصله بین تصاویر را حذف می‌کند */
-      padding: 0; /* padding اطراف container را حذف می‌کند */
-      margin: 0; /* margin اطراف container را حذف می‌کند */
+      display: flex; 
+      flex-wrap: wrap; 
+      justify-content: center; 
+      align-items: flex-start; 
+      gap: 0; 
+      padding: 0; 
+      margin: 0; 
     }
 
     .image-container img,
     .image-container picture {
-      display: block; /* نمایش بلوکی برای حذف فضاهای اضافی */
-      max-width: 100%; /* عرض تصویر حداکثر 100% از والد خود باشد */
-      height: auto; /* ارتفاع به صورت خودکار تنظیم می‌شود تا نسبت تصویر حفظ شود */
-      margin: 0; /* margin اطراف تصاویر را حذف می‌کند */
-      padding: 0; /* padding اطراف تصاویر را حذف می‌کند */
-      box-sizing: border-box; /* برای اطمینان از اینکه padding و border در width لحاظ شوند */
+      display: block; 
+      max-width: 100%; 
+      height: auto; 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
     }
 
-    /* برای دستگاه‌های موبایل: اطمینان از اینکه تصاویر در ستون‌های جداگانه قرار نگیرند */
+  
     @media (max-width: 768px) {
       .image-container img,
       .image-container picture {
-        width: 100%; /* در موبایل، عرض کامل را بگیرد */
+        width: 100%; 
       }
     }
 
@@ -893,15 +893,15 @@
    }
 
 async function fetchProjects() {
-      const importantRepoNames = [ // Changed to importantRepoNames for clarity
+      const importantRepoNames = [ 
         'Advanced-Mic-Camera-Monitor',
         'Hiden-Text-Detector',
         'YouTube-Downloader',
         'Filtering-Analysis-Tool',
         'TimeZone',
         'DB-Search-GUI',
-        'null-err0r', // Add your profile repo if you want to exclude it from the "Other Projects" list
-        'null-err0r.github.io' // Add your website repo if you want to exclude it from the "Other Projects" list
+        'null-err0r', 
+        'null-err0r.github.io' 
       ];
       try {
         const response = await fetch('https://api.github.com/users/null-err0r/repos');
@@ -909,12 +909,11 @@ async function fetchProjects() {
 
         let otherRepoListHtml = '<div class="other-projects"><h2 class="center"></h2><ul class="project-list">';
         
-        // Filter out important, archived, and forked repos for the "Other Projects" list
         const filteredRepos = data.filter(repo => 
              !repo.fork
         );
 
-        // Sort the remaining repositories alphabetically by name
+       
         filteredRepos.sort((a, b) => a.name.localeCompare(b.name));
 
         filteredRepos.forEach(repo => {
