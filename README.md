@@ -15,7 +15,13 @@
   <img src="http://github-profile-summary-cards.vercel.app/api/cards/stats?username=null-err0r&theme=gruvbox" />
   <img src="http://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=null-err0r&theme=gruvbox&utcOffset=8" />
 </p>
+<div align="center">
+  <img src="https://github-readme-streak-stats.herokuapp.com/?user=null-err0r&theme=gruvbox" alt="GitHub Streak" />
+</div>
 
+<div align="center">
+  <img src="https://github-profile-trophy.vercel.app/?username=null-err0r&theme=gruvbox&no-frame=true&margin-w=15&margin-h=15&row=2&column=4" />
+</div>
 <div align="center">
   <a href="https://next.ossinsight.io/widgets/official/analyze-user-contribution-time-distribution?user_id=19436819&period=all_times" target="_blank" style="display: block;">
     <picture>
@@ -44,17 +50,8 @@
 </div>
 
 <div align="center">
-  <img src="https://github-readme-activity-graph.vercel.app/graph?username=null-err0r&theme=high-contrast" alt="Activity Graph" />
+  <img src="https://github-readme-activity-graph.vercel.app/graph?username=null-err0r&theme=gruvbox" alt="Activity Graph" />
 </div>
-
-<div align="center">
-  <img src="https://github-readme-streak-stats.herokuapp.com/?user=null-err0r&theme=dark" alt="GitHub Streak" />
-</div>
-
-<div align="center">
-  <img src="https://github-profile-trophy.vercel.app/?username=null-err0r&theme=radical&no-frame=true&margin-w=15&margin-h=15&row=2&column=4" />
-</div>
-
 <div align="center">
   :eyes: Visitor No. :eyes:<br>
   <img src="https://ghvc.kabelkultur.se/?username=null-err0r" alt="Visitor Counter" />
@@ -64,9 +61,6 @@
   <a href="https://t.me/NullErr0r" target="_blank">
     <img src="https://img.shields.io/badge/Telegram-black?style=for-the-badge&logo=Telegram" alt="Telegram" />
   </a>
-</div>
-<div align="center">
-  <img src="https://user-images.githubusercontent.com/74038190/212284100-561aa473-3905-4a80-b561-0d28506553ee.gif" width="900">
 </div>
 <div align="center">
   <img src="https://raw.githubusercontent.com/Trilokia/Trilokia/379277808c61ef204768a61bbc5d25bc7798ccf1/bottom_header.svg" alt="Bottom Banner" />
