@@ -30,7 +30,6 @@
 <details align="center">
 <summary> <b> ❗️ Click for more details</b> </summary>
 <br>
-
 <div align="center">
   <a href="https://next.ossinsight.io/widgets/official/analyze-user-contribution-time-distribution?user_id=19436819&period=all_times" target="_blank" style="display: block;">
     <picture>
@@ -64,7 +63,7 @@
 </details>
 
 <details align="center">
-<summary> <b>💬 Click to contact me</b> </summary>
+<summary> <b>  💬  Click to contact me</b> </summary>
 <br>
 <div align="center">
   <br><br>
