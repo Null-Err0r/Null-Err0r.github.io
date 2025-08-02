@@ -524,11 +524,13 @@
                     
                         case 'date':
                         case 'زمان':
-                             const now = new Date();
-                             const localGregorian = new Intl.DateTimeFormat('en-GB', { dateStyle: 'full', timeStyle: 'long', timeZone: 'Asia/Riyadh' }).format(now);
-                             const localShamsi = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { dateStyle: 'full', timeStyle: 'long', timeZone: 'Asia/Tehran' }).format(now);
-                             const dateOutput = `<b>Current Time (Jeddah):</b><br>${localGregorian}<br><br>` +
-                                    `<b>زمان فعلی (تهران):</b><br>${localShamsi}`;
+                            const now = new Date();
+                            const adjustedTime = new Date(now.getTime() + 4* 60 * 60 * 1000);
+                            const localGregorian = new Intl.DateTimeFormat('en-GB', { dateStyle: 'full', timeStyle: 'long' }).format(now);
+                            const localShamsi = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { dateStyle: 'full', timeStyle: 'long' }).format(adjustedTime);
+                            const dateOutput = `<b>Gregorian:</b><br>${localGregorian}<br><br>` +
+                   `<b>ایران:</b><br>${localShamsi}`;
+
                             await printToTerminal(dateOutput, 'info', false);
                             break;
 
