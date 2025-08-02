@@ -814,15 +814,19 @@
     }
 
     function openPanel(content, command) {
-      if (currentPanelCommand === command && document.body.classList.contains('panel-open')) return; 
+      if (currentPanelCommand === command && document.body.classList.contains('panel-open')) return;
 
       document.body.classList.add('split');
       if (isMobileDevice()) {
-      document.body.classList.add('panel-open'); 
-     }
-  
-     panel.style.display = 'block';
-     panelContent.innerHTML = `
+        document.body.classList.add('panel-open');
+      }
+
+      panel.style.display = 'block';
+      if (isMobileDevice()) {
+        history.pushState({ panelOpen: true }, null);
+      }
+
+      panelContent.innerHTML = `
       <div class="progress-container" id="progressContainer">
         <div class="progress-bar" id="progressBar"></div>
       </div>
@@ -1312,7 +1316,6 @@ async function fetchProjects() {
         if (commandSet[cmd.toLowerCase()]) {
           console.log('Executing command:', cmd);
           const res = await commandSet[cmd.toLowerCase()]();
-          // Panel-opening or clear commands return '', so they won't trigger this.
           if (res) {
             output.innerHTML += makeLinksClickable(`> ${cmd}\n${res}\n\n`);
           }
@@ -1338,17 +1341,12 @@ async function fetchProjects() {
         }
       }
     });
-
-
-
     if (isMobileDevice()) {
       window.addEventListener('popstate', (event) => {
         if (panel.style.display === 'block') {
           closePanel();
-          history.pushState(null, null, window.location.href);
         }
       });
-      history.pushState(null, null, window.location.href);
     }
 
     window.onload = () => {
