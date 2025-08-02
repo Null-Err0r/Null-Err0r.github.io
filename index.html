@@ -36,29 +36,25 @@
  
     }
 
-    #qrcode-banner {
+    #datetime-banner {
       position: fixed;
-      top: 100px;
-      inset-inline-end: 10px; 
-      width: 160px;
-      max-width: 60vw;
+      top: 20px;
+      inset-inline-end: 20px;
+      width: 290px;
+      max-width: 80vw;
       z-index: 999;
-      background-color: rgba(0, 0, 0, 0.4);
-      padding: 5px;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 12px;
       border-radius: 8px;
       box-shadow: 0 0 8px rgba(0, 255, 150, 0.5);
       transition: all 0.3s ease;
+      font-size: 0.85rem;
+      text-align: center;
+      line-height: 1.6;
     }
 
-    body.split #qrcode-banner {
+    body.split #datetime-banner {
       display: none;
-    }
-
-    #qrcode-banner img {
-      width: 100%;
-      height: auto;
-      display: block;
-      border-radius: 6px;
     }
 
     @keyframes subtlePulse {
@@ -464,9 +460,12 @@
       z-index: 1001;
     }
 
-    body.mobile #qrcode-banner {
+    body.mobile #datetime-banner {
       top: 72px;
       z-index: 1000;
+      font-size: 0.8rem;
+      padding: 8px 12px;
+      width: 250px;
     }
     
    body.mobile #terminal {
@@ -617,9 +616,7 @@
 </head>
 
 <body>
-  <div id="qrcode-banner">
-    <img src="js/qrcode.png" alt="QR Code" />
-  </div>
+  <div id="datetime-banner"></div>
   <div id="tsparticles"></div>
 
   <div id="terminal" role="main" aria-label="Terminal Portfolio">
@@ -664,6 +661,7 @@
     const panel = document.getElementById('panel');
     const panelContent = document.getElementById('panel-content');
     const closePanelBtn = document.getElementById('close-panel');
+    const dateTimeBanner = document.getElementById('datetime-banner');
 
     let lang = 'fa';
     let currentPanelCommand = null;
@@ -800,6 +798,23 @@
       }
     };
 
+    function updateDateTime() {
+      const now = new Date();
+
+      const options = {
+        dateStyle: 'full',
+        timeStyle: 'medium',
+        timeZone: 'UTC' 
+      };
+
+      const localGregorian = new Intl.DateTimeFormat('en-GB', options).format(now);
+      const localShamsi = new Intl.DateTimeFormat('fa-IR-u-ca-persian', options).format(now);
+      const dateOutput = `<b>Gregorian :</b><br>${localGregorian}<br><br><b>ایران :</b><br>${localShamsi}`;
+      dateTimeBanner.innerHTML = dateOutput;
+    }
+
+    setInterval(updateDateTime, 1000);
+
     function makeLinksClickable(text) {
       const urlRegex = /(?<!["'=])(https?:\/\/[^\s<>“']+)/g;
       return text.replace(urlRegex, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
@@ -822,6 +837,7 @@
       }
 
       panel.style.display = 'block';
+
       if (isMobileDevice()) {
         history.pushState({ panelOpen: true }, null);
       }
@@ -1278,18 +1294,20 @@ async function fetchProjects() {
       output.scrollTop = 0;
     }
     
-    const qr = document.getElementById('qrcode-banner');
-  
     langFaBtn.addEventListener('click', () => {
-      if (lang !== 'fa') switchLanguage('fa');
-        qr.style.insetInlineEnd = 'auto';
-        qr.style.insetInlineStart = '10px';
+      if (lang !== 'fa') {
+        switchLanguage('fa');
+        dateTimeBanner.style.insetInlineEnd = 'auto';
+        dateTimeBanner.style.insetInlineStart = '20px';
+      }
     });
 
     langEnBtn.addEventListener('click', () => {
-      if (lang !== 'en') switchLanguage('en');
-         qr.style.insetInlineEnd = '10px';
-         qr.style.insetInlineStart = 'auto';
+      if (lang !== 'en') {
+        switchLanguage('en');
+        dateTimeBanner.style.insetInlineEnd = '20px';
+        dateTimeBanner.style.insetInlineStart = 'auto';
+      }
     });
 
     closePanelBtn.addEventListener('click', () => {
@@ -1341,6 +1359,8 @@ async function fetchProjects() {
         }
       }
     });
+
+
     if (isMobileDevice()) {
       window.addEventListener('popstate', (event) => {
         if (panel.style.display === 'block') {
@@ -1355,10 +1375,11 @@ async function fetchProjects() {
       langFaBtn.setAttribute('aria-pressed', 'true');
       langEnBtn.setAttribute('aria-pressed', 'false');
       document.documentElement.setAttribute('lang', 'fa');
-      qr.style.insetInlineEnd = 'auto';
-      qr.style.insetInlineStart = '10px';
+      dateTimeBanner.style.insetInlineEnd = 'auto';
+      dateTimeBanner.style.insetInlineStart = '20px';
       document.documentElement.style.direction = 'rtl';
       input.placeholder = 'دستور را اینجا وارد کنید...';
+      updateDateTime();
     };
   </script>
  
