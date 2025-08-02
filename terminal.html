@@ -524,14 +524,21 @@
                     
                         case 'date':
                         case 'زمان':
-                            const now = new Date();
-                            const adjustedTime = new Date(now.getTime() + 4* 60 * 60 * 1000);
-                            const localGregorian = new Intl.DateTimeFormat('en-GB', { dateStyle: 'full', timeStyle: 'long' }).format(now);
-                            const localShamsi = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { dateStyle: 'full', timeStyle: 'long' }).format(adjustedTime);
-                            const dateOutput = `<b>Gregorian:</b><br>${localGregorian}<br><br>` +
-                   `<b>ایران:</b><br>${localShamsi}`;
+                        const now = new Date();
 
-                            await printToTerminal(dateOutput, 'info', false);
+const formatted = now.toLocaleString(undefined, {
+    year: 'numeric',
+    month: 'long',
+    day: '2-digit',
+    weekday: 'long',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+});
+
+await printToTerminal(`🕒 : ${formatted}`, 'info', false);
+
                             break;
 
                         case 'clear':
