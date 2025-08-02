@@ -36,27 +36,6 @@
  
     }
 
-    #datetime-banner {
-      position: fixed;
-      top: 20px;
-      inset-inline-end: 20px;
-      width: 290px;
-      max-width: 80vw;
-      z-index: 999;
-      background-color: rgba(0, 0, 0, 0.6);
-      padding: 12px;
-      border-radius: 8px;
-      box-shadow: 0 0 8px rgba(0, 255, 150, 0.5);
-      transition: all 0.3s ease;
-      font-size: 0.85rem;
-      text-align: center;
-      line-height: 1.6;
-    }
-
-    body.split #datetime-banner {
-      display: none;
-    }
-
     @keyframes subtlePulse {
       0% { opacity: 1; }
       50% { opacity: 0.8; }
@@ -97,10 +76,10 @@
       line-height: 1.4;
       font-size: 1rem;
       user-select: text;
-      margin: 190px 0 10px;/
+      margin: 60px 0 10px; /* Adjusted margin */
       color: #ffffff;
       text-align: inherit;
-      max-height: calc(100vh - 180px); 
+      max-height: calc(100vh - 100px); 
       padding-bottom: 20px;
     }
 
@@ -459,18 +438,10 @@
       padding: 10px;
       z-index: 1001;
     }
-
-    body.mobile #datetime-banner {
-      top: 72px;
-      z-index: 1000;
-      font-size: 0.8rem;
-      padding: 8px 12px;
-      width: 250px;
-    }
     
    body.mobile #terminal {
      width: 100vw;
-     padding-top: 292px; 
+     padding-top: 70px; /* Adjusted padding */
      padding-left: 8px;
      padding-right: 8px;
      padding-bottom: 8px;
@@ -480,7 +451,7 @@
     }
 
     body.mobile.panel-open #terminal {
-       padding-top: 292px;
+       padding-top: 70px;
     }
 
     body.mobile .split #terminal {
@@ -616,7 +587,6 @@
 </head>
 
 <body>
-  <div id="datetime-banner"></div>
   <div id="tsparticles"></div>
 
   <div id="terminal" role="main" aria-label="Terminal Portfolio">
@@ -640,7 +610,7 @@
     <button id="close-panel" aria-label="Close panel">X</button>
     <div id="panel-content"></div>
   </div>
-
+  
   <script>
 
     function isMobileDevice() {
@@ -661,7 +631,6 @@
     const panel = document.getElementById('panel');
     const panelContent = document.getElementById('panel-content');
     const closePanelBtn = document.getElementById('close-panel');
-    const dateTimeBanner = document.getElementById('datetime-banner');
 
     let lang = 'fa';
     let currentPanelCommand = null;
@@ -797,23 +766,6 @@
         cmdNotFound: `دستور یافت نشد. برای مشاهده دستورات 'راهنما' را تایپ کنید.`,
       }
     };
-
-    function updateDateTime() {
-      const now = new Date();
-
-      const options = {
-        dateStyle: 'full',
-        timeStyle: 'medium',
-        timeZone: 'UTC' 
-      };
-
-      const localGregorian = new Intl.DateTimeFormat('en-GB', options).format(now);
-      const localShamsi = new Intl.DateTimeFormat('fa-IR-u-ca-persian', options).format(now);
-      const dateOutput = `<b>Gregorian :</b><br>${localGregorian}<br><br><b>ایران :</b><br>${localShamsi}`;
-      dateTimeBanner.innerHTML = dateOutput;
-    }
-
-    setInterval(updateDateTime, 1000);
 
     function makeLinksClickable(text) {
       const urlRegex = /(?<!["'=])(https?:\/\/[^\s<>“']+)/g;
@@ -1297,16 +1249,12 @@ async function fetchProjects() {
     langFaBtn.addEventListener('click', () => {
       if (lang !== 'fa') {
         switchLanguage('fa');
-        dateTimeBanner.style.insetInlineEnd = 'auto';
-        dateTimeBanner.style.insetInlineStart = '20px';
       }
     });
 
     langEnBtn.addEventListener('click', () => {
       if (lang !== 'en') {
         switchLanguage('en');
-        dateTimeBanner.style.insetInlineEnd = '20px';
-        dateTimeBanner.style.insetInlineStart = 'auto';
       }
     });
 
@@ -1375,15 +1323,12 @@ async function fetchProjects() {
       langFaBtn.setAttribute('aria-pressed', 'true');
       langEnBtn.setAttribute('aria-pressed', 'false');
       document.documentElement.setAttribute('lang', 'fa');
-      dateTimeBanner.style.insetInlineEnd = 'auto';
-      dateTimeBanner.style.insetInlineStart = '20px';
       document.documentElement.style.direction = 'rtl';
       input.placeholder = 'دستور را اینجا وارد کنید...';
-      updateDateTime();
     };
   </script>
  
-  <script src="js/tsparticles.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
   <script>
 
     tsParticles.load({
