@@ -783,7 +783,7 @@
       en: {
         welcome: ` Welcome <`,
         promptHelp: `... Type 'help' to get started <`,
-        helpText: `Available commands:\n- about: Who am I\n- projects: Show my projects\n- quote: Show a motivational quote`,
+        helpText: `Available commands:\n- about: Who am I\n- projects: Show my projects\n- tutorial: Windows, Linux & RE commands\n- quote: Show a motivational quote`,
         projectsLoading: `Fetching projects from GitHub...`,
         projectsError: `Error fetching projects. Visit: https://github.com/null-err0r`,
         langSwitched: `.Language switched to English`,
@@ -792,7 +792,7 @@
       fa: {
         welcome: `>  خوش آمدید`,
         promptHelp: `> برای شروع 'راهنما' را تایپ کنید.`,
-        helpText: `دستورات موجود:\n- مشخصات: درباره من\n- کارها: نمایش پروژه‌ها\n- جمله: نمایش جمله انگیزشی`,
+        helpText: `دستورات موجود:\n- مشخصات: درباره من\n- کارها: نمایش پروژه‌ها\n- آموزش: دستورات ویندوز - لینوکس و مهندسی معکوس\n- جمله: نمایش جمله انگیزشی`,
         projectsLoading: `در حال دریافت پروژه‌ها از GitHub...`,
         projectsError: `خطا در دریافت پروژه‌ها. به این آدرس مراجعه کنید: https://github.com/null-err0r`,
         langSwitched: `زبان به فارسی تغییر کرد.`,
@@ -1109,6 +1109,11 @@ async function fetchProjects() {
           openPanel(cachedProjectsContent, 'projects');
           return '';
         },
+        'tutorial': () => {
+          const tutorialContent = `<iframe src="terminal.html" style="width:100%; height:100%; border:0;"></iframe>`;
+          openPanel(tutorialContent, 'tutorial');
+          return '';
+        },
         'clear': () => {
           initTerminal();
           return '';
@@ -1236,6 +1241,11 @@ async function fetchProjects() {
           openPanel(cachedProjectsContent, 'کارها');
           return '';
         },
+        'آموزش': () => {
+          const tutorialContent = `<iframe src="terminal.html" style="width:100%; height:100%; border:0;"></iframe>`;
+          openPanel(tutorialContent, 'آموزش');
+          return '';
+        },
         'پاک کن': () => {
           initTerminal();
           return '';
@@ -1302,7 +1312,8 @@ async function fetchProjects() {
         if (commandSet[cmd.toLowerCase()]) {
           console.log('Executing command:', cmd);
           const res = await commandSet[cmd.toLowerCase()]();
-          if (cmd.toLowerCase() !== 'clear' && cmd.toLowerCase() !== 'پاک کن' && cmd.toLowerCase() !== 'about' && cmd.toLowerCase() !== 'مشخصات' && cmd.toLowerCase() !== 'projects' && cmd.toLowerCase() !== 'کارها' && res) {
+          // Panel-opening or clear commands return '', so they won't trigger this.
+          if (res) {
             output.innerHTML += makeLinksClickable(`> ${cmd}\n${res}\n\n`);
           }
         } else {
