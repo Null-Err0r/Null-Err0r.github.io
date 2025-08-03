@@ -616,7 +616,11 @@
     function isMobileDevice() {
       return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     }
-
+    
+    function isTorDetected() {
+        return (!window.matchMedia('(prefers-color-scheme:dark)').matches &&
+                typeof chrome !== "object" && !navigator.requestMIDIAccess);
+    }
 
     if (isMobileDevice()) {
       document.body.classList.add('mobile');
@@ -746,6 +750,7 @@
         "هدف نهایی از یادگیری برنامه‌نویسی این نیست که فقط کد بنویسی، بلکه این است که دنیا را بهتر درک کنی.– کوری هاوس"
       ]
     };
+
     const messages = {
       en: {
         welcome: ` Welcome <`,
@@ -755,6 +760,7 @@
         projectsError: `Error fetching projects. Visit: https://github.com/null-err0r`,
         langSwitched: `.Language switched to English`,
         cmdNotFound: `Command not found. Type 'help' to see available commands.`,
+        torDetected: `[!] Tor network detected.` 
       },
       fa: {
         welcome: `>  خوش آمدید`,
@@ -764,6 +770,7 @@
         projectsError: `خطا در دریافت پروژه‌ها. به این آدرس مراجعه کنید: https://github.com/null-err0r`,
         langSwitched: `زبان به فارسی تغییر کرد.`,
         cmdNotFound: `دستور یافت نشد. برای مشاهده دستورات 'راهنما' را تایپ کنید.`,
+        torDetected: `[!] شبکه Tor شناسایی شد.` 
       }
     };
 
@@ -772,8 +779,12 @@
       return text.replace(urlRegex, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
     }
 
-    function initTerminal() {
-      output.innerHTML = makeLinksClickable(`${messages[lang].welcome}\n${messages[lang].promptHelp}\n\n`);
+function initTerminal() {
+      let torMessage = '';
+      if (isTorDetected()) {
+        torMessage = messages[lang].torDetected + '\n'; 
+      }
+      output.innerHTML = makeLinksClickable(`${torMessage}${messages[lang].welcome}\n${messages[lang].promptHelp}\n\n`);
       input.value = '';
       input.focus();
       output.scrollTop = 0;
