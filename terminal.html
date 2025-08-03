@@ -512,7 +512,7 @@
                       case 'آی پی':
                            await printToTerminal('Fetching IP info from ip-api.com...', 'info', true);
                               try {
-                                 const response = await fetch('https://ip-api.com/json');
+                                 const response = await fetch('http://ip-api.com/json');
                                    if (!response.ok) throw new Error('API request failed');
                                     const data = await response.json();
                                     const ipInfo = `<b>IP:</b> ${data.query}\n<b>Location:</b> ${data.city}, ${data.country}\n<b>ISP:</b> ${data.isp}`;
