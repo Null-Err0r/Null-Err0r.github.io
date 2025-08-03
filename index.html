@@ -4,10 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <title>Mr. SAM</title>
-
   <link href="https://fonts.googleapis.com/css2?family=Fira+Mono&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet" />
-
   <style>
     html, body {
       height: 100%;
@@ -26,16 +24,11 @@
       position: relative;
       touch-action: manipulation;
     }
-
-
-
     #tsparticles {
       position: fixed;
       width: 100%;
       height: 100%;
- 
     }
-
     @keyframes subtlePulse {
       0% { opacity: 1; }
       50% { opacity: 0.8; }
@@ -76,7 +69,7 @@
       line-height: 1.4;
       font-size: 1rem;
       user-select: text;
-      margin: 60px 0 10px; /* Adjusted margin */
+      margin: 60px 0 10px; 
       color: #ffffff;
       text-align: inherit;
       max-height: calc(100vh - 100px); 
@@ -92,29 +85,59 @@
     #output a:hover {
       color: #00ff99;
     }
+    
+    #prompt-wrapper {
+        display: flex;
+        align-items: center;
+        border-top: 2px solid #ffffffcc;
+        background: #000;
+        padding: 8px;
+        position: sticky;
+        bottom: 0;
+        z-index: 10;
+    }
+
+    #prompt-label {
+        color: #00ffcc;
+        font-size: 1.1rem;
+        white-space: nowrap;
+    }
 
     #commandInput {
-      border: none;
-      border-top: 2px solid #ffffffcc;
-      background: transparent;
-      color: #ffffff;
-      font-family: 'Vazirmatn', 'Fira Mono', monospace;
-      font-size: 1.1rem;
-      padding: 8px;
-      outline: none;
-      width: 100%;
-      box-sizing: border-box;
-      user-select: text;
-      text-align: inherit;
-      position: sticky;
-      bottom: 0;
-      z-index: 10;
-      background-color: #000;
+        border: none;
+        background: transparent;
+        color: #ffffff;
+        font-family: 'Vazirmatn', 'Fira Mono', monospace;
+        font-size: 1.1rem;
+        outline: none;
+        width: 100%;
+        box-sizing: border-box;
+        user-select: text;
+        text-align: inherit;
+    }
+    
+    html[lang="fa"] #commandInput {
+        padding-right: 5px;
+    }
+    
+    html[lang="en"] #commandInput {
+        padding-left: 5px;
     }
 
-    #commandInput::placeholder {
-      color: #ffffffaa;
+
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
     }
+
+    .cursor {
+        font-weight: bold;
+        color: #ffffff;
+        animation: blink 1s step-end infinite;
+        font-size: 1.1rem;
+        margin: 0 4px;
+    }
+
 
     .lang-buttons {
       display: flex;
@@ -441,7 +464,7 @@
     
    body.mobile #terminal {
      width: 100vw;
-     padding-top: 70px; /* Adjusted padding */
+     padding-top: 70px; 
      padding-left: 8px;
      padding-right: 8px;
      padding-bottom: 8px;
@@ -582,7 +605,10 @@
         width: 100%; 
       }
     }
-
+    
+    html[lang="fa"] #prompt-wrapper {
+     flex-direction: row-reverse;
+    }
   </style>
 </head>
 
@@ -595,16 +621,19 @@
       <button class="lang-btn" id="langEnBtn" aria-label="Switch to English" aria-pressed="false">English</button>
     </div>
     <pre id="output" aria-live="polite" aria-atomic="false"></pre>
-    <input
-      type="text"
-      id="commandInput"
-      autocomplete="off"
-      autofocus
-      placeholder="دستور را اینجا وارد کنید..."
-      aria-label="Command input"
-      spellcheck="false"
-      inputmode="text"
-    />
+    <div id="prompt-wrapper">
+        <span id="prompt-label"></span>
+        <input
+            type="text"
+            id="commandInput"
+            autocomplete="off"
+            autofocus
+            aria-label="Command input"
+            spellcheck="false"
+            inputmode="text"
+        />
+        <span class="cursor">█</span>
+    </div>
   </div>
   <div id="panel" role="dialog" aria-label="Content Panel">
     <button id="close-panel" aria-label="Close panel">X</button>
@@ -616,7 +645,7 @@
     function isMobileDevice() {
       return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     }
-    
+
     function isTorDetected() {
         return (!window.matchMedia('(prefers-color-scheme:dark)').matches &&
                 typeof chrome !== "object" && !navigator.requestMIDIAccess);
@@ -626,8 +655,6 @@
       document.body.classList.add('mobile');
     }
 
-
-
     const input = document.getElementById('commandInput');
     const output = document.getElementById('output');
     const langFaBtn = document.getElementById('langFaBtn');
@@ -635,6 +662,7 @@
     const panel = document.getElementById('panel');
     const panelContent = document.getElementById('panel-content');
     const closePanelBtn = document.getElementById('close-panel');
+    const promptLabel = document.getElementById('prompt-label');
 
     let lang = 'fa';
     let currentPanelCommand = null;
@@ -642,7 +670,7 @@
     let cachedAboutContent = null;
     let commandHistory = [];
     let historyIndex = -1;
-
+    const introHasRun = { fa: false, en: false };
 
     const quotes = {
       en: [
@@ -750,46 +778,115 @@
         "هدف نهایی از یادگیری برنامه‌نویسی این نیست که فقط کد بنویسی، بلکه این است که دنیا را بهتر درک کنی.– کوری هاوس"
       ]
     };
-
-    const messages = {
+const messages = {
       en: {
-        welcome: ` Welcome <`,
-        promptHelp: `... Type 'help' to get started <`,
-        helpText: `Available commands:\n- about: Who am I\n- projects: Show my projects\n- tutorial: Windows, Linux & RE commands\n- quote: Show a motivational quote`,
+        intro: [
+          "{ok}...Checking connection",
+          "{ok}...Establishing secure tunnel",
+          "{ok}...Traversing proxy layers",
+          "{ok}...Encryption verification",
+          "{ok}...Encryption confirmation and secure communication\n "
+        ],
+        gibberish: [
+          "0xFE34C_..AFF_&%..|#(*.._#",
+          "SCANNING PORTS..|#_..[22, 80, 443]",
+          "DECRYPTING DATA...sK29a#$..",
+          "AUTH_TOKEN: 48fgb-bf4ca-8474a..",
+        ],
+        prompt: "root@NullErr0r:~$&nbsp;",
+        welcome: `Welcome`,
+        promptHelp: `Type 'help' to get started.`,
+        helpText: `Available commands:\n- about: Who am I\n- projects: Show my projects\n- tutorial: Windows, Linux & RE commands\n- quote: Show a motivational quote\n- clear: Clear the terminal`,
         projectsLoading: `Fetching projects from GitHub...`,
         projectsError: `Error fetching projects. Visit: https://github.com/null-err0r`,
-        langSwitched: `.Language switched to English`,
-        cmdNotFound: `Command not found. Type 'help' to see available commands.`,
-        torDetected: `[!] Tor network detected.` 
+        langSwitched: ` `,
+        cmdNotFound: `Command not found. Type 'help'.`,
+        torDetected: `[!] Tor network detected.`
       },
       fa: {
+        intro: [
+          "در حال بررسی ارتباط...{موفق}",
+          "ایجاد تونل امن...{موفق}",
+          "عبور از لایه‌های پروکسی...{موفق}",
+          "تایید رمزنگاری و ارتباط امن...{موفق}",
+          "دسترسی تایید شد...{موفق}\n "
+        ],
+        gibberish: [
+          "0xFE34C_..AFF_&%..|#(*.._#",
+          "اسکن پورت‌ها..|#_..[۲۲، ۸۰، ۴۴۳]",
+          "رمزگشایی اطلاعات...sK29a#$..",
+          "کلید تایید: ۴۸فگب-بف۴چا-۸۴۷۴آ..",
+        ],
+        prompt: "root@NullErr0r:~$&nbsp;",
         welcome: `>  خوش آمدید`,
         promptHelp: `> برای شروع 'راهنما' را تایپ کنید.`,
-        helpText: `دستورات موجود:\n- مشخصات: درباره من\n- کارها: نمایش پروژه‌ها\n- آموزش: دستورات ویندوز - لینوکس و مهندسی معکوس\n- جمله: نمایش جمله انگیزشی`,
+        helpText: `دستورات موجود:\n- مشخصات: درباره من\n- کارها: نمایش پروژه‌ها\n- آموزش: دستورات ویندوز - لینوکس و مهندسی معکوس\n- جمله: نمایش جمله انگیزشی\n- پاک کن: پاک کردن ترمینال`,
         projectsLoading: `در حال دریافت پروژه‌ها از GitHub...`,
         projectsError: `خطا در دریافت پروژه‌ها. به این آدرس مراجعه کنید: https://github.com/null-err0r`,
-        langSwitched: `زبان به فارسی تغییر کرد.`,
+        langSwitched: `  `,
         cmdNotFound: `دستور یافت نشد. برای مشاهده دستورات 'راهنما' را تایپ کنید.`,
-        torDetected: `[!] شبکه Tor شناسایی شد.` 
+        torDetected: `[!] شبکه Tor شناسایی شد.`
       }
     };
+
+    const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
     function makeLinksClickable(text) {
       const urlRegex = /(?<!["'=])(https?:\/\/[^\s<>“']+)/g;
       return text.replace(urlRegex, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
     }
 
-function initTerminal() {
-      let torMessage = '';
-      if (isTorDetected()) {
-        torMessage = messages[lang].torDetected + '\n'; 
-      }
-      output.innerHTML = makeLinksClickable(`${torMessage}${messages[lang].welcome}\n${messages[lang].promptHelp}\n\n`);
-      input.value = '';
-      input.focus();
-      output.scrollTop = 0;
-      closePanel();
+    async function runIntroAnimation() {
+        input.disabled = true;
+        const gibberishLines = messages[lang].gibberish;
+        let currentGibberish = '';
+
+        for(let i=0; i < 8; i++) {
+            const randomLine = gibberishLines[Math.floor(Math.random() * gibberishLines.length)];
+            currentGibberish = randomLine;
+            output.innerHTML = makeLinksClickable(currentGibberish);
+            await sleep(80);
+        }
+
+        output.innerHTML = '';
+        await sleep(200);
+
+        for (const line of messages[lang].intro) {
+            let formattedLine = line.replace('{ok}', '<span style="color: #00ff99;">✓</span>')
+                                     .replace('{موفق}', '<span style="color: #00ff99;">✓</span>');
+            output.innerHTML += makeLinksClickable(formattedLine + '\n');
+            output.scrollTop = output.scrollHeight;
+            await sleep(400);
+        }
+        await sleep(500);
     }
+
+async function initTerminal(isSwitch = false) {
+  output.innerHTML = '';
+  input.value = '';
+  promptLabel.innerHTML = messages[lang].prompt;
+  
+if (!introHasRun[lang]) {
+  await runIntroAnimation();
+  introHasRun[lang] = true; 
+}
+
+  let initialText = '';
+  if (isTorDetected()) {
+    initialText += messages[lang].torDetected + '\n\n'; 
+  }
+  if (isSwitch) {
+    initialText += messages[lang].langSwitched + '\n\n';
+  }
+  initialText += `${messages[lang].welcome}\n${messages[lang].promptHelp}\n\n`;
+  output.innerHTML += makeLinksClickable(initialText);
+  
+  input.disabled = false;
+  input.focus();
+  output.scrollTop = output.scrollHeight;
+  closePanel();
+}
+
 
     function openPanel(content, command) {
       if (currentPanelCommand === command && document.body.classList.contains('panel-open')) return;
@@ -835,7 +932,7 @@ function initTerminal() {
         }
       }
 
-      if (command === 'projects') {
+      if (command === 'projects' || command === 'کارها') {
         const images = panelContent.querySelectorAll('.responsive-img, .visitor img');
         let loadedImages = 0;
         if (images.length > 0) {
@@ -1060,22 +1157,22 @@ async function fetchProjects() {
   <img src="https://avatars.githubusercontent.com/u/19436819?v=4" alt="اسماعیل اسدی" class="avatar">
 </div>
 
-  <h1>اسماعیل اسدی</h1>
-  <p class="bio">توسعه‌دهنده، پژوهشگر و علاقه‌مند به تکنولوژی</p>
+  <h1>Esmail Asadi</h1>
+  <p class="bio">Developer, Researcher, and Tech Enthusiast</p>
 <a class="link-button" href="https://t.me/NullErr0r" target="_blank" rel="noopener noreferrer">
-  <i class="fab fa-telegram" style="font-size:1.2em; vertical-align:middle; margin-left:0.4em;"></i>تلگرام
+  <i class="fab fa-telegram" style="font-size:1.2em; vertical-align:middle; margin-left:0.4em;"></i>Telegram
 </a>
 
 <a class="link-button" href="https://x.com/0x0Err0r" target="_blank" rel="noopener noreferrer">
-  <i class="fab fa-x" style="font-size:1.2em; vertical-align:middle; margin-left:0.4em;"></i>ایکس
+  <i class="fab fa-x" style="font-size:1.2em; vertical-align:middle; margin-left:0.4em;"></i>X (Twitter)
 </a>
 
 <a class="link-button" href="https://github.com/Null-Err0r" target="_blank" rel="noopener noreferrer">
-  <i class="fab fa-github" style="font-size:1.2em; vertical-align:middle; margin-left:0.4em;"></i>گیت‌هاب
+  <i class="fab fa-github" style="font-size:1.2em; vertical-align:middle; margin-left:0.4em;"></i>GitHub
 </a>
 
 <a class="link-button" href="mailto:NullError@duck.com" target="_blank" rel="noopener noreferrer">
-  <i class="fa-solid fa-envelope" style="font-size:1.2em; vertical-align:middle; margin-left:0.4em;"></i>ایمیل
+  <i class="fa-solid fa-envelope" style="font-size:1.2em; vertical-align:middle; margin-left:0.4em;"></i>Email
 </a>
 
 </div>
@@ -1086,6 +1183,7 @@ async function fetchProjects() {
           return '';
         },
         'projects': async () => {
+          openPanel(messages.en.projectsLoading, 'projects');
           if (!cachedProjectsContent) {
             cachedProjectsContent = await fetchProjects();
           }
@@ -1218,6 +1316,7 @@ async function fetchProjects() {
           return '';
         },
         'کارها': async () => {
+          openPanel(messages.fa.projectsLoading, 'کارها');
           if (!cachedProjectsContent) {
             cachedProjectsContent = await fetchProjects();
           }
@@ -1244,17 +1343,16 @@ async function fetchProjects() {
       lang = newLang;
       document.documentElement.setAttribute('lang', lang);
       document.documentElement.style.direction = lang === 'fa' ? 'rtl' : 'ltr';
-      input.placeholder = lang === 'fa' ? 'دستور را اینجا وارد کنید...' : '...Type command here';
+      
       langFaBtn.classList.toggle('active', lang === 'fa');
       langEnBtn.classList.toggle('active', lang === 'en');
       langFaBtn.setAttribute('aria-pressed', lang === 'fa');
       langEnBtn.setAttribute('aria-pressed', lang === 'en');
       cachedProjectsContent = null;
       cachedAboutContent = null;
-      output.innerHTML = makeLinksClickable(`${messages[lang].welcome}\n${messages[lang].promptHelp}\n\n${messages[lang].langSwitched}\n\n`);
       closePanel();
       input.focus();
-      output.scrollTop = 0;
+      initTerminal(true);
     }
     
     langFaBtn.addEventListener('click', () => {
@@ -1276,29 +1374,27 @@ async function fetchProjects() {
     input.addEventListener('keydown', async (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
-        const cmd = input.value.trim();
-        console.log('Command entered:', cmd);
+        const cmdText = input.value.trim();
+        const cmd = cmdText.toLowerCase();
 
-        if (!cmd) {
-          output.innerHTML += makeLinksClickable(`> ${cmd}\n${lang === 'fa' ? 'لطفاً یک دستور وارد کنید.' : 'Please enter a command.'}\n\n`);
-          input.value = '';
-          output.scrollTop = output.scrollHeight;
-          return;
+        output.innerHTML += makeLinksClickable(`\n${messages[lang].prompt}${cmdText}\n`);
+
+        if (cmd) {
+            commandHistory.push(cmdText);
+            historyIndex = commandHistory.length;
+
+            const commandSet = commands[lang];
+            if (commandSet[cmd]) {
+                console.log('Executing command:', cmd);
+                const res = await commandSet[cmd]();
+                if (res) {
+                    output.innerHTML += makeLinksClickable(`${res}\n\n`);
+                }
+            } else {
+                output.innerHTML += makeLinksClickable(`${messages[lang].cmdNotFound}\n\n`);
+            }
         }
-
-        commandHistory.push(cmd);
-        historyIndex = commandHistory.length;
-
-        const commandSet = commands[lang];
-        if (commandSet[cmd.toLowerCase()]) {
-          console.log('Executing command:', cmd);
-          const res = await commandSet[cmd.toLowerCase()]();
-          if (res) {
-            output.innerHTML += makeLinksClickable(`> ${cmd}\n${res}\n\n`);
-          }
-        } else {
-          output.innerHTML += makeLinksClickable(`> ${cmd}\n${messages[lang].cmdNotFound}\n\n`);
-        }
+        
         input.value = '';
         output.scrollTop = output.scrollHeight;
       } else if (e.key === 'ArrowUp') {
@@ -1328,14 +1424,13 @@ async function fetchProjects() {
       });
     }
 
-    window.onload = () => {
-      initTerminal();
+    window.onload = async () => {
       langFaBtn.classList.add('active');
       langFaBtn.setAttribute('aria-pressed', 'true');
       langEnBtn.setAttribute('aria-pressed', 'false');
       document.documentElement.setAttribute('lang', 'fa');
       document.documentElement.style.direction = 'rtl';
-      input.placeholder = 'دستور را اینجا وارد کنید...';
+      await initTerminal();
     };
   </script>
  
