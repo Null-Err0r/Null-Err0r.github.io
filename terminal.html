@@ -123,16 +123,16 @@
     
     .prompt .user { color: var(--green); }
 
-    #command-input {
-        background: transparent;
-        border: none;
-        color: var(--foreground);
-        font-family: inherit;
-        font-size: inherit;
-        outline: none;
-        width: 100%;
-        text-shadow: 0 0 2px var(--foreground);
-    }
+#command-input {
+    background: transparent;
+    border: none;
+    color: var(--foreground);
+    font-family: inherit;
+    font-size: inherit;
+    outline: none;
+    flex: 1;
+    text-shadow: 0 0 2px var(--foreground);
+}
     .output-line { white-space: pre-wrap; margin-bottom: 2px; }
     .output-line.command { color: var(--foreground); }
     .output-line.error { color: var(--red); text-shadow: 0 0 5px var(--red); }
@@ -196,9 +196,7 @@
     td .lang-fa, th .lang-fa { text-align: right; }
 
     @media (max-width: 768px) {
-        body {
-            display: block;
-        }
+
         #terminal-window {
             width: 100%;
             height: 100%;
@@ -436,109 +434,161 @@
     </div>
 </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const output = document.getElementById('output');
+        const commandInput = document.getElementById('command-input');
+        const terminal = document.getElementById('terminal');
+        const promptEl = document.getElementById('prompt');
+        const cursor = document.getElementById('cursor');
+
+        const commandHistory = [];
+        let historyIndex = -1;
+        const typingSpeed = 10;
+        let isTyping = false;
+        
+        let fingerprintInstance = null;
+        try {
+            if (typeof Fingerprint === 'undefined') {
+                throw new Error("The 'Fingerprint' class is not defined. Check if the path to 'app.fingerprint.js' is correct.");
+            }
+            fingerprintInstance = new Fingerprint();
+        } catch(e) {
+            console.error("Could not initialize Fingerprint script.", e);
+        }
+
+        function proxify(url) {
+
+            const myPersonalProxy = 'https://broad-mountain-1927.awardbinsami.workers.dev/'; 
             
-            const setRealViewportHeight = () => {
-                document.documentElement.style.setProperty('--app-height', `${window.innerHeight}px`);
+            return `${myPersonalProxy}?url=${encodeURIComponent(url)}`;
+        }
+
+async function getIpInfoAdvanced() {
+            await printToTerminal('Fetching IP info...', 'info', true);
+            
+            const ipApiEndpoints = [
+                'https://ipinfo.io/json',
+                'https://ipwho.is/'
+            ];
+
+
+            const parsers = {
+                'ipinfo.io': data => `<b>IP:</b> ${data.ip}\n<b>Location:</b> ${data.city}, ${data.country}\n<b>ISP:</b> ${data.org}`,
+                'ipwho.is': data => `<b>IP:</b> ${data.ip}\n<b>Location:</b> ${data.city}, ${data.country}\n<b>ISP:</b> ${data.isp}`
             };
 
-            window.addEventListener('resize', setRealViewportHeight);
-            setRealViewportHeight();
+            const promises = ipApiEndpoints.map(endpoint => 
+                fetch(proxify(endpoint), { signal: AbortSignal.timeout(8000) })
+                    .then(response => {
+                        if (!response.ok) {
 
-            const output = document.getElementById('output');
-            const commandInput = document.getElementById('command-input');
-            const terminal = document.getElementById('terminal');
-            const promptEl = document.getElementById('prompt');
-            const cursor = document.getElementById('cursor');
+                            console.error(`Request to ${endpoint} failed with status: ${response.status}`);
+                            throw new Error(`Request failed: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(realData => {
+                        const domain = new URL(endpoint).hostname.replace('www.', '');
+                        const parserKey = Object.keys(parsers).find(key => domain.includes(key));
+                        if (!parserKey) throw new Error(`No parser found for domain: ${domain}`);
+                        
+                        return parsers[parserKey](realData);
+                    })
+            );
 
-            const commandHistory = [];
-            let historyIndex = -1;
-            const typingSpeed = 10;
-            let isTyping = false;
-            
-            let fingerprintInstance = null;
             try {
 
-                if (typeof Fingerprint === 'undefined') {
-                    throw new Error("The 'Fingerprint' class is not defined. Check if the path to 'app.fingerprint.js' is correct.");
-                }
-                fingerprintInstance = new Fingerprint();
-            } catch(e) {
-                console.error("Could not initialize Fingerprint script.", e);
+                const firstSuccessResponse = await Promise.any(promises);
+                await printToTerminal(firstSuccessResponse, 'info', false);
+            } catch (error) {
+
+                console.error("All IP fetching attempts failed:", error);
+                await printToTerminal('Error: Could not retrieve IP information.', 'error', true);
             }
+        }
 
-
-            const typeEffect = async (text, element, speed) => {
-                return new Promise(resolve => {
-                    let i = 0;
-                    const interval = setInterval(() => {
-                        if (i < text.length) {
-                            element.innerHTML += text.charAt(i);
-                            i++;
-                            terminal.scrollTop = terminal.scrollHeight;
-                        } else {
-                            clearInterval(interval);
-                            resolve();
-                        }
-                    }, speed);
-                });
-            };
-
-            const printToTerminal = async (text, type = 'output-line', useTyping = true) => {
-                const line = document.createElement('div');
-                if (type) line.classList.add(...type.split(' '));
-                output.appendChild(line);
-
-                if (useTyping && !text.includes('<')) {
-                    await typeEffect(text, line, typingSpeed);
-                } else {
-                    line.innerHTML = text;
-                }
-                terminal.scrollTop = terminal.scrollHeight;
-            };
-
-            const printPrompt = (command) => {
-                 const line = document.createElement('div');
-                 line.innerHTML = `<span class="prompt">${promptEl.innerHTML}</span> ${command}`;
-                 output.appendChild(line);
-            }
-
-         const executeCommand = async (command) => {
-                isTyping = true;
-                toggleInput(false);
-                printPrompt(command);
-
-                if (command.trim() !== '') {
-                   commandHistory.unshift(command);
-                   historyIndex = -1;
-                }
-
-                const [cmd, ...args] = command.toLowerCase().split(' ').filter(Boolean);
-                
-                const helpTopics = ['linux', 'windows', 'asm', 'reversing', 'compare'];
-
-                if (helpTopics.includes(cmd)) {
-                    const contentEl = document.getElementById(`help-${cmd}`);
-                    if (contentEl) {
-                        await printToTerminal(contentEl.innerHTML, 'output-line', false);
+        function typeEffect(text, element, speed) {
+            return new Promise(resolve => {
+                let i = 0;
+                const interval = setInterval(() => {
+                    if (i < text.length) {
+                        element.innerHTML += text.charAt(i);
+                        i++;
+                        terminal.scrollTop = terminal.scrollHeight;
+                    } else {
+                        clearInterval(interval);
+                        resolve();
                     }
-                } else {
-                    switch (command.toLowerCase().trim()) { 
-                        case 'help':
-                        case 'راهنما':
-                            await printToTerminal(document.getElementById('help-main').innerHTML, 'output-line', false);
-                            break;
+                }, speed);
+            });
+        }
 
-                        case 'whoami':
-                        case 'من کی هستم':
+        async function printToTerminal(text, type = 'output-line', useTyping = true) {
+            const line = document.createElement('div');
+            if (type) line.classList.add(...type.split(' '));
+            output.appendChild(line);
+
+            if (useTyping && !text.includes('<')) {
+                await typeEffect(text, line, typingSpeed);
+            } else {
+                line.innerHTML = text;
+            }
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        function printPrompt(command) {
+             const line = document.createElement('div');
+             line.innerHTML = `<span class="prompt">${promptEl.innerHTML}</span> ${command}`;
+             output.appendChild(line);
+        }
+
+        function toggleInput(enable) {
+            commandInput.disabled = !enable;
+            if (enable) {
+                commandInput.focus();
+                cursor.style.display = 'inline-block';
+            } else {
+                commandInput.blur();
+                cursor.style.display = 'none';
+            }
+        }
+        
+        async function executeCommand(command) {
+            isTyping = true;
+            toggleInput(false);
+            printPrompt(command);
+
+            if (command.trim() !== '') {
+               commandHistory.unshift(command);
+               historyIndex = -1;
+            }
+
+            const [cmd, ...args] = command.toLowerCase().split(' ').filter(Boolean);
+            
+            const helpTopics = ['linux', 'windows', 'asm', 'reversing', 'compare'];
+
+            if (helpTopics.includes(cmd)) {
+                const contentEl = document.getElementById(`help-${cmd}`);
+                if (contentEl) {
+                    await printToTerminal(contentEl.innerHTML, 'output-line', false);
+                }
+            } else {
+                switch (command.toLowerCase().trim()) { 
+                    case 'help':
+                    case 'راهنما':
+                        await printToTerminal(document.getElementById('help-main').innerHTML, 'output-line', false);
+                        break;
+
+                    case 'whoami':
+                    case 'من کی هستم':
                             if (!fingerprintInstance) {
                                 await printToTerminal('Error: Fingerprint script not loaded correctly.', 'error', true);
                                 break;
                             }
-                            await printToTerminal('Gathering system fingerprint...', 'info', true);
-                            
-                            const browserInfo = fingerprintInstance.getBrowserInfo(navigator.userAgent);
+                           await printToTerminal('Gathering system fingerprint...', 'info', true);
+                                                    const browserInfo = fingerprintInstance.getBrowserInfo(navigator.userAgent);
                             const gpuInfo = fingerprintInstance.getGPUInfo();
                             const suspicionInfo = fingerprintInstance.analyzeUserAgentSuspicion();
                             const timezoneInfo = fingerprintInstance.getDetailedTimezoneInfo();
@@ -576,54 +626,34 @@
                             info += `<b>Languages:</b> ${(navigator.languages || []).join(', ')}\n`;
                             info += `<b>Timezone:</b> ${timezoneInfo['Timezone Name']}\n`;
                             info += `<b>Timezone Offset:</b> ${timezoneInfo['Timezone Offset']}\n`;
-                            
-                            await printToTerminal(info, 'info', false);
-                            break;
-                        
-                        case 'ip':
-                        case 'آی پی':
-                            await printToTerminal('Fetching IP info ...', 'info', true);
-                            try {
-                                const response = await fetch('https://ipapi.co/json/');
-                                if (!response.ok) {
-                                throw new Error(`API request failed with status ${response.status}`);
-                                }
-                                const data = await response.json();
-                
-                                const ipInfo = `<b>IP:</b> ${data.ip}\n<b>Location:</b> ${data.city}, ${data.country_name}\n<b>ISP:</b> ${data.org}`;
-                                await printToTerminal(ipInfo, 'info', false);
-                            } catch (error) {
-                                console.error("Fetch Error Details:", error);
-                                await printToTerminal(`Error: ${error.message}. Check browser console (F12) for details.`, 'error', true);
-                            }
-                            break;
+                        await printToTerminal(info, 'info', false);
+                        break;
                     
-                        case 'date':
-                        case 'زمان':
-                            const now = new Date();
-                            const formatted = now.toLocaleString(undefined, {
-                                year: 'numeric',
-                                month: 'long',
-                                day: '2-digit',
-                                weekday: 'long',
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                second: '2-digit',
-                                hour12: false,
-                            });
-                            await printToTerminal(`🕒 : ${formatted}`, 'info', false);
-                            break;
+                    case 'ip':
+                    case 'آی پی':
+                        await getIpInfoAdvanced();
+                        break;
+                
+                    case 'date':
+                    case 'زمان':
+                        const now = new Date();
+                        const formatted = now.toLocaleString(undefined, {
+                            year: 'numeric', month: 'long', day: '2-digit', weekday: 'long',
+                            hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
+                        });
+                        await printToTerminal(`🕒 : ${formatted}`, 'info', false);
+                        break;
 
-                        case 'clear':
-                        case 'پاک شود':
-                            output.innerHTML = '';
-                            break;
-                            
-                        case '':
-                            break;
+                    case 'clear':
+                    case 'پاک شود':
+                        output.innerHTML = '';
+                        break;
                         
-                        default:
-                            if (cmd === 'search') {
+                    case '':
+                        break;
+                    
+                    default:
+                        if (cmd === 'search') {
                                 if (args.length === 0) {
                                     await printToTerminal("Usage: search <keyword>", 'error');
                                 } else {
@@ -661,75 +691,68 @@
                                     }
                                 }
                             } else {
-                                await printToTerminal(`'${command}': command not found. Type 'help'.\nدستور شناسایی نشد. 'راهنما' را تایپ کنید.`, 'error', true);
-                            }
-                            break;
-                    }
+                            await printToTerminal(`'${command}': command not found. Type 'help'.\nدستور شناسایی نشد. 'راهنما' را تایپ کنید.`, 'error', true);
+                        }
+                        break;
                 }
+            }
+            isTyping = false;
+            toggleInput(true);
+        }
 
-                isTyping = false;
-                toggleInput(true);
-            };
+        async function initTerminal() {
+            await printToTerminal('Initializing ...', 'info', true);
+            await printToTerminal('Loading advanced command modules... [OK]', 'info', true);
+            await printToTerminal('Welcome, خوش آمدید.', 'info', true);
             
+            const asciiArt = document.getElementById('ascii-art').innerHTML;
+            await printToTerminal(asciiArt, 'output-line', false);
             
-            const toggleInput = (enable) => {
-                commandInput.disabled = !enable;
-                if (enable) {
-                    commandInput.focus();
-                    cursor.style.display = 'inline-block';
+            await printToTerminal(document.getElementById('help-main').innerHTML, 'output-line', false);
+            
+            isTyping = false;
+            toggleInput(true);
+        }
+
+        commandInput.addEventListener('keydown', (e) => {
+            if (isTyping) { e.preventDefault(); return; }
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const command = commandInput.value.trim();
+                executeCommand(command);
+                commandInput.value = '';
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (historyIndex < commandHistory.length - 1) {
+                    historyIndex++;
+                    commandInput.value = commandHistory[historyIndex];
+                }
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (historyIndex > 0) {
+                    historyIndex--;
+                    commandInput.value = commandHistory[historyIndex];
                 } else {
-                    commandInput.blur();
-                    cursor.style.display = 'none';
-                }
-            };
-            
-            commandInput.addEventListener('keydown', (e) => {
-                if (isTyping) { e.preventDefault(); return; }
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    const command = commandInput.value.trim();
-                    executeCommand(command);
+                    historyIndex = -1;
                     commandInput.value = '';
-                } else if (e.key === 'ArrowUp') {
-                    e.preventDefault();
-                    if (historyIndex < commandHistory.length - 1) {
-                        historyIndex++;
-                        commandInput.value = commandHistory[historyIndex];
-                    }
-                } else if (e.key === 'ArrowDown') {
-                    e.preventDefault();
-                    if (historyIndex > 0) {
-                        historyIndex--;
-                        commandInput.value = commandHistory[historyIndex];
-                    } else {
-                        historyIndex = -1;
-                        commandInput.value = '';
-                    }
                 }
-            });
-            
-            terminal.addEventListener('click', (e) => {
-                if(e.target === terminal || e.target === output) {
-                    if (!commandInput.disabled) commandInput.focus();
-                }
-            });
-
-            const initTerminal = async () => {
-                await printToTerminal('Initializing ...', 'info', true);
-                await printToTerminal('Loading advanced command modules... [OK]', 'info', true);
-                await printToTerminal('Welcome, خوش آمدید.', 'info', true);
-                
-                const asciiArt = document.getElementById('ascii-art').innerHTML;
-                await printToTerminal(asciiArt, 'output-line', false);
-                
-                await printToTerminal(document.getElementById('help-main').innerHTML, 'output-line', false);
-                
-                isTyping = false;
-                toggleInput(true);
-            };
-
-            initTerminal();
+            }
         });
-    </script>
+        
+        terminal.addEventListener('click', (e) => {
+            if(e.target === terminal || e.target === output) {
+                if (!commandInput.disabled) commandInput.focus();
+            }
+        });
+
+        const setRealViewportHeight = () => {
+            document.documentElement.style.setProperty('--app-height', `${window.innerHeight}px`);
+        };
+        window.addEventListener('resize', setRealViewportHeight);
+        
+        initTerminal();
+    });
+    
+</script>
 </body>
 </html>
