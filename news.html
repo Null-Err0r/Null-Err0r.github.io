@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>اخبار امنیت</title>
+    <title>Mr. SAM</title>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet" />
     <style>
-     
         :root {
             --bg-color: #1a1a1a;
             --text-color: #e0e0e0;
@@ -16,7 +15,6 @@
             --hover-bg-color: #004d2b;
         }
 
- 
         *, *::before, *::after {
             box-sizing: border-box;
         }
@@ -29,7 +27,6 @@
             overflow-x: hidden;
         }
 
-      
         #loader {
             text-align: center;
             padding: 50px;
@@ -43,19 +40,16 @@
             100% { opacity: 1; }
         }
 
-        
         .hidden {
             display: none !important;
         }
 
-   
         #news-container {
             display: grid;
-            grid-template-columns: 1fr; 
+            grid-template-columns: 1fr;
             gap: 40px;
         }
 
-    
         .news-section h2 {
             border-bottom: 2px solid var(--border-color);
             padding-bottom: 10px;
@@ -94,7 +88,6 @@
             transform: translateX(-5px);
         }
 
-      
         #article-view {
             padding: 10px;
             animation: fadeIn 0.5s ease-in-out;
@@ -126,7 +119,7 @@
         #article-content {
             line-height: 1.9;
             font-size: 1.1rem;
-            white-space: pre-wrap; 
+            white-space: pre-wrap;
         }
         #article-content h3 {
              color: var(--primary-color);
@@ -136,28 +129,33 @@
             margin: 20px 0;
         }
 
-   
-        @media (min-width: 768px) {
+        @media (min-width: 1024px) {
             body {
                 padding: 30px;
             }
             #news-container {
-                grid-template-columns: 1fr 1fr; 
+                grid-template-columns: 1fr 1fr 1fr;
             }
         }
     </style>
 </head>
 <body>
 
-    <div id="loader">در حال دریافت آخرین اخبار...</div>
+    <div id="loader">در حال دریافت از منابع معتبر ...</div>
 
     <div id="news-container" class="hidden">
+        <div id="exploitdb-section" class="news-section">
+            <h2>جدیدترین اکسپلویت ها <a href="https://www.exploit-db.com/" target="_blank">(اطلاعات بیشتر)</a></h2>
+            <ul id="exploitdb-list" class="news-list"></ul>
+        </div>
+
         <div id="cisa-section" class="news-section">
-            <h2>CISA <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" target="_blank">(منبع)</a></h2>
+            <h2> CISA <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" target="_blank">(اطلاعات بیشتر)</a></h2>
             <ul id="cisa-list" class="news-list"></ul>
         </div>
+
         <div id="takian-section" class="news-section">
-            <h2>اخبار تاکیان نت <a href="https://www.takian.net/news" target="_blank">(منبع)</a></h2>
+            <h2> تاکیان  <a href="https://www.takian.net/news" target="_blank">(اطلاعات بیشتر)</a></h2>
             <ul id="takian-list" class="news-list"></ul>
         </div>
     </div>
@@ -172,10 +170,10 @@
 
 <script>
     // =======================================================================
-    const CISA_PROXY_URL = 'https://cisa-proxy.awardbinsami.workers.dev/'; 
+    const EXPLOITDB_PROXY_URL = 'https://vulners-proxy.awardbinsami.workers.dev/';
+    const CISA_PROXY_URL = 'https://cisa-proxy.awardbinsami.workers.dev/';
     const TAKIAN_PROXY_URL = 'https://takian-proxy.awardbinsami.workers.dev/';
     // =======================================================================
-
 
     const loader = document.getElementById('loader');
     const newsContainer = document.getElementById('news-container');
@@ -183,74 +181,110 @@
     const articleContent = document.getElementById('article-content');
     const backButton = document.getElementById('back-button');
 
-    
     function showListView() {
         articleView.classList.add('hidden');
         newsContainer.classList.remove('hidden');
     }
 
- 
     function showArticleView(content) {
         newsContainer.classList.add('hidden');
         articleContent.innerHTML = content;
         articleView.classList.remove('hidden');
     }
 
-  
     async function loadNews() {
-        try {
-            const [cisaResponse, takianResponse] = await Promise.all([
-                fetch(CISA_PROXY_URL),
-                fetch(TAKIAN_PROXY_URL)
-            ]);
+     
+        const sources = [
+            {
+                name: 'ExploitDB',
+                url: EXPLOITDB_PROXY_URL,
+                listElement: document.getElementById('exploitdb-list'),
+                sectionElement: document.getElementById('exploitdb-section'),
+                processor: (item, li) => {
+                    li.textContent = item.title;
+                    li.onclick = () => window.open(item.url, '_blank');
+                }
+            },
+            {
+                name: 'CISA',
+                url: CISA_PROXY_URL,
+                listElement: document.getElementById('cisa-list'),
+                sectionElement: document.getElementById('cisa-section'),
+                processor: (item, li) => {
+                    li.textContent = item.vulnerabilityName;
+                    li.onclick = () => {
+                        const content = `<h3>${item.vulnerabilityName}</h3><hr><p>${item.notes}</p>`;
+                        showArticleView(content);
+                    };
+                }
+            },
+            {
+                name: 'Takian',
+                url: TAKIAN_PROXY_URL,
+                listElement: document.getElementById('takian-list'),
+                sectionElement: document.getElementById('takian-section'),
+                processor: (item, li) => {
+                    li.textContent = item.title;
+                    li.onclick = () => window.open(item.url, '_blank');
+                }
+            }
+        ];
 
-            if (!cisaResponse.ok || !takianResponse.ok) {
-                 throw new Error('پاسخ شبکه موفقیت‌آمیز نبود.');
+        try {
+     
+            const results = await Promise.allSettled(
+                sources.map(s => fetch(s.url))
+            );
+            
+            let successfulFetches = 0;
+
+    
+            await Promise.all(results.map(async (result, index) => {
+                const source = sources[index];
+                
+     
+                if (result.status === 'fulfilled' && result.value.ok) {
+                    try {
+                        const data = await result.value.json();
+                        if (data && data.length > 0) {
+                            successfulFetches++;
+                            data.forEach(item => {
+                                const li = document.createElement('li');
+                                li.className = 'news-item';
+                                source.processor(item, li);
+                                source.listElement.appendChild(li);
+                            });
+                        } else {
+                   
+                           source.sectionElement.classList.add('hidden');
+                        }
+                    } catch (e) {
+                        console.error(`Error parsing JSON for ${source.name}:`, e);
+                        source.sectionElement.classList.add('hidden');
+                    }
+                } else {
+          
+                    console.error(`Failed to fetch from ${source.name}:`, result.reason || result.value.statusText);
+                    source.sectionElement.classList.add('hidden');
+                }
+            }));
+            
+            if (successfulFetches === 0) {
+                throw new Error("هیچ یک از منابع خبری در دسترس نبودند. لطفاً اتصال اینترنت خود را بررسی کرده و مجدداً تلاش کنید.");
             }
 
-            const cisaNews = await cisaResponse.json();
-            const takianNews = await takianResponse.json();
-
-         
-            const cisaList = document.getElementById('cisa-list');
-            cisaNews.forEach(item => {
-                const li = document.createElement('li');
-                li.className = 'news-item';
-                li.textContent = item.vulnerabilityName;
-                li.onclick = () => {
-                    const content = `<h3>${item.vulnerabilityName}</h3><hr><p>${item.notes}</p>`;
-                    showArticleView(content);
-                };
-                cisaList.appendChild(li);
-            });
-
+        } catch (error) {
       
-            const takianList = document.getElementById('takian-list');
-            takianNews.forEach(item => {
-                const li = document.createElement('li');
-                li.className = 'news-item';
-                li.textContent = item.title;
-                
-                li.onclick = () => {
-                    window.open(item.url, '_blank');
-                };
-                takianList.appendChild(li);
-            });
-
-
+            loader.innerHTML = `<strong>خطا در دریافت اطلاعات...</strong><br><small>${error.message}</small>`;
+            console.error('Overall fetch error:', error);
+        } finally {
+          
             loader.classList.add('hidden');
             showListView();
-
-        } catch (error) {
-            loader.innerHTML = `<strong>خطا در دریافت اخبار.</strong><br><small>${error.message}</small>`;
-            console.error('Fetch error:', error);
         }
     }
 
- 
     backButton.addEventListener('click', showListView);
-
-  
     document.addEventListener('DOMContentLoaded', loadNews);
 </script>
 
