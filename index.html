@@ -231,7 +231,7 @@
       width: 100%;
       height: 100%;
       border: none;
-      background-color: #000;
+      background-color: #1a1a1a; 
       display: block;
     }
 
@@ -334,27 +334,27 @@
       box-shadow: 0 0 8px rgba(0, 204, 122, 0.3);
     }
     .github-stats {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  width: 100%;
-  padding: 8px 0;
-}
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      padding: 8px 0;
+    }
 
-.github-stats img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 6px;
-  box-shadow: 0 0 8px rgba(0, 204, 122, 0.3);
-}
+    .github-stats img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 6px;
+      box-shadow: 0 0 8px rgba(0, 204, 122, 0.3);
+    }
 
-.github-stats a {
-  display: block;
-  width: 100%;
-  max-width: 700px;
-}
+    .github-stats a {
+      display: block;
+      width: 100%;
+      max-width: 700px;
+    }
 
 
     .projects {
@@ -462,7 +462,7 @@
       z-index: 1001;
     }
     
-   body.mobile #terminal {
+    body.mobile #terminal {
      width: 100vw;
      padding-top: 70px; 
      padding-left: 8px;
@@ -506,6 +506,7 @@
       margin: 10px 0 10px;
       max-height: none;
       width: 100%;
+      white-space: normal;
     }
 
 
@@ -631,7 +632,7 @@
             spellcheck="false"
             inputmode="text"
         />
-        <span class="cursor">█</span>
+        
     </div>
   </div>
   <div id="panel" role="dialog" aria-label="Content Panel">
@@ -792,10 +793,10 @@ const messages = {
           "DECRYPTING DATA...sK29a#$..",
           "AUTH_TOKEN: 48fgb-bf4ca-8474a..",
         ],
-        prompt: "root@NullErr0r:~$&nbsp;",
+        prompt: "",
         welcome: `Welcome`,
         promptHelp: `Type 'help' to get started.`,
-        helpText: `Available commands:\n- about: Who am I\n- projects: Show my projects\n- tutorial: Windows, Linux & RE commands\n- quote: Show a motivational quote\n- clear: Clear the terminal`,
+        helpText: `Available commands:\n- about: Who am I\n- projects: Show my projects\n- tutorial: Windows, Linux & RE commands\n- news: Show latest security news\n- quote: Show a motivational quote\n- clear: Clear the terminal`,
         projectsLoading: `Fetching projects from GitHub...`,
         projectsError: `Error fetching projects. Visit: https://github.com/null-err0r`,
         langSwitched: ` `,
@@ -816,10 +817,10 @@ const messages = {
           "رمزگشایی اطلاعات...sK29a#$..",
           "کلید تایید: ۴۸فگب-بف۴چا-۸۴۷۴آ..",
         ],
-        prompt: "root@NullErr0r:~$&nbsp;",
+        prompt: "",
         welcome: `>  خوش آمدید`,
         promptHelp: `> برای شروع 'راهنما' را تایپ کنید.`,
-        helpText: `دستورات موجود:\n- مشخصات: درباره من\n- کارها: نمایش پروژه‌ها\n- آموزش: دستورات ویندوز - لینوکس و مهندسی معکوس\n- جمله: نمایش جمله انگیزشی\n- پاک کن: پاک کردن ترمینال`,
+        helpText: `دستورات موجود:\n- مشخصات: درباره من\n- کارها: نمایش پروژه‌ها\n- آموزش: دستورات ویندوز - لینوکس و مهندسی معکوس\n- اخبار: نمایش آخرین اخبار امنیتی\n- جمله: نمایش جمله انگیزشی\n- پاک کن: پاک کردن ترمینال`,
         projectsLoading: `در حال دریافت پروژه‌ها از GitHub...`,
         projectsError: `خطا در دریافت پروژه‌ها. به این آدرس مراجعه کنید: https://github.com/null-err0r`,
         langSwitched: `  `,
@@ -888,7 +889,6 @@ if (!introHasRun[lang]) {
 
 
     function openPanel(content, command) {
-      if (currentPanelCommand === command && document.body.classList.contains('panel-open')) return;
 
       document.body.classList.add('split');
       if (isMobileDevice()) {
@@ -1005,25 +1005,25 @@ async function fetchProjects() {
 <div class="container" style="display: flex; flex-direction: column; align-items: center; gap: 30px; max-width: 100%; margin: auto;">
 
   <div class="row" style="display: flex; justify-content: center; flex-wrap: wrap; width: 100%;">
-    <img src="http://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=null-err0r&theme=gruvbox" alt="Profile Details" style="max-width: 100%; height: auto; pointer-events: none; user-select: none; display: block;" />
+    <img loading="lazy" src="http://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=null-err0r&theme=gruvbox" alt="Profile Details" style="max-width: 100%; height: auto; pointer-events: none; user-select: none; display: block;" />
   </div>
 
   <div class="row" style="display: flex; justify-content: center; flex-wrap: wrap; width: 100%;">
-    <img src="http://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=null-err0r&theme=gruvbox" alt="Repos per Language" style="max-width: 100%; height: auto; pointer-events: none; user-select: none; display: block;" />
-    <img src="http://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=null-err0r&theme=gruvbox" alt="Most Commit Language" style="max-width: 100%; height: auto; pointer-events: none; user-select: none; display: block;" />
+    <img loading="lazy" src="http://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=null-err0r&theme=gruvbox" alt="Repos per Language" style="max-width: 100%; height: auto; pointer-events: none; user-select: none; display: block;" />
+    <img loading="lazy" src="http://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=null-err0r&theme=gruvbox" alt="Most Commit Language" style="max-width: 100%; height: auto; pointer-events: none; user-select: none; display: block;" />
   </div>
 
   <div class="row" style="display: flex; justify-content: center; flex-wrap: wrap; width: 100%;">
-    <img src="http://github-profile-summary-cards.vercel.app/api/cards/stats?username=null-err0r&theme=gruvbox" alt="Stats" style="max-width: 100%; height: auto; pointer-events: none; user-select: none; display: block;" />
-    <img src="http://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=null-err0r&theme=gruvbox&utcOffset=8" alt="Productive Time" style="max-width: 100%; height: auto; pointer-events: none; user-select: none; display: block;" />
+    <img loading="lazy" src="http://github-profile-summary-cards.vercel.app/api/cards/stats?username=null-err0r&theme=gruvbox" alt="Stats" style="max-width: 100%; height: auto; pointer-events: none; user-select: none; display: block;" />
+    <img loading="lazy" src="http://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=null-err0r&theme=gruvbox&utcOffset=8" alt="Productive Time" style="max-width: 100%; height: auto; pointer-events: none; user-select: none; display: block;" />
   </div>
 
   <div class="row" style="display: flex; justify-content: center; width: 100%;">
-    <img src="https://github-readme-streak-stats.herokuapp.com/?user=null-err0r&theme=gruvbox" alt="GitHub Streak" style="max-width: 100%; height: auto; pointer-events: none; user-select: none; display: block;" />
+    <img loading="lazy" src="https://github-readme-streak-stats.herokuapp.com/?user=null-err0r&theme=gruvbox" alt="GitHub Streak" style="max-width: 100%; height: auto; pointer-events: none; user-select: none; display: block;" />
   </div>
 
   <div class="row" style="display: flex; justify-content: center; width: 100%;">
-    <img src="https://github-profile-trophy.vercel.app/?username=null-err0r&theme=gruvbox&no-frame=true&margin-w=15&margin-h=15&row=2&column=4" alt="Trophies" style="max-width: 100%; height: auto; pointer-events: none; user-select: none; display: block;" />
+    <img loading="lazy" src="https://github-profile-trophy.vercel.app/?username=null-err0r&theme=gruvbox&no-frame=true&margin-w=15&margin-h=15&row=2&column=4" alt="Trophies" style="max-width: 100%; height: auto; pointer-events: none; user-select: none; display: block;" />
   </div>
 
           <div class="projects">
@@ -1057,7 +1057,7 @@ async function fetchProjects() {
           ${otherRepoListHtml} 
           <div style="display: flex; justify-content: center; width: 100%;">
             <br> </br>
-             <img src="https://ghvc.kabelkultur.se/?username=null-err0r&abbreviated=true&color=ff5500&label=%E2%81%AE%20%E2%81%AE%E2%81%AE%20%E2%81%AE%E2%81%AE%20%F0%9F%91%80%20%E2%81%AE%20%E2%81%AE%E2%81%AE%20%E2%81%AE%E2%81%AEVisitor%E2%81%AE%20%E2%81%AE%E2%81%AE%20%E2%81%AE%E2%81%AE%20%F0%9F%91%80%E2%81%AE%20%E2%81%AE%E2%81%AE%20%E2%81%AE%E2%81%AE%E2%81%AE%20%E2%81%AE%E2%81%AE%20%E2%81%AE%E2%81%AE⁮⁮" alt="Visitor Counter" />
+             <img loading="lazy" src="https://ghvc.kabelkultur.se/?username=null-err0r&abbreviated=true&color=ff5500&label=%E2%81%AE%20%E2%81%AE%E2%81%AE%20%E2%81%AE%E2%81%AE%20%F0%9F%91%80%20%E2%81%AE%20%E2%81%AE%E2%81%AE%20%E2%81%AE%E2%81%AEVisitor%E2%81%AE%20%E2%81%AE%E2%81%AE%20%E2%81%AE%E2%81%AE%20%F0%9F%91%80%E2%81%AE%20%E2%81%AE%E2%81%AE%20%E2%81%AE%E2%81%AE%E2%81%AE%20%E2%81%AE%E2%81%AE%20%E2%81%AE%E2%81%AE⁮⁮" alt="Visitor Counter" />
             <br> </br>
           </div>
           `;
@@ -1187,6 +1187,11 @@ async function fetchProjects() {
             cachedProjectsContent = await fetchProjects();
           }
           openPanel(cachedProjectsContent, 'projects');
+          return '';
+        },
+          'news': () => {
+          const newsContent = `<iframe src="news.html" style="width:100%; height:100%; border:0; background-color: #1a1a1a;"></iframe>`;
+          openPanel(newsContent, 'news');
           return '';
         },
         'tutorial': () => {
@@ -1320,6 +1325,11 @@ async function fetchProjects() {
             cachedProjectsContent = await fetchProjects();
           }
           openPanel(cachedProjectsContent, 'کارها');
+          return '';
+        },
+                'اخبار': () => {
+          const newsContent = `<iframe src="news.html" style="width:100%; height:100%; border:0; background-color: #1a1a1a;"></iframe>`;
+          openPanel(newsContent, 'اخبار');
           return '';
         },
         'آموزش': () => {
