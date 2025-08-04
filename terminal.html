@@ -8,208 +8,212 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --background: #1a1a1a;
-            --window-bg: #1a1a1a;
-            --title-bar: #16213e;
-            --foreground: #e0e0e0;
-            --cyan: #00e5ff;
-            --green: #50fa7b;
-            --red: #ff5555;
-            --purple: #bd93f9;
-            --comment: #6272a4;
-            --font-primary: 'Fira Code', monospace;
-            --font-secondary: 'Vazirmatn', sans-serif;
-            --app-height: 100vh; 
+    :root {
+        --background: #1a1a1a;
+        --window-bg: #1a1a1a;
+        --title-bar: #16213e;
+        --foreground: #e0e0e0;
+        --cyan: #00e5ff;
+        --green: #50fa7b;
+        --red: #ff5555;
+        --purple: #bd93f9;
+        --comment: #6272a4;
+        --font-primary: 'Fira Code', monospace;
+        --font-secondary: 'Vazirmatn', sans-serif;
+        --app-height: 100vh; 
+    }
+
+    * { 
+        box-sizing: border-box; 
+    }
+
+    html {
+        background-color: var(--background);
+        color: var(--foreground);
+        font-family: var(--font-primary);
+        font-size: 16px;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: var(--app-height); 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden; 
+    }
+
+    #terminal-window {
+        width: 90%;
+        height: 90%;
+        max-width: 1200px;
+        background-color: var(--window-bg);
+        border: 1px solid var(--purple);
+        border-radius: 8px;
+        box-shadow: 0 0 25px rgba(189, 147, 249, 0.3);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        position: relative;
+    }
+    
+    #terminal-window::after {
+        content: '';
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px);
+        pointer-events: none;
+        z-index: 10;
+    }
+
+    .title-bar {
+        background-color: var(--title-bar);
+        color: var(--foreground);
+        padding: 8px 12px;
+        font-weight: bold;
+        border-bottom: 1px solid var(--purple);
+        text-align: center;
+        cursor: default;
+        flex-shrink: 0; 
+    }
+    .title-bar .controls { float: left; }
+
+    #terminal {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        padding: 15px;
+        overflow-y: auto;
+        word-wrap: break-word;
+    }
+    
+    #terminal::-webkit-scrollbar { width: 8px; }
+    #terminal::-webkit-scrollbar-track { background: var(--window-bg); }
+    #terminal::-webkit-scrollbar-thumb { background: var(--purple); border-radius: 4px; }
+    #terminal::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
+
+    .input-line { display: flex; align-items: center; flex-shrink: 0; }
+
+    #cursor {
+        color: var(--green);
+        animation: blinking-cursor 1s infinite;
+    }
+
+    @keyframes blinking-cursor {
+        0% { opacity: 1; }
+        50% { opacity: 0; }
+        100% { opacity: 1; }
+    }
+
+    .prompt {
+        color: var(--cyan);
+        font-weight: bold;
+        text-shadow: 0 0 5px var(--cyan);
+        margin-right: 8px;
+        white-space: nowrap;
+    }
+    
+    .prompt .user { color: var(--green); }
+
+    #command-input {
+        background: transparent;
+        border: none;
+        color: var(--foreground);
+        font-family: inherit;
+        font-size: inherit;
+        outline: none;
+        width: 100%;
+        text-shadow: 0 0 2px var(--foreground);
+    }
+    .output-line { white-space: pre-wrap; margin-bottom: 2px; }
+    .output-line.command { color: var(--foreground); }
+    .output-line.error { color: var(--red); text-shadow: 0 0 5px var(--red); }
+    .output-line.info, .output-line b, .output-line strong { color: var(--cyan); text-shadow: 0 0 4px var(--cyan); }
+    
+    .command-section h3, .output-line h3 {
+        color: var(--green);
+        text-shadow: 0 0 5px var(--green);
+        border-bottom: 1px solid var(--green);
+        padding-bottom: 5px; margin-top: 20px; font-size: 1.2em;
+    }
+    .command-section h4 {
+        color: var(--purple);
+        margin-top: 20px; margin-bottom: 10px;
+        border-left: 3px solid var(--purple); padding-left: 8px;
+    }
+    .command-item {
+        margin-bottom: 15px; border-left: 2px solid var(--comment);
+        padding-left: 10px; break-inside: avoid-column;
+    }
+    .command-item b { color: var(--cyan); }
+    .command-item .desc { color: #b0bec5; font-size: 0.9em; margin-left: 5px; }
+
+    .lang-fa {
+        font-family: var(--font-secondary);
+        direction: rtl; text-align: right; display: block;
+        margin-top: 4px; color: #b0bec5; text-shadow: none;
+    }
+    
+    .example {
+        background: #1c1c1c;
+        padding: 8px;
+        border-radius: 5px;
+        margin-top: 5px;
+        font-size: 0.9em;
+        color: #d0d0d0;
+        display: block;
+        word-wrap: break-word; 
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+        font-size: 0.9em;
+    }
+    th, td {
+        border: 1px solid var(--comment);
+        padding: 8px;
+        text-align: left;
+    }
+    th {
+        background: var(--title-bar);
+        color: var(--green);
+    }
+    td { background: #2a2a2e; }
+    td .lang-fa, th .lang-fa { text-align: right; }
+
+    @media (max-width: 768px) {
+        body { 
+            display: block; 
         }
-
-        * { box-sizing: border-box; }
-
-        html, body {
-            background-color: var(--background);
-            color: var(--foreground);
-            font-family: var(--font-primary);
-            font-size: 16px;
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            width: 100%;
-            overflow: hidden; 
-        }
-
-        body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: var(--app-height);
-        }
-
         #terminal-window {
-            width: 100%;
-            height: 100%;
-            max-width: 1200px;
-            background-color: var(--window-bg);
-            border: 1px solid var(--purple);
-            border-radius: 8px;
-            box-shadow: 0 0 25px rgba(189, 147, 249, 0.3);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            position: relative;
-            transition: width 0.3s ease, height 0.3s ease; 
+            width: 100%; 
+            height: 100%; 
+            max-width: none; 
+            border-radius: 0;
+            border: none; 
+            box-shadow: none;
         }
-        
-        #terminal-window::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px);
-            pointer-events: none;
-            z-index: 10;
+        .title-bar .controls { display: none; }
+        #terminal { padding: 10px; }
+        html { font-size: 14px; }
+    }
+    
+    @media (max-width: 600px) {
+        html {
+            font-size: 13px;
         }
-
-        .title-bar {
-            background-color: var(--title-bar);
-            color: var(--foreground);
-            padding: 8px 12px;
-            font-weight: bold;
-            border-bottom: 1px solid var(--purple);
-            text-align: center;
-            cursor: default;
-            flex-shrink: 0; 
-        }
-        .title-bar .controls { float: left; }
 
         #terminal {
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-            padding: 15px;
-            overflow-y: auto;
-            word-wrap: break-word;
-        }
-        
-        #terminal::-webkit-scrollbar { width: 8px; }
-        #terminal::-webkit-scrollbar-track { background: var(--window-bg); }
-        #terminal::-webkit-scrollbar-thumb { background: var(--purple); border-radius: 4px; }
-        #terminal::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
-
-        .input-line { display: flex; align-items: center; flex-shrink: 0; }
-
-        .prompt {
-            color: var(--cyan);
-            font-weight: bold;
-            text-shadow: 0 0 5px var(--cyan);
-            margin-right: 8px;
-            white-space: nowrap;
-        }
-        
-        .prompt .user { color: var(--green); }
-
-        #command-input {
-            background: transparent;
-            border: none;
-            color: var(--foreground);
-            font-family: inherit;
-            font-size: inherit;
-            outline: none;
-            width: 100%;
-            text-shadow: 0 0 2px var(--foreground);
-        }
-        .output-line { white-space: pre-wrap; margin-bottom: 2px; }
-        .output-line.command { color: var(--foreground); }
-        .output-line.error { color: var(--red); text-shadow: 0 0 5px var(--red); }
-        .output-line.info, .output-line b, .output-line strong { color: var(--cyan); text-shadow: 0 0 4px var(--cyan); }
-        
-        .command-section h3, .output-line h3 {
-            color: var(--green);
-            text-shadow: 0 0 5px var(--green);
-            border-bottom: 1px solid var(--green);
-            padding-bottom: 5px; margin-top: 20px; font-size: 1.2em;
-        }
-        .command-section h4 {
-            color: var(--purple);
-            margin-top: 20px; margin-bottom: 10px;
-            border-left: 3px solid var(--purple); padding-left: 8px;
-        }
-        .command-item {
-            margin-bottom: 15px; border-left: 2px solid var(--comment);
-            padding-left: 10px; break-inside: avoid-column;
-        }
-        .command-item b { color: var(--cyan); }
-        .command-item .desc { color: #b0bec5; font-size: 0.9em; margin-left: 5px; }
-
-        .lang-fa {
-            font-family: var(--font-secondary);
-            direction: rtl; text-align: right; display: block;
-            margin-top: 4px; color: #b0bec5; text-shadow: none;
-        }
-        
-        .example {
-            background: #1c1c1c;
             padding: 8px;
-            border-radius: 5px;
-            margin-top: 5px;
-            font-size: 0.9em;
-            color: #d0d0d0;
-            display: block;
-            word-wrap: break-word; 
         }
-        .defense {
-            color: #ff5555;
-            font-style: italic;
-            margin-top: 5px;
-            font-size: 0.9em;
-            display: block;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 15px 0;
-            font-size: 0.9em;
-        }
-        th, td {
-            border: 1px solid var(--comment);
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background: var(--title-bar);
-            color: var(--green);
-        }
-        td { background: #2a2a2e; }
-        td .lang-fa, th .lang-fa { text-align: right; }
-
-        @media (max-width: 1024px) {
-            #terminal-window {
-                width: 100%;
-                height: 100vh;
-            }
-        }
-
-
-        @media (max-width: 768px) {
-            body { 
-                display: block; 
-                padding: 0; 
-                height: var(--app-height); 
-                overflow: visible; 
-            }
-            #terminal-window {
-                width: 100%; 
-                height: var(--app-height); 
-                max-width: none; 
-                border-radius: 0;
-                border: none; 
-                box-shadow: none;
-            }
-            .title-bar .controls { display: none; }
-            #terminal { padding: 10px; }
-            body { font-size: 14px; }
-        }
-    </style>
+    }
+</style>
  
     <script src="js/app.fingerprint.js"></script>
 </head>
