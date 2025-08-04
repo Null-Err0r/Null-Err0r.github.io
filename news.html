@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اخبار امنیت</title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet" />
+    <style>
+     
+        :root {
+            --bg-color: #1a1a1a;
+            --text-color: #e0e0e0;
+            --primary-color: #00ffcc;
+            --secondary-color: #022a1c;
+            --border-color: #00cc7a;
+            --hover-bg-color: #004d2b;
+        }
+
+ 
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Vazirmatn', sans-serif;
+            margin: 0;
+            padding: 15px;
+            overflow-x: hidden;
+        }
+
+      
+        #loader {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        
+        .hidden {
+            display: none !important;
+        }
+
+   
+        #news-container {
+            display: grid;
+            grid-template-columns: 1fr; 
+            gap: 40px;
+        }
+
+    
+        .news-section h2 {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+        .news-section h2 a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 0.7em;
+            margin-right: 10px;
+            opacity: 0.7;
+        }
+        .news-section h2 a:hover {
+            opacity: 1;
+        }
+
+        .news-list {
+            list-style: none;
+            padding: 0;
+        }
+        .news-item {
+            background-color: var(--secondary-color);
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 6px;
+            border-right: 4px solid var(--border-color);
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        .news-item:hover {
+            background-color: var(--hover-bg-color);
+            transform: translateX(-5px);
+        }
+
+      
+        #article-view {
+            padding: 10px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #back-button {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-family: 'Vazirmatn', sans-serif;
+            cursor: pointer;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s;
+        }
+        #back-button:hover {
+             background-color: var(--hover-bg-color);
+        }
+
+        #article-content {
+            line-height: 1.9;
+            font-size: 1.1rem;
+            white-space: pre-wrap; 
+        }
+        #article-content h3 {
+             color: var(--primary-color);
+        }
+        #article-content hr {
+            border-color: rgba(0, 255, 204, 0.2);
+            margin: 20px 0;
+        }
+
+   
+        @media (min-width: 768px) {
+            body {
+                padding: 30px;
+            }
+            #news-container {
+                grid-template-columns: 1fr 1fr; 
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader">در حال دریافت آخرین اخبار...</div>
+
+    <div id="news-container" class="hidden">
+        <div id="cisa-section" class="news-section">
+            <h2>CISA <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" target="_blank">(منبع)</a></h2>
+            <ul id="cisa-list" class="news-list"></ul>
+        </div>
+        <div id="takian-section" class="news-section">
+            <h2>اخبار تاکیان نت <a href="https://www.takian.net/news" target="_blank">(منبع)</a></h2>
+            <ul id="takian-list" class="news-list"></ul>
+        </div>
+    </div>
+
+    <div id="article-view" class="hidden">
+        <button id="back-button">
+            <span>&rarr;</span>
+            <span>بازگشت به لیست اخبار</span>
+        </button>
+        <div id="article-content"></div>
+    </div>
+
+<script>
+    // =======================================================================
+    const CISA_PROXY_URL = 'https://cisa-proxy.awardbinsami.workers.dev/'; 
+    const TAKIAN_PROXY_URL = 'https://takian-proxy.awardbinsami.workers.dev/';
+    // =======================================================================
+
+
+    const loader = document.getElementById('loader');
+    const newsContainer = document.getElementById('news-container');
+    const articleView = document.getElementById('article-view');
+    const articleContent = document.getElementById('article-content');
+    const backButton = document.getElementById('back-button');
+
+    
+    function showListView() {
+        articleView.classList.add('hidden');
+        newsContainer.classList.remove('hidden');
+    }
+
+ 
+    function showArticleView(content) {
+        newsContainer.classList.add('hidden');
+        articleContent.innerHTML = content;
+        articleView.classList.remove('hidden');
+    }
+
+  
+    async function loadNews() {
+        try {
+            const [cisaResponse, takianResponse] = await Promise.all([
+                fetch(CISA_PROXY_URL),
+                fetch(TAKIAN_PROXY_URL)
+            ]);
+
+            if (!cisaResponse.ok || !takianResponse.ok) {
+                 throw new Error('پاسخ شبکه موفقیت‌آمیز نبود.');
+            }
+
+            const cisaNews = await cisaResponse.json();
+            const takianNews = await takianResponse.json();
+
+         
+            const cisaList = document.getElementById('cisa-list');
+            cisaNews.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'news-item';
+                li.textContent = item.vulnerabilityName;
+                li.onclick = () => {
+                    const content = `<h3>${item.vulnerabilityName}</h3><hr><p>${item.notes}</p>`;
+                    showArticleView(content);
+                };
+                cisaList.appendChild(li);
+            });
+
+      
+            const takianList = document.getElementById('takian-list');
+            takianNews.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'news-item';
+                li.textContent = item.title;
+                
+                li.onclick = () => {
+                    window.open(item.url, '_blank');
+                };
+                takianList.appendChild(li);
+            });
+
+
+            loader.classList.add('hidden');
+            showListView();
+
+        } catch (error) {
+            loader.innerHTML = `<strong>خطا در دریافت اخبار.</strong><br><small>${error.message}</small>`;
+            console.error('Fetch error:', error);
+        }
+    }
+
+ 
+    backButton.addEventListener('click', showListView);
+
+  
+    document.addEventListener('DOMContentLoaded', loadNews);
+</script>
+
+</body>
+</html>
