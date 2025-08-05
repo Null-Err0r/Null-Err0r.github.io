@@ -7,6 +7,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Fira+Mono&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="icon" type="image/png" href="favicon/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="favicon/favicon.svg" />
+  <link rel="shortcut icon" href="favicon/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png" />
+  <link rel="manifest" href="favicon/site.webmanifest" />
   <style>
     :root {
       --primary-color: #00ffcc;
@@ -208,20 +213,20 @@
 
     const messages = {
       en: {
-        intro: ["{ok}...Checking connection", "{ok}...Establishing secure tunnel", "{ok}...Traversing proxy layers", "{ok}...Encryption verification", "{ok}...Encryption confirmation and secure communication\n "],
+        intro: [" Communication encryption ...{ok}", "Access confirmed...{ok}\n "],
         gibberish: ["0xFE34C_..AFF_&%..|#(*.._#", "SCANNING PORTS..|#_..[22, 80, 443]", "DECRYPTING DATA...sK29a#$..", "AUTH_TOKEN: 48fgb-bf4ca-8474a.."],
         prompt: "> ", welcome: `Welcome`, promptHelp: `Type 'help' for commands. Press 'Esc' to exit terminal mode.`,
         helpText: `Available commands:\n- about: Who am I\n- projects: Show my projects\n- tutorial: Windows, Linux & RE commands\n- news: Show latest security news\n- quote: Show a motivational quote\n- clear: Clear the terminal`,
-        projectsLoading: `Fetching projects from GitHub...`, projectsError: `Error fetching projects. Visit: https://github.com/null-err0r`,
+        projectsLoading: `Updateing...`, projectsError: `Error fetching . Visit: https://github.com/null-err0r`,
         langSwitched: `Language switched to English.`, cmdNotFound: `Command not found. Type 'help'.`,
         torDetected: `[!] Tor network detected.`, guiHint: "Press 'Esc' or click here to enter Terminal Mode"
       },
       fa: {
-        intro: ["در حال بررسی ارتباط...{موفق}", "ایجاد تونل امن...{موفق}", "عبور از لایه‌های پروکسی...{موفق}", "تایید رمزنگاری و ارتباط امن...{موفق}", "دسترسی تایید شد...{موفق}\n "],
+        intro: [" رمزنگاری ارتباط ...{موفق}", "دسترسی تایید شد...{موفق}\n "],
         gibberish: ["0xFE34C_..AFF_&%..|#(*.._#", "اسکن پورت‌ها..|#_..[۲۲، ۸۰، ۴۴۳]", "رمزگشایی اطلاعات...sK29a#$..", "کلید تایید: ۴۸فگب-بف۴چا-۸۴۷۴آ.."],
         prompt: "> ", welcome: `خوش آمدید`, promptHelp: `برای شروع 'راهنما' را تایپ کنید. برای خروج از حالت ترمینال کلید 'Esc' را فشار دهید.`,
         helpText: `دستورات موجود:\n- مشخصات: درباره من\n- کارها: نمایش پروژه‌ها\n- آموزش: دستورات ویندوز - لینوکس و مهندسی معکوس\n- اخبار: نمایش آخرین اخبار امنیتی\n- جمله: نمایش جمله انگیزشی\n- پاک کن: پاک کردن ترمینال`,
-        projectsLoading: `در حال دریافت پروژه‌ها از GitHub...`, projectsError: `خطا در دریافت پروژه‌ها. به این آدرس مراجعه کنید: https://github.com/null-err0r`,
+        projectsLoading: `بروز رسانی...`, projectsError: `خطا در دریافت . به این آدرس مراجعه کنید: https://github.com/null-err0r`,
         langSwitched: `زبان به فارسی تغییر یافت.`, cmdNotFound: `دستور یافت نشد. برای مشاهده دستورات 'راهنما' را تایپ کنید.`,
         torDetected: `[!] شبکه Tor شناسایی شد.`, guiHint: "برای ورود به حالت ترمینال کلید 'Esc' را فشار دهید یا اینجا کلیک کنید"
       }
@@ -475,11 +480,30 @@ async function fetchProjects() {
     }
     
 
-    const getAboutContent = (currentLang) => {
+const getAboutContent = (currentLang) => {
         const bioStyle = `...`; 
         const commonHtmlStart = `
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-            <style>.bio-container * { box-sizing: border-box; } .bio-container { max-width: 480px; margin: 0 auto; text-align: center; color: #f0f0f0; padding: 1rem; } .bio-container .avatar { width: 200px; height: 200px; border-radius: 50%; margin: 1rem auto; object-fit: contain; background-color: #000; border: 3px solid #f0f0f0; } .avatar-wrapper { position: relative; display: inline-block; } .glow-ring { content: ''; position: absolute; top: -15px; left: -15px; width: calc(100% + 30px); height: calc(100% + 30px); border-radius: 50%; background: conic-gradient(from 0deg, #00ffcc, #002a17, #00ffcc); animation: spin 4s linear infinite; z-index: -1; filter: blur(12px) brightness(1.5); } @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } } .bio-container h1 { font-size: 1.5rem; margin: 0.5rem 0; } .bio-container .bio { color: #ccc; font-size: 1rem; margin-bottom: 2rem; } .bio-container .link-button { display: flex; align-items: center; justify-content: center; text-decoration: none !important; margin: 0.5rem 0; padding: 1rem; background: rgba(255, 255, 255, 0.05); color: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); transition: transform 0.2s ease, background 0.2s; } .bio-container .link-button:hover { transform: scale(1.02); background: rgba(255, 255, 255, 0.15); } .bio-container .link-button i { margin-left: 0.5rem; } #panel-content {white-space: normal;}</style>
+            <style>
+                .bio-container * { box-sizing: border-box; } 
+                .bio-container { max-width: 480px; margin: 0 auto; text-align: center; color: #f0f0f0; padding: 1rem; } 
+                .bio-container .avatar { width: 200px; height: 200px; border-radius: 50%; margin: 1rem auto; object-fit: contain; background-color: #000; border: 3px solid #f0f0f0; } 
+                .avatar-wrapper { position: relative; display: inline-block; } 
+                .glow-ring { content: ''; position: absolute; top: -15px; left: -15px; width: calc(100% + 30px); height: calc(100% + 30px); border-radius: 50%; background: conic-gradient(from 0deg, #00ffcc, #002a17, #00ffcc); animation: spin 4s linear infinite; z-index: -1; filter: blur(12px) brightness(1.5); } 
+                @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } } 
+                .bio-container h1 { font-size: 1.5rem; margin: 0.5rem 0; } 
+                .bio-container .bio { color: #ccc; font-size: 1rem; margin-bottom: 2rem; } 
+                .bio-container .link-button { display: flex; align-items: center; justify-content: center; text-decoration: none !important; margin: 0.5rem 0; padding: 1rem; background: rgba(255, 255, 255, 0.05); color: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); transition: transform 0.2s ease, background 0.2s; } 
+                .bio-container .link-button:hover { transform: scale(1.02); background: rgba(255, 255, 255, 0.15); } 
+                .bio-container .link-button i { margin-left: 0.5rem; } 
+                #panel-content {
+                    white-space: normal;
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    height: 100%; 
+                }
+            </style>
             <div class="bio-container">
               <div class="avatar-wrapper">
                 <div class="glow-ring"></div>
