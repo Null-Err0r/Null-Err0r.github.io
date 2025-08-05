@@ -89,10 +89,9 @@
     flex-direction: column;
     flex-grow: 1;
     padding: 15px;
-    overflow-y: auto;
     word-wrap: break-word;
     overscroll-behavior-y: contain;
-    min-height: 0; 
+
 }
     
     #terminal::-webkit-scrollbar { width: 8px; }
@@ -218,6 +217,14 @@
             padding: 8px;
         }
     }
+
+    #output {
+    flex-grow: 1; 
+    overflow-y: auto; 
+    min-height: 0; 
+    padding-bottom: 10px;
+   }
+           
 </style>
  
     <script src="js/app.fingerprint.js"></script>
