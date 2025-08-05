@@ -42,7 +42,8 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        overflow: hidden;
+          overflow: auto;
+  -webkit-overflow-scrolling: touch;
         background-color: var(--background);
         color: var(--foreground);
         font-family: var(--font-primary);
@@ -516,7 +517,7 @@ async function getIpInfoAdvanced() {
                     if (i < text.length) {
                         element.innerHTML += text.charAt(i);
                         i++;
-                        terminal.scrollTop = terminal.scrollHeight;
+                        scrollToBottom();
                     } else {
                         clearInterval(interval);
                         resolve();
@@ -524,6 +525,13 @@ async function getIpInfoAdvanced() {
                 }, speed);
             });
         }
+        
+        function scrollToBottom() {
+    requestAnimationFrame(() => {
+        terminal.scrollTop = terminal.scrollHeight;
+    });
+}
+
 
         async function printToTerminal(text, type = 'output-line', useTyping = true) {
             const line = document.createElement('div');
