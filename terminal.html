@@ -7,7 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
-    <style>
+   
+       <style>
     :root {
         --background: #1a1a1a;
         --window-bg: #1a1a1a;
@@ -25,7 +26,6 @@
 
     html {
         box-sizing: border-box;
-
         font-size: clamp(13px, calc(0.25vw + 11.5px), 16px);
     }
 
@@ -37,13 +37,11 @@
         margin: 0;
         padding: 0;
         width: 100%;
-        height: 100vh; 
-        height: var(--app-height);
+        height: var(--app-height); 
         display: flex;
         align-items: center;
         justify-content: center;
-          overflow: auto;
-  -webkit-overflow-scrolling: touch;
+        overflow: hidden; 
         background-color: var(--background);
         color: var(--foreground);
         font-family: var(--font-primary);
@@ -124,16 +122,16 @@
     
     .prompt .user { color: var(--green); }
 
-#command-input {
-    background: transparent;
-    border: none;
-    color: var(--foreground);
-    font-family: inherit;
-    font-size: inherit;
-    outline: none;
-    flex: 1;
-    text-shadow: 0 0 2px var(--foreground);
-}
+    #command-input {
+        background: transparent;
+        border: none;
+        color: var(--foreground);
+        font-family: inherit;
+        font-size: inherit;
+        outline: none;
+        flex: 1;
+        text-shadow: 0 0 2px var(--foreground);
+    }
     .output-line { white-space: pre-wrap; margin-bottom: 2px; }
     .output-line.command { color: var(--foreground); }
     .output-line.error { color: var(--red); text-shadow: 0 0 5px var(--red); }
@@ -197,10 +195,14 @@
     td .lang-fa, th .lang-fa { text-align: right; }
 
     @media (max-width: 768px) {
+       
+        html {
+            font-size: 13px;
+        }
 
         #terminal-window {
             width: 100%;
-            height: 100%;
+            height: 100%; 
             max-width: none;
             border-radius: 0;
             border: none;
@@ -208,11 +210,9 @@
         }
         .title-bar .controls { display: none; }
         #terminal { padding: 10px; }
-
     }
     
     @media (max-width: 600px) {
-
         #terminal {
             padding: 8px;
         }
