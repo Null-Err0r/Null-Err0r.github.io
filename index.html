@@ -208,8 +208,32 @@
     <button id="close-panel" aria-label="Close panel">X</button>
     <div id="panel-content"></div>
   </div>
-  
   <script>
+    const decoyPartB64 = 'ZGVsYmFyODY3MQ==';
+    const ENCRYPTED_AI_WORKER_URL = 'JQZaUCB7YlsDHgwdQxUEBQ8KAB5JUVgAWVxZQVZDKRBHTiAgIB1LBQIbBQQeA08KABpL';
+    function generateKey() {
+        const p1 = document.title; 
+        const p2 = document.getElementById('terminal').id; 
+        const p3 = document.getElementById('panel').id;   
+        const p4 = atob(decoyPartB64); 
+        return p1 + p2 + p3 + p4; 
+    }
+
+    function decryptUrl(encodedStr) {
+        try {
+            const dynamicKey = generateKey(); 
+            const xorResult = atob(encodedStr); 
+            let originalStr = '';
+            for (let i = 0; i < xorResult.length; i++) {
+                originalStr += String.fromCharCode(xorResult.charCodeAt(i) ^ dynamicKey.charCodeAt(i % dynamicKey.length));
+            }
+            return originalStr; 
+        } catch (e) {
+            console.error("Decryption failed:", e);
+            return "";
+        }
+    }
+
     const input = document.getElementById('commandInput');
     const output = document.getElementById('output');
     const langFaBtn = document.getElementById('langFaBtn');
@@ -329,7 +353,7 @@
             </form>
         </main>
         <script type="module">
-            const WORKER_URL = 'https://flat-thunder-44b8.awardbinsami.workers.dev/';
+            const WORKER_URL = '%%WORKER_URL_PLACEHOLDER%%';
             const conversationContainer = document.getElementById('conversation-container');
             const inputForm = document.getElementById('input-area');
             const promptInput = document.getElementById('prompt-input');
@@ -414,7 +438,6 @@
             window.addEventListener('resize', setRealViewportHeight);
             inputForm.addEventListener('submit', handleFormSubmit);
             conversationContainer.addEventListener('click', handleCopyClick);
-            promptInput.addEventListener('input', autoResizeTextarea);
             promptInput.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); inputForm.requestSubmit(); } });
             setRealViewportHeight();
             addMessage('ai', 'آماده گفتگو هستم = I am ready to talk');
@@ -505,6 +528,13 @@
         return currentLang === 'fa' ? `${commonHtmlStart}<h1>اسماعیل اسدی</h1><p class="bio">توسعه‌دهنده، پژوهشگر و علاقه‌مند به تکنولوژی</p>${commonHtmlEnd}` : `${commonHtmlStart}<h1>Esmail Asadi</h1><p class="bio">Developer, Researcher, and Tech Enthusiast</p>${commonHtmlEnd}`;
     };
 
+    function openAiPanel() {
+        const decryptedWorkerUrl = decryptUrl(ENCRYPTED_AI_WORKER_URL);
+        const finalAiHtml = aiAssistantContent.replace('%%WORKER_URL_PLACEHOLDER%%', decryptedWorkerUrl);
+        openPanel(`<iframe srcdoc="${finalAiHtml.replace(/"/g, '&quot;')}"></iframe>`);
+        return '';
+    }
+
     const commandFunctions = {
         'about': () => { if (!cachedAboutContent[lang]) cachedAboutContent[lang] = getAboutContent(lang); openPanel(cachedAboutContent[lang]); return ''; },
         'projects': async () => { openPanel(messages[lang].projectsLoading); if (!cachedProjectsContent) cachedProjectsContent = await fetchProjects(); openPanel(cachedProjectsContent); return ''; },
@@ -519,7 +549,7 @@
         'projects': { fn: commandFunctions.projects, label: "Projects", icon: "fa-solid fa-laptop-code" },
         'tutorial': { fn: commandFunctions.tutorial, label: "Tutorials", icon: "fa-solid fa-terminal" },
         'news': { fn: commandFunctions.news, label: "Security News", icon: "fa-solid fa-newspaper" },
-        'ai': { fn: () => { openPanel(`<iframe srcdoc="${aiAssistantContent.replace(/"/g, '&quot;')}"></iframe>`); return ''; }, label: "AI Assistant", icon: "fa-solid fa-robot" },
+        'ai': { fn: openAiPanel, label: "AI Assistant", icon: "fa-solid fa-robot" },
         'help': { fn: () => messages.en.helpText }, 'clear': { fn: commandFunctions.clear }
       },
       fa: {
@@ -527,7 +557,7 @@
         'کارها': { fn: commandFunctions.projects, label: "پروژه‌ها", icon: "fa-solid fa-laptop-code" },
         'آموزش': { fn: commandFunctions.tutorial, label: "آموزش", icon: "fa-solid fa-terminal" },
         'اخبار': { fn: commandFunctions.news, label: "اخبار امنیتی", icon: "fa-solid fa-newspaper" },
-        'هوش مصنوعی': { fn: () => { openPanel(`<iframe srcdoc="${aiAssistantContent.replace(/"/g, '&quot;')}"></iframe>`); return ''; }, label: "دستیار هوش مصنوعی", icon: "fa-solid fa-robot" },
+        'هوش مصنوعی': { fn: openAiPanel, label: "دستیار هوش مصنوعی", icon: "fa-solid fa-robot" },
         'راهنما': { fn: () => messages.fa.helpText }, 'پاک کن': { fn: commandFunctions.clear }
       }
     };
