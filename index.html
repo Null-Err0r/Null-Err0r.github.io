@@ -546,7 +546,7 @@
     }
 
     function showGuiWelcome() {
-        output.innerHTML = `<div class="welcome-logo" onclick="toggleTerminalMode()">&lt;Mr.SAM /&gt;</div><div class="welcome-hint" onclick="toggleTerminalMode()">${messages[lang].guiHint}</div>`;
+        output.innerHTML = `<div class="welcome-logo" onclick="toggleTerminalMode()">&lt;/Mr. SAM/&gt;❤️</div><div class="welcome-hint" onclick="toggleTerminalMode()">${messages[lang].guiHint}</div>`;
         document.body.classList.remove('terminal-mode'); closePanel();
     }
 
@@ -665,38 +665,60 @@
     
   </script>
  
-  <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
   <script>
-    tsParticles.load({
-      id: "tsparticles", 
-      options: {
-        fullScreen: { enable: true, zIndex: -1 },
-        background: { color: "#1a1a1a" },
-        particles: {
-          number: { value: 100, density: { enable: true, value_area: 800 } },
-          color: { value: ["#ffffff", "#ffccdd", "#ccffdd"], animation: { enable: true, speed: 20, sync: false } },
-          shape: { type: ["circle", "triangle", "star"], },
-          opacity: { value: { min: 0.3, max: 0.8 }, animation: { enable: true, speed: 1, minimumValue: 0.1 } },
-          size: { value: { min: 1, max: 5 }, animation: { enable: true, speed: 3, minimumValue: 0.5 } },
-          links: { enable: true, distance: 150, color: "#ffffff", opacity: 0.5, width: 1 },
-          move: { enable: true, speed: { min: 1, max: 3 }, direction: "none", random: true, outModes: { default: "bounce" } }
-        },
-        interactivity: {
-          detect_on: "canvas",
-          events: {
-            onHover: { enable: true, mode: ["grab", "repulse"], parallax: { enable: true, force: 60, smooth: 10 } },
-            onClick: { enable: true, mode: "push" }
-          },
-          modes: {
-            grab: { distance: 200, links: { opacity: 0.7 } },
-            repulse: { distance: 150, duration: 0.4 },
-            push: { quantity: 4 }
-          }
-        },
-        retina_detect: true, fpsLimit: 60 
+      
+  tsParticles.load({
+  id: "tsparticles",
+  options: {
+    fullScreen: { enable: true, zIndex: -1 },
+    background: { color: "#1a1a1a" },
+    particles: {
+      number: { value: 100, density: { enable: true, area: 800 } }, 
+      color: { value: ["#ffffff", "#ffccdd", "#ccffdd"], animation: { enable: true, speed: 20, sync: false } },
+      shape: { type: ["circle", "triangle", "star"] },
+      opacity: {
+        value: { min: 0.3, max: 0.8 },
+        animation: { enable: true, speed: 1, minimumValue: 0.1 }
+      },
+      size: {
+        value: { min: 1, max: 5 },
+        animation: { enable: true, speed: 3, minimumValue: 0.5 }
+      },
+      links: { enable: true, distance: 150, color: "#ffffff", opacity: 0.5, width: 1 },
+      move: {
+        enable: true,
+        speed: { min: 1, max: 3 },
+        direction: "none",
+        random: true,
+        outModes: { default: "bounce" }
       }
-    });
+    },
+    interactivity: {
+      detectsOn: "window", 
+      events: {
+        onHover: {
+          enable: true,
+          mode: "attract" 
+        },
+        onClick: {
+          enable: true,
+          mode: "push"
+        }
+      },
+      modes: {
+        attract: {
+          distance: 250,
+          duration: 0.4,
+          speed: 10 
+        },
+        push: { quantity: 4 }
+      }
+    },
+    detectRetina: true, 
+    fpsLimit: 60
+  }
+});
   </script>
-
 </body>
 </html>
