@@ -255,17 +255,17 @@
       en: {
         intro: [" Communication encryption ...{ok}", "Access confirmed...{ok}\n "],
         gibberish: ["0xFE34C_..AFF_&%..|#(*.._#", "SCANNING PORTS..|#_..[22, 80, 443]", "DECRYPTING DATA...sK29a#$..", "AUTH_TOKEN: 48fgb-bf4ca-8474a.."],
-        prompt: "> ", welcome: `Welcome`, promptHelp: `Type 'help' for commands. Press 'Esc' to enter and exit terminal.`,
-            helpText: `:Available commands\n about: Who am I-\n projects: Show my projects-\n tutorial: Windows, Linux & RE commands-\n news: Show latest security news-\n ai: Open AI Assistant-\n clear: Clear the terminal-`,
-        projectsLoading: `... Updateing`, projectsError: `Error fetching . Visit: https://github.com/null-err0r`,
+        prompt: "> ", welcome: `Welcome`, promptHelp: `Type 'help' for commands. Press 'Esc' to exit terminal .`,
+            helpText: `:Available commands\n about: Who am I-\n projects: Show my projects-\n tutorial: Windows, Linux & RE commands-\n news: Show latest security news-\n ai: Open AI Assistant-\n donate: Support the project-\n clear: Clear the terminal-`,
+        projectsLoading: `...Updateing`, projectsError: `Error fetching . Visit: https://github.com/null-err0r`,
         langSwitched: `Language switched to English.`, cmdNotFound: `Command not found. Type 'help'.`,
-        torDetected: `[!] Tor network detected.`, guiHint: "Press 'Esc' or click here to enter Terminal Mode"
+        torDetected: `[!] Tor network detected.`, guiHint: "Press 'Esc' or click here to enter and exit Terminal "
       },
       fa: {
         intro: [" رمزنگاری ارتباط ...{موفق}", "دسترسی تایید شد...{موفق}\n "],
         gibberish: ["0xFE34C_..AFF_&%..|#(*.._#", "اسکن پورت‌ها..|#_..[۲۲، ۸۰، ۴۴۳]", "رمزگشایی اطلاعات...sK29a#$..", "کلید تایید: ۴۸فگب-بف۴چا-۸۴۷۴آ.."],
         prompt: "> ", welcome: `خوش آمدید`, promptHelp: `برای شروع 'راهنما' را تایپ کنید. برای خروج از حالت ترمینال کلید 'Esc' را فشار دهید.`,
-        helpText: `دستورات موجود:\n- مشخصات: درباره من\n- کارها: نمایش پروژه‌ها\n- آموزش: دستورات ویندوز - لینوکس و مهندسی معکوس\n- اخبار: نمایش آخرین اخبار امنیتی\n- هوش مصنوعی:  فقط گفتگوی متنی با هوش مصنوعی \n- پاک کن: پاک کردن ترمینال`,
+        helpText: `دستورات موجود:\n- مشخصات: درباره من\n- کارها: نمایش پروژه‌ها\n- آموزش: دستورات ویندوز - لینوکس و مهندسی معکوس\n- اخبار: نمایش آخرین اخبار امنیتی\n- هوش مصنوعی:  فقط گفتگوی متنی با هوش مصنوعی \n- حمایت: حمایت مالی از پروژه\n- پاک کن: پاک کردن ترمینال`,
         projectsLoading: `بروز رسانی...`, projectsError: `خطا در دریافت . به این آدرس مراجعه کنید: https://github.com/null-err0r`,
         langSwitched: `زبان به فارسی تغییر یافت.`, cmdNotFound: `دستور یافت نشد. برای مشاهده دستورات 'راهنما' را تایپ کنید.`,
         torDetected: `[!] شبکه Tor شناسایی شد.`, guiHint: "برای ورود و خروج ترمینال کلید 'Esc' را فشار دهید یا اینجا کلیک کنید"
@@ -550,6 +550,7 @@
         'tutorial': { fn: commandFunctions.tutorial, label: "Tutorials", icon: "fa-solid fa-terminal" },
         'news': { fn: commandFunctions.news, label: "Security News", icon: "fa-solid fa-newspaper" },
         'ai': { fn: openAiPanel, label: "AI Assistant", icon: "fa-solid fa-robot" },
+        'donate': { fn: () => { openPanel('<iframe src="donate.html"></iframe>'); return ''; }, label: "Donate", icon: 'fa-solid fa-heart" style="color: #ff5555;"' },
         'help': { fn: () => messages.en.helpText }, 'clear': { fn: commandFunctions.clear }
       },
       fa: {
@@ -558,6 +559,7 @@
         'آموزش': { fn: commandFunctions.tutorial, label: "آموزش", icon: "fa-solid fa-terminal" },
         'اخبار': { fn: commandFunctions.news, label: "اخبار امنیتی", icon: "fa-solid fa-newspaper" },
         'هوش مصنوعی': { fn: openAiPanel, label: "دستیار هوش مصنوعی", icon: "fa-solid fa-robot" },
+        'حمایت': { fn: () => { openPanel('<iframe src="donate.html"></iframe>'); return ''; }, label: "حمایت ", icon: 'fa-solid fa-heart" style="color: #ff5555;"' },
         'راهنما': { fn: () => messages.fa.helpText }, 'پاک کن': { fn: commandFunctions.clear }
       }
     };
@@ -576,7 +578,7 @@
     }
 
     function showGuiWelcome() {
-        output.innerHTML = `<div class="welcome-logo" onclick="toggleTerminalMode()">&lt;/Mr. SAM/&gt;❤️</div><div class="welcome-hint" onclick="toggleTerminalMode()">${messages[lang].guiHint}</div>`;
+        output.innerHTML = `<div class="welcome-logo" onclick="toggleTerminalMode()">&lt;/Mr. SAM/&gt;</div><div class="welcome-hint" onclick="toggleTerminalMode()">${messages[lang].guiHint}</div>`;
         document.body.classList.remove('terminal-mode'); closePanel();
     }
 
