@@ -13,19 +13,21 @@
       --text-color: #e0e0e0;
     }
 
-    html, body {
-      background-color: #1a1a1a;
-      color: var(--text-color);
-      font-family: 'Vazirmatn', sans-serif;
-      margin: 0;
-      padding: 20px;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      justify-content: center; 
-      height: var(--app-height, 100vh); 
-      box-sizing: border-box;
-    }
+   html, body {
+  background-color: #1a1a1a;
+  color: var(--text-color);
+  font-family: 'Vazirmatn', sans-serif;
+  margin: 0;
+  padding: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+
+  justify-content: flex-start; 
+  height: var(--app-height, 100vh);
+  box-sizing: border-box;
+  overflow-y: auto; 
+}
 
     .button-container {
       display: flex;
