@@ -38,7 +38,10 @@ html[lang="en"] #terminal { text-align: left; }
 .split #terminal { width: 50vw; }
 
 #output {
-  flex-grow: 1; overflow-y: auto; white-space: pre-wrap; line-height: 1.4;
+  flex-grow: 1; overflow-y: auto; 
+    overflow-x: auto;
+  white-space: pre; 
+   line-height: 1.4;
   font-size: 1rem; user-select: text; margin: 10px 0; color: #ffffff;
   text-align: inherit; max-height: calc(100vh - 80px); padding-bottom: 20px;
 }
@@ -153,36 +156,67 @@ html[lang="en"] #time-fa { display: none; }
         overflow-y: auto !important;
     }
 
-    .split #terminal {
-        width: 100vw !important;
+
+
+
+    #terminal {
+        padding-top: 70px !important;
+
+        padding-bottom: 20px !important;
     }
 
+
+    .lang-buttons {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        margin: 0;
+        padding: 8px 5px;
+        gap: 5px;
+        z-index: 1001;
+        background-color: var(--bg-color, #1a1a1a);
+    }
+
+    .lang-btn { padding: 6px 12px; font-size: 0.9rem; }
+    .header-gif { height: 40px; margin: 0 5px; }
+    .time-display { font-size: 0.8rem; padding: 4px 8px; line-height: 1.4; }
+    .welcome-logo { font-size: 2rem; } 
+
+
+    .split #terminal { width: 100vw !important; }
     #panel {
         width: 100vw !important;
-        height: 100vh !important; 
+        height: 100vh !important;
         border: none !important;
         position: fixed !important;
         top: 0 !important;
         left: 0 !important;
-        z-index: 2000 !important; 
+        z-index: 2000 !important;
+    }
+    
+
+    #gui-controls {
+        flex-direction: column;
+        align-items: center;
+    }
+    .glass-btn {
+        width: 80%;
+        max-width: 350px;
+        padding: 18px; 
     }
 
-    #gui-controls { flex-direction: column; align-items: center; }
-    .glass-btn { width: 80%; padding: 20px; }
-    .lang-buttons {
-        position: fixed;
-        top: 0; left: 0; right: 0;
-        width: 100%; margin: 0;
-        padding: 8px 5px; gap: 5px;
-        z-index: 1001;
-        background-color: var(--bg-color, #1a1a1a);
+    .about-me-wrapper .row {
+        flex-direction: column !important; 
+        align-items: center;
+        gap: 15px;
     }
-    #terminal { padding-top: 70px; }
-    body:not(.terminal-mode) #terminal { padding-top: 0; }
-    body:not(.terminal-mode) .lang-buttons { position: sticky; }
-    .lang-btn { padding: 6px 12px; font-size: 0.9rem; }
-    .header-gif { height: 40px; margin: 0 5px; }
-    .time-display { font-size: 0.8rem; padding: 4px 8px; line-height: 1.4; }
+
+    .about-me-wrapper .row img {
+        width: 95% !important;
+        max-width: 450px;
+    }
 }
 
 #gui-controls {
