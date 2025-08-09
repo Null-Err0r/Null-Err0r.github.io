@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Mr. SAM</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Mono&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="icon" type="image/png" href="favicon/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="favicon/favicon.svg" />
+  <link rel="shortcut icon" href="favicon/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png" />
+  <link rel="manifest" href="favicon/site.webmanifest" />
+
+  <style>
+  :root {
+  --primary-color: #00ffcc;
+  --bg-color: #1a1a1a;
+  --text-color: #e0e0e0;
+}
+html, body {
+  height: 100%; min-height: var(--app-height, 100vh); margin: 0; padding: 0; background-color: transparent;
+  font-family: 'Vazirmatn', 'Fira Mono', monospace; color: var(--primary-color);
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  user-select: none; overflow: hidden; direction: rtl;
+  display: flex; position: relative; touch-action: manipulation;
+}
+#tsparticles { position: fixed; width: 100%; height: 100%; z-index: -1; }
+html[lang="en"] { font-family: 'Fira Mono', monospace; direction: ltr; }
+
+#terminal {
+  height: var(--app-height, 100vh); width: 100vw; display: flex; flex-direction: column;
+  background-color: transparent; padding: 10px; box-sizing: border-box;
+  text-align: right; transition: width 0.3s ease; z-index: 1; overflow-y: auto;
+}
+html[lang="en"] #terminal { text-align: left; }
+.split #terminal { width: 50vw; }
+
+#output {
+  flex-grow: 1; overflow-y: auto; white-space: pre-wrap; line-height: 1.4;
+  font-size: 1rem; user-select: text; margin: 10px 0; color: #ffffff;
+  text-align: inherit; max-height: calc(100vh - 80px); padding-bottom: 20px;
+}
+
+body:not(.terminal-mode) #output {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center;
+}
+.welcome-logo {
+    font-family: 'Fira Mono', monospace; font-size: 2.5rem; font-weight: bold;
+    color: #fff; text-shadow: 0 0 5px var(--primary-color), 0 0 10px var(--primary-color);
+    animation: fadeIn 2s ease-in-out; cursor: pointer;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.welcome-hint {
+    color: #777; font-size: 0.8rem; margin-top: 15px; cursor: pointer;
+    animation: fadeIn 2s ease-in-out 0.5s; animation-fill-mode: backwards;
+}
+
+#output a { color: #00cc7a; text-decoration: underline; cursor: pointer; }
+#output a:hover { color: #00ff99; }
+
+#prompt-wrapper {
+    display: none; align-items: center; border-top: 2px solid #ffffffcc;
+    background: #000; padding: 8px; position: sticky; bottom: 0; z-index: 10;
+}
+body.terminal-mode #prompt-wrapper { display: flex; }
+html[lang="fa"] #prompt-wrapper { flex-direction: row-reverse; }
+
+#commandInput {
+    border: none; background: transparent; color: #ffffff;
+    font-family: 'Vazirmatn', 'Fira Mono', monospace; font-size: 1.1rem;
+    outline: none; width: 100%; box-sizing: border-box; user-select: text;
+    text-align: inherit;
+}
+html[lang="fa"] #commandInput { padding-right: 5px; }
+html[lang="en"] #commandInput { padding-left: 5px; }
+
+.lang-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+    flex-wrap: wrap;   
+    gap: 10px;    
+    width: 100%;
+    padding: 10px 15px;   
+    box-sizing: border-box;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.lang-btn {
+    padding: 8px 16px;
+    font-family: 'Vazirmatn', 'Fira Mono', monospace;
+    font-size: 1rem;
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s ease;
+    text-align: center;
+    backdrop-filter: blur(5px);
+    flex-shrink: 0; 
+}
+
+.lang-btn:hover { background-color: rgba(255, 255, 255, 0.2); }
+.lang-btn.active { background-color: var(--primary-color); color: #000; cursor: default; }
+
+.header-gif {
+    height: 45px; 
+    width: auto;
+    margin: 0 10px;
+    opacity: 0.8;
+    flex-shrink: 0;
+}
+
+.time-display {
+    color: #e0e0e0;
+    font-size: 0.9rem; 
+    font-weight: bold;
+    font-family: 'Fira Mono', monospace;
+    background-color: transparent; 
+    padding: 5px 12px;
+    border-radius: 5px;
+    text-align: center;
+    direction: ltr;
+    line-height: 1.5;
+    text-shadow: 0 0 3px rgba(0, 255, 204, 0.2);
+    flex-shrink: 0;
+}
+
+.header-gif { order: 1; }
+#langFaBtn  { order: 2; }
+#langEnBtn  { order: 3; }
+#time-en    { order: 4; }
+#time-fa    { order: 5; display: none; }
+
+html[lang="fa"] #time-fa    { order: 1; display: block; }
+html[lang="fa"] #langFaBtn  { order: 2; }
+html[lang="fa"] #langEnBtn  { order: 3; }
+html[lang="fa"] .header-gif { order: 4; }
+html[lang="fa"] #time-en    { order: 5; display: none; }
+
+html[lang="en"] #time-en { display: block; }
+html[lang="en"] #time-fa { display: none; }
+
+@media (max-width: 768px) {
+    body {
+        overflow-y: auto !important;
+    }
+
+    .split #terminal {
+        width: 100vw !important;
+    }
+
+    #panel {
+        width: 100vw !important;
+        height: 100vh !important; 
+        border: none !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        z-index: 2000 !important; 
+    }
+
+    #gui-controls { flex-direction: column; align-items: center; }
+    .glass-btn { width: 80%; padding: 20px; }
+    .lang-buttons {
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        width: 100%; margin: 0;
+        padding: 8px 5px; gap: 5px;
+        z-index: 1001;
+        background-color: var(--bg-color, #1a1a1a);
+    }
+    #terminal { padding-top: 70px; }
+    body:not(.terminal-mode) #terminal { padding-top: 0; }
+    body:not(.terminal-mode) .lang-buttons { position: sticky; }
+    .lang-btn { padding: 6px 12px; font-size: 0.9rem; }
+    .header-gif { height: 40px; margin: 0 5px; }
+    .time-display { font-size: 0.8rem; padding: 4px 8px; line-height: 1.4; }
+}
+
+#gui-controls {
+    display: none; flex-wrap: wrap; justify-content: center; align-items: center;
+    gap: 15px; padding: 20px 0; width: 100%;
+}
+body:not(.terminal-mode) #gui-controls { display: flex; }
+
+.glass-btn {
+    background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px; padding: 15px 25px; color: #e0e0e0;
+    font-family: 'Vazirmatn', sans-serif; font-size: 1rem; font-weight: bold;
+    cursor: pointer; transition: all 0.3s ease; backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); display: flex;
+    align-items: center; justify-content: center; gap: 10px; min-width: 200px;
+}
+html[lang="en"] .glass-btn { font-family: 'Fira Mono', monospace; }
+.glass-btn:hover {
+    background: rgba(255, 255, 255, 0.15); transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+.glass-btn i { font-size: 1.2rem; color: var(--primary-color); }
+
+#panel {
+  display: none; width: 50vw;
+  height: var(--app-height, 100vh);
+  background-color: #000; color: #ffffff;
+  padding: 10px;
+  padding-top: 45px;
+  box-sizing: border-box;
+  font-family: 'Vazirmatn', 'Fira Mono', monospace; animation: slideIn 0.3s ease;
+  z-index: 50; border-left: 1px solid #30363d;
+  position: relative;
+}
+@keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+html[lang="en"] #panel { text-align: left; animation-name: slideInEn; border-left: none; border-right: 1px solid #30363d;}
+@keyframes slideInEn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+
+#panel-content {
+    height: 100%;
+    overflow-y: auto;
+    position: relative;
+}
+#panel-content iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background-color: #1a1a1a;
+}
+
+#close-panel {
+    position: absolute; top: 10px; left: 10px; padding: 4px 10px;
+    background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px; color: #ffffff; font-family: 'Vazirmatn', sans-serif;
+    cursor: pointer; z-index: 1000;
+}
+#close-panel:hover { background-color: rgba(255, 255, 255, 0.2); }
+
+.progress-container {
+    position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
+    width: 150px; height: 15px; background-color: #022a1c; border-radius: 8px;
+    overflow: hidden; z-index: 1001; display: none;
+    box-shadow: 0 0 8px rgba(0, 204, 122, 0.5);
+}
+.progress-bar { width: 0; height: 100%; background: linear-gradient(90deg, #00cc7a, #00ff99); transition: width 1.5s ease-in-out; }
+.progress-container.loading { display: block; }
+
+#output::-webkit-scrollbar, #panel-content::-webkit-scrollbar { width: 8px; }
+#output::-webkit-scrollbar-track, #panel-content::-webkit-scrollbar-track { background: #010409; }
+#output::-webkit-scrollbar-thumb, #panel-content::-webkit-scrollbar-thumb { background: #30363d; border-radius: 6px; }
+
+.visitor, .stats, .projects, .other-projects, .footer { margin-bottom: 15px; text-align: center; }
+.projects h2, .other-projects h2 { font-size: 1.3rem; margin-bottom: 8px; color: var(--primary-color); }
+.project-list-container { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 8px; }
+.project-list-container > div { padding: 12px; background-color: #022a1c; border: 1px solid #00cc7a; border-radius: 6px; width: 90%; max-width: 350px; text-align: center; }
+.project-list-container a { color: var(--primary-color); font-size: 1rem; text-decoration: none; font-weight: bold; }
+.project-list-container a:hover { color: #33ff99; text-decoration: underline; }
+.project-list-container p { color: #ffffff; font-size: 0.8rem; margin-top: 5px; }
+.project-list { list-style: none; padding: 0; margin: 0; text-align: center; }
+.project-list li { margin: 8px 0; }
+.project-list a { color: #00cc7a; text-decoration: none; font-size: 0.9rem; }
+.project-list a:hover { color: #00ff99; text-decoration: underline; }
+
+.icon-combo {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--primary-color);
+    vertical-align: middle;
+}
+
+.about-me-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 40px;
+}
+
+.bio-container * { box-sizing: border-box; }
+.bio-container { max-width: 480px; margin: 0 auto; text-align: center; color: #f0f0f0; padding: 1rem; }
+.bio-container .avatar { width: 200px; height: 200px; border-radius: 50%; margin: 1rem auto; object-fit: contain; background-color: #000; border: 3px solid #f0f0f0; }
+.avatar-wrapper { position: relative; display: inline-block; }
+.glow-ring { content: ''; position: absolute; top: -15px; left: -15px; width: calc(100% + 30px); height: calc(100% + 30px); border-radius: 50%; background: conic-gradient(from 0deg, #00ffcc, #002a17, #00ffcc); animation: spin 4s linear infinite; z-index: -1; filter: blur(12px) brightness(1.5); }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+.bio-container h1 { font-size: 1.5rem; margin: 0.5rem 0; }
+.bio-container .bio { color: #ccc; font-size: 1rem; margin-bottom: 2rem; }
+.bio-container .link-button { display: flex; align-items: center; justify-content: center; text-decoration: none !important; margin: 0.5rem 0; padding: 1rem; background: rgba(255, 255, 255, 0.05); color: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); transition: transform 0.2s ease, background 0.2s; }
+.bio-container .link-button:hover { transform: scale(1.02); background: rgba(255, 255, 255, 0.15); }
+.bio-container .link-button i { margin-left: 0.5rem; }
+ </style>
+  
+</head>
+
+<body>
+  <div id="tsparticles"></div>
+
+  <div id="terminal" role="main" aria-label="Terminal Portfolio">
+
+<div class="lang-buttons">
+    <button class="lang-btn" id="langFaBtn" aria-label="تغییر به فارسی">فارسی</button>
+    <button class="lang-btn" id="langEnBtn" aria-label="Switch to English">English</button>
+    <span id="time-fa" class="time-display"></span>
+    <span id="time-en" class="time-display"></span>
+    <img src="res/shapes.gif" alt="Globe GIF" class="header-gif" />
+</div>
+
+    <div id="gui-controls"></div>
+    <pre id="output" aria-live="polite" aria-atomic="false"></pre>
+    <div id="prompt-wrapper">
+        <span id="prompt-label"></span>
+        <input type="text" id="commandInput" autocomplete="off" autofocus aria-label="Command input" spellcheck="false" inputmode="text" />
+    </div>
+  </div>
+  <div id="panel" role="dialog" aria-label="Content Panel">
+    <button id="close-panel" aria-label="Close panel">X</button>
+    <div id="panel-content"></div>
+  </div>
+  <script>
+    const decoyPartB64 = 'ZGVsYmFyODY3MQ==';
+    const ENCRYPTED_AI_WORKER_URL = 'JQZaUCB7YlsDHgwdQxUEBQ8KAB5JUVgAWVxZQVZDKRBHTiAgIB1LBQIbBQQeA08KABpL';
+    function generateKey() {
+        const p1 = document.title; 
+        const p2 = document.getElementById('terminal').id; 
+        const p3 = document.getElementById('panel').id;   
+        const p4 = atob(decoyPartB64); 
+        return p1 + p2 + p3 + p4; 
+    }
+
+    function decryptUrl(encodedStr) {
+        try {
+            const dynamicKey = generateKey(); 
+            const xorResult = atob(encodedStr); 
+            let originalStr = '';
+            for (let i = 0; i < xorResult.length; i++) {
+                originalStr += String.fromCharCode(xorResult.charCodeAt(i) ^ dynamicKey.charCodeAt(i % dynamicKey.length));
+            }
+            return originalStr; 
+        } catch (e) {
+            console.error("Decryption failed:", e);
+            return "";
+        }
+    }
+
+    const input = document.getElementById('commandInput');
+    const output = document.getElementById('output');
+    const langFaBtn = document.getElementById('langFaBtn');
+    const langEnBtn = document.getElementById('langEnBtn');
+    const panel = document.getElementById('panel');
+    const panelContent = document.getElementById('panel-content');
+    const closePanelBtn = document.getElementById('close-panel');
+    const guiControls = document.getElementById('gui-controls');
+    const timeFaDisplay = document.getElementById('time-fa');
+    const timeEnDisplay = document.getElementById('time-en');
+    let lang = 'fa';
+    let isTerminalMode = false;
+    let cachedProjectsContent = null;
+    let cachedAboutContent = {}; 
+    let commandHistory = [];
+    let historyIndex = -1;
+    let introHasRun = { fa: false, en: false };
+    
+    const TIME_CORRECTION_OFFSET = -1 * (3 * 60 * 60 * 1000 + 30 * 60 * 1000); 
+    
+    const messages = {
+      en: {
+        intro: [],
+gibberish: [
+    "Initializing secure core ... [OK]",
+    "Verifying digital signature ... [MATCH]",
+    "Establishing encrypted link ... [LOCKED]",
+    "Analyzing system integrity ... [SECURE]",
+    "Loading security protocols ... [ACTIVE]",
+    "Awaiting secure handshake ... [CONFIRMED]",
+    "Final security check ... [PASS]"
+],
+        prompt: "> ", welcome: `Welcome`, promptHelp: `Type 'help' for commands. Press 'Esc' to exit terminal .`,
+            helpText: `:Available commands\n about: Who am I-\n projects: Show my projects-\n tutorial: Windows, Linux & RE commands-\n updates: The Newest in Security-\n ai: Open AI Assistant-\n donate: Support the project-\n clear: Clear the terminal-`,
+        projectsLoading: ` ... Updateing `, projectsError: `Error fetching . Visit: https://github.com/null-err0r`,
+        langSwitched: `Language switched to English.`, cmdNotFound: `Command not found. Type 'help'.`,
+        torDetected: `[!] Tor network detected.`, guiHint: "Press 'Esc' or click here to enter and exit Terminal "
+      },
+      fa: {
+         intro: [],
+gibberish: [
+    "راه‌اندازی هسته امن ... [تأیید]",
+    "بررسی امضای دیجیتال ... [مطابق]",
+    "ایجاد پیوند رمزنگاری‌شده ... [قفل شد]",
+    "تحلیل یکپارچگی سیستم ... [امن]",
+    "بارگذاری پروتکل‌های امنیتی ... [فعال]",
+    "در انتظار دست‌دهی امن ... [تأیید شد]",
+    "بررسی نهایی امنیت ... [موفق]"
+],
+
+        prompt: "> ", welcome: `خوش آمدید`, promptHelp: `برای شروع 'راهنما' را تایپ کنید. برای خروج از حالت ترمینال کلید 'Esc' را فشار دهید.`,
+        helpText: `دستورات موجود:\n- مشخصات: درباره من\n- کارها: نمایش پروژه‌ها\n- آموزش: دستورات ویندوز - لینوکس و مهندسی معکوس\n- تازه ها:  جدیدترین ها از دنیای امنیت\n- هوش مصنوعی:  فقط گفتگوی متنی با هوش مصنوعی \n- حمایت: حمایت مالی از پروژه\n- پاک کن: پاک کردن ترمینال`,
+        projectsLoading: `بروز رسانی ...`, projectsError: `خطا در دریافت . به این آدرس مراجعه کنید: https://github.com/null-err0r`,
+        langSwitched: `زبان به فارسی تغییر یافت.`, cmdNotFound: `دستور یافت نشد. برای مشاهده دستورات 'راهنما' را تایپ کنید.`,
+        torDetected: `[!] شبکه Tor شناسایی شد.`, guiHint: "برای ورود و خروج ترمینال کلید 'Esc' را فشار دهید یا اینجا کلیک کنید"
+      }
+    };
+    
+    const aiAssistantContent = `
+    <!DOCTYPE html>
+    <html lang="fa" dir="rtl">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Mr. SAM</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+        <style>
+            :root {
+                --background: #1a1a1a;
+                --window-bg: #1a1a1a;
+                --title-bar: #022a1c;
+                --foreground: #e0e0e0;
+                --primary-color: #00ffcc;
+                --border-color: #00cc7a;
+                --green: #50fa7b;
+                --red: #ff5555;
+                --comment: #6272a4;
+                --user-bubble: #2a2a3e;
+                --ai-bubble: #253554;
+                --dracula-bg: #282a36;
+                --font-primary: 'Vazirmatn', sans-serif;
+                --font-code: 'Fira Code', monospace;
+                --app-height: 100vh;
+            }
+            html { box-sizing: border-box; font-size: 16px; }
+            *, *::before, *::after { box-sizing: inherit; }
+            body { margin: 0; padding: 0; width: 100%; height: var(--app-height); display: flex; align-items: center; justify-content: center; overflow: hidden; background-color: var(--background); color: var(--foreground); font-family: var(--font-primary); }
+            #chat-window { width: 100%; height: 100%; max-width: 1000px; background-color: var(--window-bg); border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 0 35px rgba(0, 255, 204, 0.2); display: flex; flex-direction: column; overflow: hidden; position: relative; }
+            .title-bar { background-color: var(--title-bar); color: var(--foreground); padding: 8px 12px; font-weight: bold; border-bottom: 1px solid var(--border-color); text-align: center; cursor: default; flex-shrink: 0; font-family: var(--font-code); }
+            #conversation-container { flex-grow: 1; padding: 20px; overflow-y: auto; scroll-behavior: smooth; display: flex; flex-direction: column; gap: 20px; }
+            #conversation-container::-webkit-scrollbar { width: 8px; }
+            #conversation-container::-webkit-scrollbar-track { background: var(--window-bg); }
+            #conversation-container::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+            #conversation-container::-webkit-scrollbar-thumb:hover { background: var(--primary-color); }
+            .message { display: flex; flex-direction: column; max-width: 80%; padding: 12px 18px; border-radius: 15px; line-height: 1.7; position: relative; animation: fadeIn 0.3s ease-out; }
+            @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+            .message .author { font-weight: bold; margin-bottom: 8px; font-size: 0.9em; }
+            .message.user { background-color: var(--user-bubble); border-bottom-right-radius: 3px; align-self: flex-end; text-align: right; }
+            .message.user .author { color: var(--green); }
+            .message.ai { background-color: var(--ai-bubble); border-bottom-left-radius: 3px; align-self: flex-start; text-align: left; direction: ltr; }
+            .message.ai[dir="rtl"] { text-align: right; direction: rtl; }
+            .message.ai .author { color: var(--primary-color); }
+            #input-area { display: flex; padding: 15px; border-top: 1px solid var(--border-color); flex-shrink: 0; gap: 10px; background-color: var(--title-bar); }
+            #prompt-input { flex-grow: 1; background: transparent; border: 1px solid var(--comment); color: var(--foreground); font-family: inherit; font-size: 1rem; outline: none; padding: 10px; border-radius: 6px; resize: none; max-height: 150px; transition: border-color 0.2s; }
+            #prompt-input:focus { border-color: var(--primary-color); }
+            #prompt-input::placeholder { color: var(--comment); }
+            #submit-button { background: var(--primary-color); border: none; border-radius: 6px; color: #000; cursor: pointer; padding: 0 15px; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s, opacity 0.2s; }
+            #submit-button:hover:not(:disabled) { background-color: #00cc7a; }
+            #submit-button:disabled { background-color: var(--comment); cursor: not-allowed; opacity: 0.6; }
+            .copy-button { position: absolute; top: 8px; right: 12px; background: none; border: none; cursor: pointer; color: var(--comment); transition: color 0.2s; padding: 5px; }
+            .message.ai[dir="rtl"] .copy-button { right: auto; left: 12px; }
+            .copy-button:hover { color: var(--primary-color); }
+            .copy-button svg { width: 16px; height: 16px; }
+            .copy-button .copied-text { display: none; }
+            .copy-button.copied .copied-text { display: inline; font-size: 0.8em; }
+            .copy-button.copied svg { display: none; }
+            .typing-indicator span { height: 8px; width: 8px; background-color: var(--comment); display: inline-block; border-radius: 50%; margin: 0 2px; animation: bounce 1.4s infinite ease-in-out both; }
+            .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+            .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+            @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
+            .message.ai pre { background-color: var(--dracula-bg); color: #f8f8f2; padding: 1em; border-radius: 5px; overflow-x: auto; font-family: var(--font-code); font-size: 0.9em; margin-top: 10px; }
+            .message.ai code { font-family: var(--font-code); }
+            @media (max-width: 768px) { html { font-size: 14px; } #chat-window { width: 100%; height: 100%; max-width: none; border-radius: 0; border: none; box-shadow: none; } #conversation-container { padding: 15px; } .message { max-width: 90%; } }
+        </style>
+    </head>
+    <body>
+        <main id="chat-window">
+            <header class="title-bar">AI Assistant</header> 
+            <section id="conversation-container"></section>
+            <form id="input-area">
+                <textarea id="prompt-input" placeholder=" Write ( Shift+Enter for new line ) " rows="1"></textarea>
+                <button id="submit-button" type="submit" title="ارسال Send">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" /></svg>
+                </button>
+            </form>
+        </main>
+        <script type="module">
+            const WORKER_URL = '%%WORKER_URL_PLACEHOLDER%%';
+            const conversationContainer = document.getElementById('conversation-container');
+            const inputForm = document.getElementById('input-area');
+            const promptInput = document.getElementById('prompt-input');
+            const submitButton = document.getElementById('submit-button');
+            const setRealViewportHeight = () => document.documentElement.style.setProperty('--app-height', \`\${window.innerHeight}px\`);
+            const scrollToBottom = () => conversationContainer.scrollTop = conversationContainer.scrollHeight;
+            const autoResizeTextarea = () => { promptInput.style.height = 'auto'; promptInput.style.height = \`\${promptInput.scrollHeight}px\`; };
+            const formatMessageContent = (text) => { const escapedText = text.replace(/</g, "&lt;").replace(/>/g, "&gt;"); return escapedText.replace(/\\\`\\\`\\\`([\\s\\S]*?)\\\`\\\`\\\`/g, '<pre><code>$1</code></pre>'); };
+            const hasPersian = (text) => /[\\u0600-\\u06FF]/.test(text);
+            const addMessage = (author, content) => {
+                const isUser = author === 'user';
+                const messageDiv = document.createElement('div');
+                messageDiv.className = \`message \${author}\`;
+                const authorName = isUser ? 'شما You' : 'AI';
+                const formattedContent = isUser ? content : formatMessageContent(content);
+                let copyButtonHTML = '';
+                if (!isUser) {
+                    if (hasPersian(content)) messageDiv.dir = 'rtl';
+                    copyButtonHTML = \`<button class="copy-button" title=" Copy text کپی کردن متن"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 4.125l-2.25 2.25m0 0l-2.25-2.25m2.25 2.25V17.25m0 0h-2.25m2.25 0h2.25" /></svg><span class="copied-text">کپی شد Copied</span></button>\`;
+                }
+                messageDiv.innerHTML = \`\${copyButtonHTML}<div class="author">\${authorName}</div><div class="content">\${formattedContent}</div>\`;
+                conversationContainer.appendChild(messageDiv);
+                scrollToBottom();
+                return messageDiv;
+            };
+            const streamAIResponse = async (prompt) => {
+                submitButton.disabled = true;
+                const aiMessageDiv = addMessage('ai', '<div class="typing-indicator"><span></span><span></span><span></span></div>');
+                const aiContentDiv = aiMessageDiv.querySelector('.content');
+                let fullResponse = ''; 
+                try {
+                    const response = await fetch(WORKER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt }) });
+                    if (!response.ok) throw new Error(\`Server error: \${response.statusText}\`);
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder();
+                    let fullResponse = '';
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+                        const chunk = decoder.decode(value, { stream: true });
+                        const lines = chunk.split('\\n');
+                        for (const line of lines) {
+                            if (line.trim().startsWith('data: ')) {
+                                const jsonString = line.substring(6);
+                                if (jsonString.trim() === '[DONE]') break;
+                                try {
+                                    const data = JSON.parse(jsonString);
+                                    if (data?.response) { fullResponse += data.response; }
+                                } catch (e) { console.error("Could not parse JSON chunk:", jsonString); }
+                            }
+                        }
+                        aiContentDiv.innerHTML = formatMessageContent(fullResponse);
+                        if (!aiMessageDiv.dir && hasPersian(fullResponse)) { aiMessageDiv.dir = 'rtl'; }
+                        scrollToBottom();
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    aiContentDiv.innerHTML = \`<span style="color:var(--red);">خطا Error: \${error.message}</span>\`;
+                } finally {
+                    submitButton.disabled = false;
+                    promptInput.focus();
+                    if (fullResponse.trim() === 'بریم تو کار یخ شکن') {
+                        console.log("Sending 'openProxy' signal from iframe..."); 
+                        parent.postMessage({ type: 'openProxynet' }, '*');
+                    }
+                }
+            };
+            const handleFormSubmit = (event) => {
+                event.preventDefault();
+                const prompt = promptInput.value.trim();
+                if (prompt === '' || submitButton.disabled) return;
+                addMessage('user', prompt);
+                promptInput.value = '';
+                autoResizeTextarea();
+                streamAIResponse(prompt);
+            };
+            const handleCopyClick = (e) => {
+                const copyButton = e.target.closest('.copy-button');
+                if (!copyButton) return;
+                const messageDiv = copyButton.closest('.message');
+                const contentDiv = messageDiv.querySelector('.content');
+                navigator.clipboard.writeText(contentDiv.innerText).then(() => {
+                    copyButton.classList.add('copied');
+                    setTimeout(() => { copyButton.classList.remove('copied'); }, 2000);
+                }).catch(err => { console.error('Failed to copy text: ', err); alert('Failed to copy!'); });
+            };
+            window.addEventListener('resize', setRealViewportHeight);
+            inputForm.addEventListener('submit', handleFormSubmit);
+            conversationContainer.addEventListener('click', handleCopyClick);
+            promptInput.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); inputForm.requestSubmit(); } });
+            setRealViewportHeight();
+            addMessage('ai', 'آماده گفتگو هستم <br> I am ready to talk');
+            promptInput.focus();
+        <\/script>
+    </body>
+    </html>
+    `;
+    
+    const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+    const isMobileDevice = () => /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isTorDetected = () => (!window.matchMedia('(prefers-color-scheme:dark)').matches && typeof chrome !== "object" && !navigator.requestMIDIAccess);
+    const makeLinksClickable = (text) => text.replace(/(?<!["'=])(https?:\/\/[^\s<>“']+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+
+    let timeOffset = 0;
+
+    async function synchronizeClock() {
+    try {
+        const response = await fetch('https://worldtimeapi.org/api/timezone/Etc/UTC');
+        if (!response.ok) throw new Error('Network response failed.');
+        
+        const data = await response.json();
+        const serverTime = new Date(data.utc_datetime).getTime();
+        const localTime = new Date().getTime();
+        
+        timeOffset = serverTime - localTime;
+
+    } catch (error) {
+        console.error("Clock synchronization failed. Using local time.", error);
+        timeOffset = 0;
+    }
+}
+
+    async function runIntroAnimation() {
+        input.disabled = true;
+        output.innerHTML = '';
+        for(let i=0; i < 8; i++) {
+            output.innerHTML = makeLinksClickable(messages[lang].gibberish[Math.floor(Math.random() * messages[lang].gibberish.length)]);
+            await sleep(80);
+        }
+        output.innerHTML = '';
+        await sleep(200);
+    }
+    
+    function openPanel(content) {
+      history.pushState({panelOpen: true}, null, '#panel');
+      document.body.classList.add('split');
+      panel.style.display = 'block';
+      panelContent.innerHTML = `<div class="progress-container" id="progressContainer"><div class="progress-bar" id="progressBar"></div></div>${content}`;
+      
+      panelContent.scrollTop = 0;
+      
+      const progressContainer = panelContent.querySelector('#progressContainer');
+      const progressBar = panelContent.querySelector('#progressBar');
+      if (progressContainer && progressBar) {
+          progressContainer.classList.add('loading');
+          setTimeout(() => { progressBar.style.width = '100%'; setTimeout(() => progressContainer.classList.remove('loading'), 1500); }, 100);
+      }
+    }
+
+    function closePanel() {
+      document.body.classList.remove('split');
+      panel.style.display = 'none';
+      panelContent.innerHTML = '';
+      if(isTerminalMode) input.focus();
+    }
+    
+    async function fetchProjects() {
+      const importantRepoNames = [ 
+        'Advanced-Mic-Camera-Monitor', 'Hiden-Text-Detector', 'YouTube-Downloader',
+        'Filtering-Analysis-Tool', 'TimeZone', 'DB-Search-GUI', 'null-err0r', 'null-err0r.github.io' 
+      ];
+      try {
+        const response = await fetch('https://api.github.com/users/null-err0r/repos');
+        const data = await response.json();
+        let otherRepoListHtml = '<div class="other-projects"><h2 class="center"></h2><ul class="project-list">';
+        const filteredRepos = data.filter(repo => !repo.fork);
+        filteredRepos.sort((a, b) => a.name.localeCompare(b.name));
+        filteredRepos.forEach(repo => { otherRepoListHtml += `<li><a href="${repo.html_url}" target="_blank">${repo.name}</a></li>`; });
+        otherRepoListHtml += '</ul></div>';
+        return `<div class="container" style="display: flex; flex-direction: column; align-items: center; gap: 30px; max-width: 100%; margin: auto;">
+          <div class="row" style="display: flex; justify-content: center; flex-wrap: wrap; width: 100%;"><img loading="lazy" src="http://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=null-err0r&theme=gruvbox" alt="Profile Details" style="max-width: 100%; height: auto; pointer-events: none; user-select: none; display: block;" /></div>
+          <div class="row" style="display: flex; justify-content: center; flex-wrap: wrap; width: 100%;"><img loading="lazy" src="http://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=null-err0r&theme=gruvbox" alt="Repos per Language" style="max-width: 100%; height: auto; pointer-events: none; user-select: none; display: block;" /><img loading="lazy" src="http://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=null-err0r&theme=gruvbox" alt="Most Commit Language" style="max-width: 100%; height: auto; pointer-events: none; user-select: none; display: block;" /></div>
+          <div class="row" style="display: flex; justify-content: center; flex-wrap: wrap; width: 100%;"><img loading="lazy" src="http://github-profile-summary-cards.vercel.app/api/cards/stats?username=null-err0r&theme=gruvbox" alt="Stats" style="max-width: 100%; height: auto; pointer-events: none; user-select: none; display: block;" /><img loading="lazy" src="http://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=null-err0r&theme=gruvbox&utcOffset=8" alt="Productive Time" style="max-width: 100%; height: auto; pointer-events: none; user-select: none; display: block;" /></div>
+          <div class="row" style="display: flex; justify-content: center; width: 100%;"><img loading="lazy" src="https://github-readme-streak-stats.herokuapp.com/?user=null-err0r&theme=gruvbox" alt="GitHub Streak" style="max-width: 100%; height: auto; pointer-events: none; user-select: none; display: block;" /></div>
+          <div class="row" style="display: flex; justify-content: center; width: 100%;"><img loading="lazy" src="https://github-profile-trophy.vercel.app/?username=null-err0r&theme=gruvbox&no-frame=true&margin-w=15&margin-h=15&row=2&column=4" alt="Trophies" style="max-width: 100%; height: auto; pointer-events: none; user-select: none; display: block;" /></div>
+          <div class="projects"><h2 class="center">📂</h2><div class="project-list-container">
+            <div><a href="https://github.com/null-err0r/Advanced-Mic-Camera-Monitor" target="_blank">Advanced Mic Camera Monitor</a><p>🛡️ مانیتورینگ میکروفن و دوربین برای شناسایی فعالیت‌های مشکوک و جاسوسی</p></div>
+            <div><a href="https://github.com/null-err0r/Hiden-Text-Detector" target="_blank">Hidden Text Detector</a><p>🧐 کشف متون پنهان در صفحات یا تصاویر با تکنیک‌های بینایی ماشین</p></div>
+            <div><a href="https://github.com/null-err0r/TimeZone" target="_blank">TimeZone</a><p>⏰🌍  تایم‌زون‌های سفارشی برای برنامه‌های جداگانه روی اندروید روت‌شده</p></div>
+            <div><a href="https://github.com/null-err0r/Filtering-Analysis-Tool" target="_blank">Filtering Analysis Tool</a><p>🧱 ابزار تحلیل شبکه برای شناسایی فیلترینگ</p></div>
+            <div><a href="https://github.com/null-err0r/DB-Search-GUI" target="_blank">DB Search GUI</a><p>🔎 جستجو در فایل‌های دیتابیس متنی با پشتیبانی از فارسی </p></div>
+            <div><a href="https://github.com/null-err0r/YouTube-Downloader" target="_blank">YouTube Downloader</a><p>▶️ دانلود ویدیو و صدا از یوتیوب با پشتیبانی از کیفیت‌های مختلف و رابط گرافیکی</p></div>
+          </div>${otherRepoListHtml}<div style="display: flex; justify-content: center; width: 100%;"><br></br><img loading="lazy" src="https://ghvc.kabelkultur.se/?username=null-err0r&abbreviated=true&color=ff5500&label=%E2%81%AE%20%E2%81%AE%E2%81%AE%20%E2%81%AE%E2%81%AE%20%F0%9F%91%80%20%E2%81%AE%20%E2%81%AE%E2%81%AE%20%E2%81%AE%E2%81%AEVisitor%E2%81%AE%20%E2%81%AE%E2%81%AE%20%E2%81%AE%E2%81%AE%20%F0%9F%91%80%E2%81%AE%20%E2%81%AE%E2%81%AE%20%E2%81%AE%E2%81%AE%E2%81%AE%20%E2%81%AE%E2%81%AE%20%E2%81%AE%E2%81%AE⁮⁮" alt="Visitor Counter" /><br></br></div>`;
+      } catch (error) {
+        console.error('Error fetching repositories:', error);
+        return makeLinksClickable(messages[lang].projectsError);
+      }
+    }
+    
+const getAboutContent = (currentLang) => {
+    const commonHtmlStart = `<div class="bio-container"><div class="avatar-wrapper"><div class="glow-ring"></div><img src="https://avatars.githubusercontent.com/u/19436819?v=4" alt="Avatar" class="avatar"></div>`;
+    
+    const commonHtmlEnd = `
+        <a class="link-button" href="https://github.com/Null-Err0r" target="_blank" rel="noopener noreferrer"><i class="fab fa-github" style="font-size:1.2em; vertical-align:middle;"></i>GitHub</a>
+        <a class="link-button" href="https://t.me/NullErr0r" target="_blank" rel="noopener noreferrer"><i class="fab fa-telegram" style="font-size:1.2em; vertical-align:middle;"></i>Telegram</a>
+        <a class="link-button" href="https://x.com/0x0Err0r" target="_blank" rel="noopener noreferrer"><i class="fab fa-twitter" style="font-size:1.2em; vertical-align:middle;"></i>X (Twitter)</a>
+        <a class="link-button" href="mailto:NullError@duck.com" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-envelope" style="font-size:1.2em; vertical-align:middle;"></i>Email</a>
+        <a class="link-button" href="#" onclick="openPanel('<iframe src=\\'content/privacy.html\\'></iframe>'); return false;"><i class="fa-solid fa-user-secret" style="font-size:1.2em; vertical-align:middle;"></i>سیاست حفظ حریم خصوصی ربات</a>
+    </div>`;
+    
+    return currentLang === 'fa' 
+        ? `${commonHtmlStart}<h1>اسماعیل اسدی</h1><p class="bio">توسعه‌دهنده، پژوهشگر و علاقه‌مند به تکنولوژی</p>${commonHtmlEnd}` 
+        : `${commonHtmlStart}<h1>Esmail Asadi</h1><p class="bio">Developer, Researcher, and Tech Enthusiast</p>${commonHtmlEnd}`;
+};
+
+async function openAboutMePanel() {
+    openPanel(`<div>${messages[lang].projectsLoading}</div>`);
+    const aboutContent = getAboutContent(lang);
+    const projectsContent = await fetchProjects();
+    const combinedHtml = `<div class="about-me-wrapper">${aboutContent}${projectsContent}</div>`;
+    openPanel(combinedHtml);
+}
+
+
+    function openAiPanel() {
+        const decryptedWorkerUrl = decryptUrl(ENCRYPTED_AI_WORKER_URL);
+        const finalAiHtml = aiAssistantContent.replace('%%WORKER_URL_PLACEHOLDER%%', decryptedWorkerUrl);
+        openPanel(`<iframe srcdoc="${finalAiHtml.replace(/"/g, '&quot;')}"></iframe>`);
+        return '';
+    }
+
+const commandFunctions = {
+    'aboutme': openAboutMePanel, 
+    'news': () => { openPanel(`<iframe src="content/news.html"></iframe>`); return ''; },
+    'tutorial': () => { openPanel(`<iframe src="content/tutorials_main.html"></iframe>`); return ''; },
+    'clear': () => { initTerminal(true); return ''; }
+};
+    
+    const commandStructure = {
+      en: {
+        'aboutme': { fn: commandFunctions.aboutme, label: "About Me", icon: "fa-solid fa-id-card" },
+        'tutorial': { fn: commandFunctions.tutorial, label: "Tutorials", icon: "fa-solid fa-graduation-cap" },
+        'updates': { fn: commandFunctions.news, label: "Security Updates", icon: "fa-solid fa-newspaper" },
+        'ai': { fn: openAiPanel, label: "AI Assistant", icon: '<span class="icon-combo"><i class="fa-solid fa-brain"></i><i class="fa-solid fa-microchip"></i></span>'},
+        'donate': { fn: () => { openPanel('<iframe src="content/donate.html"></iframe>'); return ''; }, label: "Donate", icon: 'fa-solid fa-heart" style="color: #ff5555;"' },
+        'help': { fn: () => messages.en.helpText }, 'clear': { fn: commandFunctions.clear }
+      },
+      fa: {
+         'درباره': { fn: commandFunctions.aboutme, label: "درباره من", icon: "fa-solid fa-id-card" },
+        'آموزش': { fn: commandFunctions.tutorial, label: "آموزش", icon: "fa-solid fa-graduation-cap" },
+        'تازه ها': { fn: commandFunctions.news, label: "تازه های امنیت", icon: "fa-solid fa-newspaper" },
+        'هوش مصنوعی': { fn: openAiPanel, label: "دستیار هوش مصنوعی", icon: '<span class="icon-combo"><i class="fa-solid fa-brain"></i><i class="fa-solid fa-microchip"></i></span>' },
+        'حمایت': { fn: () => { openPanel('<iframe src="content/donate.html"></iframe>'); return ''; }, label: "حمایت ", icon: 'fa-solid fa-heart" style="color: #ff5555;"' },
+        'راهنما': { fn: () => messages.fa.helpText }, 'پاک کن': { fn: commandFunctions.clear }
+      }
+    };
+
+function populateGuiButtons() {
+    guiControls.innerHTML = '';
+    const commandSet = lang === 'fa' ? commandStructure.fa : commandStructure.en;
+    for (const cmdKey in commandSet) {
+        if (!commandSet[cmdKey].label) continue;
+        const button = document.createElement('button');
+        button.className = 'glass-btn';
+        button.dataset.command = cmdKey;
+
+        let iconHtml;
+        const iconValue = commandSet[cmdKey].icon;
+        
+        if (iconValue.trim().startsWith('<')) {
+            iconHtml = iconValue; 
+        } else {
+            iconHtml = `<i class="${iconValue}"></i>`; 
+        }
+        
+        button.innerHTML = `${iconHtml} <span>${commandSet[cmdKey].label}</span>`;
+
+        guiControls.appendChild(button);
+    }
+}
+
+    function showGuiWelcome() {
+        output.innerHTML = `<div class="welcome-logo" onclick="toggleTerminalMode()">&lt;/Mr. SAM/&gt;</div><div class="welcome-hint" onclick="toggleTerminalMode()">${messages[lang].guiHint}</div>`;
+        document.body.classList.remove('terminal-mode'); closePanel();
+    }
+
+    async function initTerminal(isSwitch = false) {
+        document.body.classList.add('terminal-mode');
+        output.innerHTML = '';
+        input.value = '';
+        let initialText = '';
+        if (isTorDetected()) { initialText += messages[lang].torDetected + '\n\n'; }
+        if (isSwitch) { initialText += messages[lang].langSwitched + '\n\n'; }
+        initialText += `${messages[lang].welcome}\n${messages[lang].promptHelp}\n\n`;
+        let outputHTML = makeLinksClickable(initialText);
+        const hintHTML = `<div class="welcome-hint" style="text-align: inherit; font-size: 0.9rem; margin-top: 10px;" onclick="toggleTerminalMode()">${messages[lang].guiHint}</div>`;
+        outputHTML += hintHTML;
+        output.innerHTML = outputHTML;
+        input.disabled = false;
+        input.focus();
+        closePanel();
+    }
+
+    function toggleTerminalMode() {
+        isTerminalMode = !isTerminalMode;
+        if (isTerminalMode) { initTerminal(); } else { showGuiWelcome(); }
+    }
+
+async function switchLanguage(newLang) {
+    lang = newLang;
+    document.documentElement.lang = lang;
+    document.documentElement.style.direction = lang === 'fa' ? 'rtl' : 'ltr';
+    langFaBtn.classList.toggle('active', lang === 'fa');
+    langEnBtn.classList.toggle('active', lang === 'en');
+   
+    if (lang === 'fa') {
+        timeFaDisplay.classList.remove('hidden-time');
+        timeEnDisplay.classList.add('hidden-time');
+    } else {
+        timeFaDisplay.classList.add('hidden-time');
+        timeEnDisplay.classList.remove('hidden-time');
+    }
+    cachedProjectsContent = null;
+    cachedAboutContent = {};
+    populateGuiButtons();
+    closePanel();
+    if (isTerminalMode) {
+        initTerminal(true);
+    } else if (!introHasRun[lang]) {
+        await runIntroAnimation();
+        introHasRun[lang] = true;
+        showGuiWelcome();
+    } else {
+        showGuiWelcome();
+    }
+}
+
+    langFaBtn.addEventListener('click', () => lang !== 'fa' && switchLanguage('fa'));
+    langEnBtn.addEventListener('click', () => lang !== 'en' && switchLanguage('en'));
+    closePanelBtn.addEventListener('click', () => history.back());
+
+    guiControls.addEventListener('click', async (e) => {
+        const button = e.target.closest('.glass-btn'); if (!button) return;
+        const command = button.dataset.command;
+        const commandSet = lang === 'fa' ? commandStructure.fa : commandStructure.en;
+        if (command && commandSet[command]) {
+            const wasInGuiMode = !isTerminalMode;
+            const result = await commandSet[command].fn();
+            if (result) {
+                if (wasInGuiMode) { toggleTerminalMode(); }
+                setTimeout(() => {
+                    let outputToAdd = makeLinksClickable(`\n> ${command}\n${result}\n\n`);
+                    if (wasInGuiMode) {
+                        const hintHTML = `<div class="welcome-hint" style="text-align: inherit; font-size: 0.9rem; margin-top: 10px;" onclick="toggleTerminalMode()">${messages[lang].guiHint}</div>`;
+                        outputToAdd += hintHTML;
+                    }
+                    output.innerHTML += outputToAdd;
+                    output.scrollTop = output.scrollHeight;
+                }, 100); 
+            }
+        }
+    });
+
+    input.addEventListener('keydown', async (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault(); const cmdText = input.value.trim();
+        if (lang === 'en') {
+               output.innerHTML += makeLinksClickable(`\n<div style="direction: ltr;">> ${cmdText}</div>\n`);
+          } else {
+                output.innerHTML += makeLinksClickable(`\n> ${cmdText}\n`);
+         }
+        if (cmdText) {
+            commandHistory.push(cmdText); historyIndex = commandHistory.length;
+            const commandSet = lang === 'fa' ? commandStructure.fa : commandStructure.en;
+            const commandToExecute = cmdText.toLowerCase();
+            if (commandSet[commandToExecute]) {
+                const res = await commandSet[commandToExecute].fn();
+                if (res) output.innerHTML += makeLinksClickable(`${res}\n\n`);
+            } else { output.innerHTML += makeLinksClickable(`${messages[lang].cmdNotFound}\n\n`); }
+        }
+        input.value = ''; output.scrollTop = output.scrollHeight;
+      } else if (e.key === 'ArrowUp') { /* command history logic */ }
+      else if (e.key === 'ArrowDown') { /* command history logic */ }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            if (panel.style.display === 'block') closePanel(); else toggleTerminalMode();
+        }
+    });
+    
+    window.addEventListener('popstate', (event) => {
+        if (panel.style.display === 'block') { closePanel(); }
+    });
+    
+    const setRealViewportHeight = () => {
+         document.documentElement.style.setProperty('--app-height', `${window.innerHeight}px`);
+    };
+
+
+function updateClocks() {
+    const now = new Date(new Date().getTime() + timeOffset);
+    const correctedNow = new Date(now.getTime() + TIME_CORRECTION_OFFSET);
+
+    try {
+        const iranParts = new Intl.DateTimeFormat('fa-IR', {
+            weekday: 'long', 
+            timeZone: 'Asia/Tehran', 
+            calendar: 'persian',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false 
+        }).formatToParts(correctedNow).reduce((acc, part) => {
+            if (part.type !== 'literal') {
+                acc[part.type] = part.value;
+            }
+            return acc;
+        }, {});
+
+        const iranDayName = iranParts.weekday; 
+        const iranDateString = `${iranParts.year}/${iranParts.month}/${iranParts.day}`;
+        const iranTimeString = `${iranParts.hour}:${iranParts.minute}:${iranParts.second}`;
+        timeFaDisplay.innerHTML = `${iranDayName}<br>${iranDateString}<br><b>${iranTimeString}</b>`;
+
+    } catch (e) {
+        timeFaDisplay.innerHTML = 'خطا در نمایش ساعت';
+        console.error("Iran time formatting error:", e);
+    }
+
+try {
+        const userLocalDate = new Date(); 
+        const localParts = new Intl.DateTimeFormat('en-GB', {
+            weekday: 'long',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        }).formatToParts(userLocalDate).reduce((acc, part) => {
+             if (part.type !== 'literal') {
+                acc[part.type] = part.value;
+            }
+            return acc;
+        }, {});
+        
+        const localDayName = localParts.weekday;
+        const localDateString = `${localParts.day}/${localParts.month}/${localParts.year}`; 
+        const localTimeString = `${localParts.hour}:${localParts.minute}:${localParts.second}`;
+        timeEnDisplay.innerHTML = `${localDayName}<br>${localDateString}<br><b>${localTimeString}</b>`;
+        
+    } catch (e) {
+        timeEnDisplay.innerHTML = 'Error displaying time';
+        console.error("User local time formatting error:", e);
+    }
+}
+
+
+updateClocks(); 
+
+setInterval(updateClocks, 1000);
+
+ window.addEventListener('resize', setRealViewportHeight);
+    window.onload = () => {
+    setRealViewportHeight();
+    if (isMobileDevice()) document.body.classList.add('mobile');
+    switchLanguage('fa');
+    updateClocks();
+    setInterval(updateClocks, 1000);
+    synchronizeClock();
+};
+
+function handleWindowMessage(event) {
+    console.log("Message received in parent page:", event.data); 
+    if (event.data && event.data.type === 'openProxynet') {
+        console.log("دریافت سیگنال برای باز کردن صفحه پروکسی...");
+        openPanel(`<iframe src="content/net.html"></iframe>`);
+    }
+}
+
+
+window.addEventListener('message', handleWindowMessage);
+
+</script>
+   <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+<script>
+      
+  tsParticles.load({
+  id: "tsparticles",
+  options: {
+    fullScreen: { enable: true, zIndex: -1 },
+    background: { color: "#1a1a1a" },
+    particles: {
+      number: { value: 100, density: { enable: true, area: 800 } }, 
+      color: { value: ["#ffffff", "#ffccdd", "#ccffdd"], animation: { enable: true, speed: 20, sync: false } },
+      shape: { type: ["circle", "triangle", "star"] },
+      opacity: {
+        value: { min: 0.3, max: 0.8 },
+        animation: { enable: true, speed: 1, minimumValue: 0.1 }
+      },
+      size: {
+        value: { min: 1, max: 5 },
+        animation: { enable: true, speed: 3, minimumValue: 0.5 }
+      },
+      links: { enable: true, distance: 150, color: "#ffffff", opacity: 0.5, width: 1 },
+      move: {
+        enable: true,
+        speed: { min: 1, max: 3 },
+        direction: "none",
+        random: true,
+        outModes: { default: "bounce" }
+      }
+    },
+interactivity: {
+  detectsOn: "window",
+  events: {
+    onHover: {
+      enable: true,
+      mode: "attract" 
+    },
+    onClick: {
+      enable: true,
+      mode: "grab" 
+    }
+  },
+  modes: {
+    attract: {
+      distance: 250,
+      duration: 0.4,
+      speed: 10
+    },
+    grab: { 
+        distance: 200,
+        links: {
+            opacity: 1
+        }
+    },
+    push: { 
+        quantity: 4
+    }
+  }
+},
+    detectRetina: true, 
+    fpsLimit: 60
+  }
+});
+
+  </script>
+</body>
+</html>

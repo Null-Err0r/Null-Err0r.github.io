@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mr. SAM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --background-color: #121212;
+            --surface-color: #1e1e1e;
+            --primary-color: #00ffcc;
+            --primary-variant-color: #00b38f;
+            --text-color: #e0e0e0;
+            --text-secondary-color: #a0a0a0;
+            --border-color: #333;
+            --shadow-color: rgba(0, 255, 204, 0.1);
+            --address-bar-height: 3.5rem;
+        }
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        html {
+            font-size: 16px;
+        }
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .proxy-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: var(--surface-color);
+            border-bottom: 1px solid var(--border-color);
+            height: var(--address-bar-height);
+            flex-shrink: 0;
+        }
+        .proxy-header button {
+            background: none;
+            color: var(--text-secondary-color);
+            border: none;
+            padding: 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+            width: 2.5rem;
+            height: 2.5rem;
+            font-size: 1rem;
+        }
+        .proxy-header button:hover:not(:disabled) {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+        }
+        .proxy-header button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        #proxy-form {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            background-color: var(--background-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        #proxy-form:focus-within {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 10px var(--shadow-color);
+        }
+        #url-input {
+            flex-grow: 1;
+            background-color: transparent;
+            border: none;
+            padding: 0.75rem 1rem;
+            font-family: inherit;
+            font-size: 1rem;
+            color: var(--text-color);
+            outline: none;
+            direction: ltr;
+            text-align: left;
+        }
+        .iframe-container {
+            flex-grow: 1;
+            overflow: hidden;
+            position: relative;
+        }
+        #proxy-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background-color: #282a36; 
+        }
+        .loader {
+            position: absolute;
+            inset: 0;
+            background-color: rgba(18, 18, 18, 0.85);
+            backdrop-filter: blur(5px);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            z-index: 10;
+        }
+        .loader.is-active {
+            display: flex;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--border-color);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="proxy-header">
+        <button id="back-button" aria-label="بازگشت"><i class="fas fa-arrow-right"></i></button>
+        <button id="forward-button" aria-label="رفتن به جلو"><i class="fas fa-arrow-left"></i></button>
+        <button id="reload-button" aria-label="بارگذاری مجدد"><i class="fas fa-sync-alt"></i></button>
+        <form id="proxy-form">
+            <input type="text" id="url-input" placeholder=" url ... " required autocomplete="off" spellcheck="false">
+        </form>
+    </header>
+    <div class="iframe-container">
+        <iframe id="proxy-frame" title="محتوای پروکسی شده" sandbox="allow-forms allow-modals allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
+        <div id="loader" class="loader">
+            <div class="spinner"></div>
+            <p>در حال بارگذاری ...</p>
+        </div>
+    </div>
+    <script>
+
+        const proxyForm = document.getElementById('proxy-form');
+        const urlInput = document.getElementById('url-input');
+        const proxyFrame = document.getElementById('proxy-frame');
+        const loader = document.getElementById('loader');
+        const backButton = document.getElementById('back-button');
+        const forwardButton = document.getElementById('forward-button');
+        const reloadButton = document.getElementById('reload-button');
+
+        const sessionHistory = {
+            stack: [],
+            currentIndex: -1,
+        };
+
+        proxyForm.addEventListener('submit', handleSubmit);
+        backButton.addEventListener('click', goBack);
+        forwardButton.addEventListener('click', goForward);
+        reloadButton.addEventListener('click', reloadCurrent);
+        proxyFrame.addEventListener('load', handleFrameLoad);
+
+        function handleSubmit(event) {
+            event.preventDefault();
+            const query = urlInput.value.trim();
+            if (!query) return;
+
+            processQuery(query);
+        }
+        function processQuery(query) {
+            let targetUrl;
+            const isUrl = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/.test(query);
+            if (isUrl) {
+                targetUrl = query.startsWith('http') ? query : 'https://' + query;
+            } else {
+                targetUrl = `https://www.duckduckgo.com/?q=${encodeURIComponent(query)}`;
+            }
+            loadUrlInProxy(targetUrl, true);
+        }
+
+        function loadUrlInProxy(url, isNewNavigation = false) {
+            loader.classList.add('is-active');
+            proxyFrame.src = 'about:blank'; 
+
+            try {
+                const encodedUrl = btoa(url);
+                const proxyUrl = `/p/${encodedUrl}`;
+                proxyFrame.src = proxyUrl;              
+                if (isNewNavigation) {
+                    sessionHistory.currentIndex++;
+                    sessionHistory.stack.splice(sessionHistory.currentIndex); 
+                    sessionHistory.stack.push(url);
+                }
+                updateHistoryButtons();
+                urlInput.value = url;
+
+            } catch (e) {
+                console.error("URL Encoding Failed:", e);
+                alert("آدرس وارد شده نامعتبر است.");
+                loader.classList.remove('is-active');
+            }
+        }
+        
+        function handleFrameLoad() {
+            loader.classList.remove('is-active');
+            const finalUrl = sessionHistory.stack[sessionHistory.currentIndex];
+            if (finalUrl) {
+                urlInput.value = finalUrl;
+            }
+        }
+
+        function goBack() {
+            if (sessionHistory.currentIndex > 0) {
+                sessionHistory.currentIndex--;
+                loadUrlInProxy(sessionHistory.stack[sessionHistory.currentIndex]);
+            }
+        }
+
+        function goForward() {
+            if (sessionHistory.currentIndex < sessionHistory.stack.length - 1) {
+                sessionHistory.currentIndex++;
+                loadUrlInProxy(sessionHistory.stack[sessionHistory.currentIndex]);
+            }
+        }
+
+        function reloadCurrent() {
+            if (sessionHistory.currentIndex !== -1) {
+                proxyFrame.src = proxyFrame.src;
+            }
+        }
+
+        function updateHistoryButtons() {
+            backButton.disabled = sessionHistory.currentIndex <= 0;
+            forwardButton.disabled = sessionHistory.currentIndex >= sessionHistory.stack.length - 1;
+            reloadButton.disabled = sessionHistory.currentIndex === -1;
+        }
+
+        updateHistoryButtons();
+    </script>
+</body>
+</html>

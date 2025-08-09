@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mr. SAM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --bg-color: #1a1a1a;
+            --text-color: #e0e0e0;
+            --primary-color: #00ffcc;
+            --secondary-color: #022a1c;
+            --border-color: #00cc7a;
+            --hover-bg-color: #004d2b;
+        }
+        body { background-color: var(--bg-color); color: var(--text-color); font-family: 'Vazirmatn', sans-serif; margin: 0; padding: 15px; }
+        #header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        #header h1 { color: var(--primary-color); font-size: 1.6rem; margin: 0; }
+        #refresh-button { background: none; border: 1px solid var(--border-color); color: var(--primary-color); font-size: 1.6rem; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; transition: all 0.4s ease; display: flex; align-items: center; justify-content: center; }
+        #refresh-button:hover { background-color: var(--hover-bg-color); transform: rotate(360deg); }
+        #loader { text-align: center; padding: 50px; font-size: 1.2rem; color: var(--primary-color); animation: pulse 1.5s infinite ease-in-out; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+        .hidden { display: none !important; }
+        #news-container { display: grid; grid-template-columns: 1fr; gap: 40px; }
+        .news-section h2 { border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px; color: var(--primary-color); font-size: 1.5rem; }
+        .news-section h2 a { color: var(--primary-color); text-decoration: none; font-size: 0.7em; margin-right: 10px; opacity: 0.7; }
+        .news-list { list-style: none; padding: 0; }
+        .news-item { background-color: var(--secondary-color); margin-bottom: 10px; padding: 15px; border-radius: 6px; border-right: 4px solid var(--border-color); cursor: pointer; transition: background-color 0.3s, transform 0.2s; font-size: 1rem; line-height: 1.6; }
+        .news-item:hover { background-color: var(--hover-bg-color); transform: translateX(-5px); }
+        @media (min-width: 1024px) { body { padding: 30px; } #news-container { grid-template-columns: 1fr 1fr 1fr; } #header h1 { font-size: 1.8rem; } }
+    </style>
+</head>
+<body>
+
+    <div id="header">
+        <h1>آخرین اخبار امنیتی</h1>
+        <button id="refresh-button" title="به‌روزرسانی">&#x21bb;</button>
+    </div>
+
+<div id="loader">
+  در حال دریافت از منابع معتبر <br>
+  Fetching from trusted sources 
+</div>
+
+<div id="news-container" class="hidden">
+  <div id="exploitdb-section" class="news-section">
+    <h2>جدیدترین اکسپلویت ها <a href="https://www.exploit-db.com/" target="_blank">(اطلاعات بیشتر)</a></h2>
+    <ul id="exploitdb-list" class="news-list"></ul>
+  </div>
+  <div id="cisa-section" class="news-section">
+    <h2>جدیدترین آسیب پذیری ها <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" target="_blank">(اطلاعات بیشتر)</a></h2>
+    <ul id="cisa-list" class="news-list"></ul>
+  </div>
+  <div id="takian-section" class="news-section">
+    <h2>اخبار امنیتی <a href="https://www.takian.net/news" target="_blank">(اطلاعات بیشتر)</a></h2>
+    <ul id="takian-list" class="news-list"></ul>
+  </div>
+</div>
+
+<script>
+
+    const decoyPartB64 = 'ZmF0aWthbG8=';
+
+    const ENCRYPTED_URLS = {
+        exploitdb: 'JQZaUCB7YkcTFAgLFx4cTBQXHR4YWggcAB4LLxtAUzIsJEYSDhYOFx4cTwAABEk=',
+        cisa: 'JQZaUCB7YkcGCBcEXxwdDhwcXAcWFRsPAwUBPhNDSX02IhoOBBYWXAgKF0s=',
+        takian: 'JQZaUCB7YkcRAA8MEwJCERYKCh9PFR4KEwgNJBxdQT4oYx8KEw8AAB9BBQETXQ=='
+    };
+
+    function generateKey() {
+        const p1 = document.title; 
+        const p2 = document.getElementById('header').id; 
+        const p3 = document.getElementById('loader').id; 
+        const p4 = atob(decoyPartB64); 
+        return p1 + p2 + p3 + p4;
+    }
+
+    function decryptUrl(encodedStr) {
+        try {
+            const dynamicKey = generateKey();
+            const xorResult = atob(encodedStr);
+            let originalStr = '';
+            for (let i = 0; i < xorResult.length; i++) {
+                originalStr += String.fromCharCode(xorResult.charCodeAt(i) ^ dynamicKey.charCodeAt(i % dynamicKey.length));
+            }
+            return originalStr;
+        } catch (e) {
+            console.error("Decryption failed:", e);
+            return "";
+        }
+    }
+    
+    const EXPLOITDB_PROXY_URL = decryptUrl(ENCRYPTED_URLS.exploitdb);
+    const CISA_PROXY_URL = decryptUrl(ENCRYPTED_URLS.cisa);
+    const TAKIAN_PROXY_URL = decryptUrl(ENCRYPTED_URLS.takian);
+
+    const loader = document.getElementById('loader');
+    const newsContainer = document.getElementById('news-container');
+    const refreshButton = document.getElementById('refresh-button');
+    
+    const allSourcesElements = {
+        exploitdb: { list: document.getElementById('exploitdb-list'), section: document.getElementById('exploitdb-section') },
+        cisa: { list: document.getElementById('cisa-list'), section: document.getElementById('cisa-section') },
+        takian: { list: document.getElementById('takian-list'), section: document.getElementById('takian-section') }
+    };
+
+    async function fullLoadNews() {
+        loader.classList.remove('hidden');
+        newsContainer.classList.add('hidden');
+        for (const key in allSourcesElements) { allSourcesElements[key].list.innerHTML = ''; allSourcesElements[key].section.classList.remove('hidden'); }
+        const sources = [
+            { name: 'ExploitDB', url: EXPLOITDB_PROXY_URL, elements: allSourcesElements.exploitdb, processor: (item, li) => { li.textContent = item.title; li.onclick = () => window.open(item.url, '_blank'); } },
+            { name: 'CISA', url: CISA_PROXY_URL, elements: allSourcesElements.cisa, processor: (item, li) => { li.textContent = item.vulnerabilityName; const cveId = item.cveID; if (cveId && typeof cveId === 'string' && cveId.startsWith('CVE-')) { const nistUrl = `https://nvd.nist.gov/vuln/detail/${cveId}`; li.onclick = () => window.open(nistUrl, '_blank'); } else { li.classList.add('not-clickable'); li.title = 'شناسه CVE معتبر یافت نشد.'; } } },
+            { name: 'Takian', url: TAKIAN_PROXY_URL, elements: allSourcesElements.takian, processor: (item, li) => { li.textContent = item.title; li.onclick = () => window.open(item.url, '_blank'); } }
+        ];
+        try {
+            const results = await Promise.allSettled(sources.map(s => fetch(s.url)));
+            let successfulFetches = 0;
+            await Promise.all(results.map(async (result, index) => {
+                const source = sources[index];
+                if (result.status === 'fulfilled' && result.value.ok) {
+                    try {
+                        const data = await result.value.json();
+                        if (data && data.length > 0) {
+                            successfulFetches++;
+                            data.forEach(item => { const li = document.createElement('li'); li.className = 'news-item'; source.processor(item, li); source.elements.list.appendChild(li); });
+                        } else { source.elements.section.classList.add('hidden'); }
+                    } catch (e) { console.error(`Error parsing JSON for ${source.name}:`, e); source.elements.section.classList.add('hidden'); }
+                } else { console.error(`Failed to fetch from ${source.name}:`, result.reason || result.value.statusText); source.elements.section.classList.add('hidden'); }
+            }));
+            if (successfulFetches === 0) { throw new Error("هیچ یک از منابع خبری در دسترس نبودند."); }
+        } catch (error) { loader.innerHTML = `<strong>خطا:</strong><br><small>${error.message}</small>`; console.error('Overall fetch error:', error);
+        } finally { loader.classList.add('hidden'); newsContainer.classList.remove('hidden'); }
+    }
+    refreshButton.addEventListener('click', fullLoadNews);
+    document.addEventListener('DOMContentLoaded', fullLoadNews);
+</script>
+
+</body>
+</html>

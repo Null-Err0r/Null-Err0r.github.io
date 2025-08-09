@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>❤️</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #1a1a1a;
+      --surface-color: #2b2b2b;
+      --on-surface-color: #f0f0f0;
+      --primary-color: #ff9800;
+      --success-color: #4CAF50;
+      --text-muted-color: #aaa;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Vazirmatn', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--on-surface-color);
+      margin: 0;
+      padding: 0;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+    .container {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #fff;
+      font-weight: 700;
+    }
+    .section {
+      background: var(--surface-color);
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+    .crypto-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, 320px);
+      justify-content: center;
+      gap: 25px;
+    }
+    .crypto-item {
+      background: #333;
+      border-radius: 10px;
+      padding: 15px;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+    .crypto-item.flash-success {
+      border-color: var(--success-color);
+    }
+    .crypto-header {
+      display: flex;
+      align-items: center;
+      font-weight: 500;
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+    .crypto-icon {
+      width: 32px;
+      height: 32px;
+      margin-left: 12px;
+    }
+    .wallet {
+      background: #222;
+      padding: 12px 15px;
+      direction: ltr;
+      font-size: 14px;
+      border-radius: 8px;
+      user-select: all;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background-color 0.2s ease;
+    }
+    .wallet:hover {
+      background-color: #404040;
+    }
+    .wallet-address {
+      flex-grow: 1;
+      margin-right: 15px;
+      overflow-wrap: break-word;
+      word-break: break-all;
+    }
+    .copy-btn {
+      display: flex;
+      align-items: center;
+      font-size: 12px;
+      color: var(--text-muted-color);
+      white-space: nowrap;
+      transition: color 0.2s ease;
+    }
+    .copy-btn svg {
+      width: 18px;
+      height: 18px;
+      margin-right: 5px;
+      fill: var(--text-muted-color);
+      transition: all 0.2s ease;
+    }
+    .wallet:hover .copy-btn {
+      color: var(--primary-color);
+    }
+    .wallet:hover .copy-btn svg {
+      fill: var(--primary-color);
+    }
+    .qr-toggle {
+        font-size: 12px;
+        color: var(--primary-color);
+        cursor: pointer;
+        text-align: center;
+        margin-top: 10px;
+        font-weight: 500;
+    }
+    .qr-container {
+        display: none;
+        margin-top: 15px;
+        text-align: center;
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+    }
+    .qr-container img {
+        width: 150px;
+        height: 150px;
+        display: block;
+        margin: auto;
+        cursor: zoom-in;
+    }
+    .wallet:focus-within, .crypto-item:focus-within {
+        outline: 2px solid var(--primary-color);
+        outline-offset: 2px;
+    }
+
+    .ticker {
+        direction: ltr;
+        display: inline-block;
+        margin: 0 2px;
+    }
+
+    .modal-overlay {
+      display: none; 
+      position: fixed; 
+      z-index: 1000; 
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto; 
+      background-color: rgba(0,0,0,0.85); 
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-overlay.active {
+        display: flex; 
+    }
+
+    .modal-content {
+      margin: auto;
+      display: block;
+      max-width: 85%;
+      max-height: 85%;
+      border-radius: 8px;
+      animation-name: zoom;
+      animation-duration: 0.4s;
+    }
+
+    @keyframes zoom {
+      from {transform: scale(0.5)}
+      to {transform: scale(1)}
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 20px;
+      right: 35px;
+      color: #f1f1f1;
+      font-size: 40px;
+      font-weight: bold;
+      transition: 0.3s;
+      cursor: pointer;
+    }
+
+    .close-modal:hover,
+    .close-modal:focus {
+      color: #bbb;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="section">
+    <h1>حمایت<br>❤️<br>Donate</h1>
+    <p style="text-align: center;">
+      اگر مایلید می‌توانید از راه‌های زیر حمایت مالی کنید.<br> این حمایت‌ها به بهبود زیرساخت و تولید محتوای باکیفیت کمک می‌کنند.<br><br>
+      If you want to support our mission, you can contribute via the following options<br>Your donations help us maintain the infrastructure and continue delivering quality work
+    </p>
+    <p style="text-align: center;">
+     حتی اگر برای خرید یک قهوه باشد <br>☕️<br>
+       Even if it's to buy a coffee 
+    </p>
+
+    <h2>ارز دیجیتال<br>🌐<br>Cryptocurrency</h2>
+    
+    <div class="crypto-list">
+
+      <div class="crypto-item">
+        <div class="crypto-header"><img src="res/btc.svg" alt="BTC" class="crypto-icon"><span>بیت کوین (<span class="ticker">BTC</span>)</span></div>
+        <div class="wallet" tabindex="0"><span class="wallet-address">bc1q96uyn5y6yx4rm6z5v004vk3ty6zqrdxp3nmqhf</span><span class="copy-btn"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"></path></svg><span class="copy-text">Copy</span></span></div>
+        <div class="qr-toggle"> QR Code</div><div class="qr-container"><img src="res/btc.jpg" alt="Bitcoin QR"></div>
+      </div>
+      
+      <div class="crypto-item">
+        <div class="crypto-header"><img src="res/eth.svg" alt="ETH" class="crypto-icon"><span>اتریوم (<span class="ticker">ETH</span>)</span></div>
+        <div class="wallet" tabindex="0"><span class="wallet-address">0x2258Da6e455A53efd41675bb4043FC5c2873663f</span><span class="copy-btn"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"></path></svg><span class="copy-text">Copy</span></span></div>
+        <div class="qr-toggle"> QR Code</div><div class="qr-container"><img src="res/eth.jpg" alt="Ethereum QR"></div>
+      </div>
+      
+      <div class="crypto-item">
+        <div class="crypto-header"><img src="res/ton.svg" alt="TON" class="crypto-icon"><span>تون کوین (<span class="ticker">TON</span>)</span></div>
+        <div class="wallet" tabindex="0"><span class="wallet-address">UQCXJRikSdnNxKrLgtZvLKwxsflGrhvbJF46BmDryNDfKsdq</span><span class="copy-btn"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"></path></svg><span class="copy-text">Copy</span></span></div>
+        <div class="qr-toggle"> QR Code</div><div class="qr-container"><img src="res/ton.jpg" alt="Toncoin QR"></div>
+      </div>
+      
+      <div class="crypto-item">
+        <div class="crypto-header"><img src="res/usd.svg" alt="USDT" class="crypto-icon"><span>&nbsp;&nbsp;تتر (<span class="ticker">USDT on TRC20</span>)</span></div>
+        <div class="wallet" tabindex="0"><span class="wallet-address">TJMJBsTRF3oBnyNNc71Pkeu5xAgLDtTJ18</span><span class="copy-btn"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"></path></svg><span class="copy-text">Copy</span></span></div>
+        <div class="qr-toggle"> QR Code</div><div class="qr-container"><img src="res/teth.jpg" alt="USDT TRC20 QR"></div>
+      </div>
+
+      <div class="crypto-item">
+        <div class="crypto-header"><img src="res/sol.svg" alt="SOL" class="crypto-icon"><span>سولانا (<span class="ticker">SOL</span>)</span></div>
+        <div class="wallet" tabindex="0"><span class="wallet-address">GdnfPH14pgmN41DAw8FqcTpAhhKa8WkxzWASebg8RHDH</span><span class="copy-btn"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"></path></svg><span class="copy-text">Copy</span></span></div>
+        <div class="qr-toggle"> QR Code</div><div class="qr-container"><img src="res/sol.jpg" alt="Solana QR"></div>
+      </div>
+      
+      <div class="crypto-item">
+        <div class="crypto-header"><img src="res/trx.svg" alt="TRX" class="crypto-icon"><span>ترون (<span class="ticker">TRX</span>)</span></div>
+        <div class="wallet" tabindex="0"><span class="wallet-address">TJMJBsTRF3oBnyNNc71Pkeu5xAgLDtTJ18</span><span class="copy-btn"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"></path></svg><span class="copy-text">Copy</span></span></div>
+        <div class="qr-toggle"> QR Code</div><div class="qr-container"><img src="res/trx.jpg" alt="Tron QR"></div>
+      </div>
+      
+      <div class="crypto-item">
+        <div class="crypto-header"><img src="res/dog.svg" alt="DOGE" class="crypto-icon"><span>&nbsp;&nbsp;دوج کوین (<span class="ticker">DOGE</span>)</span></div>
+        <div class="wallet" tabindex="0"><span class="wallet-address">DEjEvXSMWwErVNKxNAbbmm5xmYA2LSZuPE</span><span class="copy-btn"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"></path></svg><span class="copy-text">Copy</span></span></div>
+        <div class="qr-toggle"> QR Code</div><div class="qr-container"><img src="res/dog.jpg" alt="Dogecoin QR"></div>
+      </div>
+      
+      <div class="crypto-item">
+        <div class="crypto-header"><img src="res/xrp.svg" alt="XRP" class="crypto-icon"><span>ریپل (<span class="ticker">XRP</span>)</span></div>
+        <div class="wallet" tabindex="0"><span class="wallet-address">rBNTzn99iexoRFrPCxCFodNDmep2ZEPP75</span><span class="copy-btn"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"></path></svg><span class="copy-text">Copy</span></span></div>
+        <div class="qr-toggle"> QR Code</div><div class="qr-container"><img src="res/xrp.jpg" alt="XRP QR"></div>
+      </div>
+      
+      <div class="crypto-item">
+        <div class="crypto-header"><img src="res/sui.svg" alt="SUI" class="crypto-icon"><span>سویی (<span class="ticker">SUI</span>)</span></div>
+        <div class="wallet" tabindex="0"><span class="wallet-address">0x231440981059211f46f68ae093a1f03afa945e3edcf845e330551da4f3f1a63e</span><span class="copy-btn"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"></path></svg><span class="copy-text">Copy</span></span></div>
+        <div class="qr-toggle"> QR Code</div><div class="qr-container"><img src="res/sui.jpg" alt="Sui QR"></div>
+      </div>
+    </div>
+    <p style="text-align:center; margin-top: 30px;">🫶 از حمایت شما سپاسگزاریم <br> Thank you for your Donate ❤️</p>
+  </div>
+</div>
+
+<div id="qr-modal" class="modal-overlay">
+  <span class="close-modal">&times;</span>
+  <img class="modal-content" id="fullscreen-qr-img" alt="Fullscreen QR Code">
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const walletContainers = document.querySelectorAll('.crypto-item');
+    walletContainers.forEach(container => {
+        const walletEl = container.querySelector('.wallet');
+        if (walletEl) {
+            walletEl.addEventListener('click', function() {
+                const address = this.querySelector('.wallet-address').innerText;
+                const copyBtn = this.querySelector('.copy-btn');
+                const copyTextSpan = copyBtn.querySelector('.copy-text');
+                const copyIcon = copyBtn.querySelector('svg');
+                const originalIconHTML = copyIcon.innerHTML;
+                const checkIconHTML = '<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>';
+
+                navigator.clipboard.writeText(address).then(() => {
+                    if (copyBtn.classList.contains('copied')) return;
+
+                    const originalText = copyTextSpan.innerText;
+                    copyBtn.classList.add('copied');
+                    copyTextSpan.innerText = 'Copied!';
+                    copyIcon.innerHTML = checkIconHTML;
+                    container.classList.add('flash-success');
+
+                    setTimeout(() => {
+                        copyTextSpan.innerText = originalText;
+                        copyIcon.innerHTML = originalIconHTML;
+                        copyBtn.classList.remove('copied');
+                        container.classList.remove('flash-success');
+                    }, 2500);
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                    copyTextSpan.innerText = 'Error!';
+                });
+            });
+        }
+
+        const qrToggle = container.querySelector('.qr-toggle');
+        const qrContainer = container.querySelector('.qr-container');
+        if (qrToggle && qrContainer) {
+            qrToggle.addEventListener('click', () => {
+                const isVisible = qrContainer.style.display === 'block';
+                qrContainer.style.display = isVisible ? 'none' : 'block';
+            });
+        }
+    });
+
+    const modal = document.getElementById('qr-modal');
+    const modalImg = document.getElementById('fullscreen-qr-img');
+    const qrImages = document.querySelectorAll('.qr-container img');
+    const closeBtn = document.querySelector('.close-modal');
+
+    qrImages.forEach(img => {
+        img.addEventListener('click', function() {
+            modal.classList.add('active');
+            modalImg.src = this.src;
+        });
+    });
+
+    const closeModal = function() {
+        modal.classList.remove('active');
+    }
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+});
+</script>
+</body>
+</html>

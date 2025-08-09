@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Mr. SAM</title>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+
+    :root {
+      --primary-color: #00ffcc;
+      --bg-color: #1a1a1a;
+      --text-color: #e0e0e0;
+    }
+    html, body {
+      background-color: #1a1a1a;
+      color: var(--text-color);
+      font-family: 'Vazirmatn', sans-serif;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center; 
+      height: 100vh;
+      box-sizing: border-box;
+    }
+    .button-container {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-bottom: 40px; 
+    }
+    .glass-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      padding: 15px 25px;
+      color: #e0e0e0;
+      font-family: 'Vazirmatn', sans-serif;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-width: 220px;
+      text-decoration: none; 
+    }
+    .glass-btn:hover {
+      background: rgba(0, 255, 204, 0.15);
+      transform: translateY(-3px);
+      border-color: var(--primary-color);
+    }
+    .glass-btn i {
+      font-size: 1.2rem;
+      color: var(--primary-color);
+    }
+    #infoText {
+      color: #ccc;
+      font-size: 1.1rem;
+    }
+    #infoText a {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: bold;
+      margin-top: 15px;
+      font-size: 1.2rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #infoText a:hover {
+      color: #33ff99;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="button-container">
+    <a href="terminal.html" class="glass-btn">
+      <i class="fa-solid fa-terminal"></i> دستورات (Commands)
+    </a>
+    <a href="course.html" class="glass-btn">
+      <i class="fa-solid fa-shield-halved"></i> دوره امنیت (Security Course)
+    </a>
+  </div>
+
+  <div id="infoText">
+   <h1>💡 ابزارهای کاربردی 💡</h1>
+<p>
+با عضویت در <strong>کانال تلگرام</strong> و <strong>گروه گفت‌وگوی</strong> ما، <br>می‌توانید با دیگر اعضا تبادل نظر کنید، پرسش‌های خود را مطرح کرده <br>و از <strong>هوش مصنوعی</strong> پاسخ بگیرید،<br> همچنین ابزارهای کاربردی موردنیاز خود را درخواست و دریافت نمایید.
+</p>
+
+    <a href="https://t.me/NullError_ir" target="_blank" rel="noopener noreferrer">
+      <i class="fab fa-telegram"></i>
+      <span>عضویت در کانال تلگرام</span>
+    </a>
+  </div>
+
+  </body>
+</html>
