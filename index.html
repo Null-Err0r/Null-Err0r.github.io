@@ -225,7 +225,7 @@ html[lang="en"] #panel { text-align: left; animation-name: slideInEn; border-lef
     height: 100%;
     overflow-y: auto;
     position: relative;
-  padding-bottom: 60px;
+    padding-bottom: 60px;
 }
 #panel-content iframe {
     width: 100%;
@@ -366,7 +366,7 @@ html[lang="en"] #panel { text-align: left; animation-name: slideInEn; border-lef
     let historyIndex = -1;
     let introHasRun = { fa: false, en: false };
     
-    const TIME_CORRECTION_OFFSET = 0; 
+    const TIME_CORRECTION_OFFSET = 0 ; 
     
     const messages = {
       en: {
@@ -621,21 +621,21 @@ gibberish: [
         await sleep(200);
     }
     
-    function openPanel(content) {
-      history.pushState({panelOpen: true}, null, '#panel');
-      document.body.classList.add('split');
-      panel.style.display = 'block';
-      panelContent.innerHTML = `<div class="progress-container" id="progressContainer"><div class="progress-bar" id="progressBar"></div></div>${content}`;
-      
-      panelContent.scrollTop = 0;
-      
-      const progressContainer = panelContent.querySelector('#progressContainer');
-      const progressBar = panelContent.querySelector('#progressBar');
-      if (progressContainer && progressBar) {
-          progressContainer.classList.add('loading');
-          setTimeout(() => { progressBar.style.width = '100%'; setTimeout(() => progressContainer.classList.remove('loading'), 1500); }, 100);
-      }
-    }
+function openPanel(content, stateId = 'generic') { 
+  history.pushState({ panelOpen: true, id: stateId }, null, `#panel-${stateId}`); 
+  document.body.classList.add('split');
+  panel.style.display = 'block';
+  panelContent.innerHTML = `<div class="progress-container" id="progressContainer"><div class="progress-bar" id="progressBar"></div></div>${content}`;
+  
+  panelContent.scrollTop = 0;
+  
+  const progressContainer = panelContent.querySelector('#progressContainer');
+  const progressBar = panelContent.querySelector('#progressBar');
+  if (progressContainer && progressBar) {
+      progressContainer.classList.add('loading');
+      setTimeout(() => { progressBar.style.width = '100%'; setTimeout(() => progressContainer.classList.remove('loading'), 1500); }, 100);
+  }
+}
 
     function closePanel() {
       document.body.classList.remove('split');
@@ -685,7 +685,7 @@ const getAboutContent = (currentLang) => {
         <a class="link-button" href="https://t.me/NullErr0r" target="_blank" rel="noopener noreferrer"><i class="fab fa-telegram" style="font-size:1.2em; vertical-align:middle;"></i>Telegram</a>
         <a class="link-button" href="https://x.com/0x0Err0r" target="_blank" rel="noopener noreferrer"><i class="fab fa-twitter" style="font-size:1.2em; vertical-align:middle;"></i>X (Twitter)</a>
         <a class="link-button" href="mailto:NullError@duck.com" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-envelope" style="font-size:1.2em; vertical-align:middle;"></i>Email</a>
-        <a class="link-button" href="#" onclick="openPanel('<iframe src=\\'content/privacy.html\\'></iframe>'); return false;"><i class="fa-solid fa-user-secret" style="font-size:1.2em; vertical-align:middle;"></i>سیاست حفظ حریم خصوصی ربات</a>
+        <a class="link-button" href="#" onclick="openPanel('<iframe src=\\'content/privacy.html\\'></iframe>', 'privacy'); return false;"><i class="fa-solid fa-user-secret" style="font-size:1.2em; vertical-align:middle;"></i>سیاست حفظ حریم خصوصی ربات</a>
     </div>`;
     
     return currentLang === 'fa' 
@@ -693,12 +693,18 @@ const getAboutContent = (currentLang) => {
         : `${commonHtmlStart}<h1>Esmail Asadi</h1><p class="bio">Developer, Researcher, and Tech Enthusiast</p>${commonHtmlEnd}`;
 };
 
-async function openAboutMePanel() {
-    openPanel(`<div>${messages[lang].projectsLoading}</div>`);
+
+async function renderAboutMePanel() {
+    panelContent.innerHTML = `<div>${messages[lang].projectsLoading}</div>`;
     const aboutContent = getAboutContent(lang);
     const projectsContent = await fetchProjects();
     const combinedHtml = `<div class="about-me-wrapper">${aboutContent}${projectsContent}</div>`;
-    openPanel(combinedHtml);
+    panelContent.innerHTML = combinedHtml;
+}
+
+async function openAboutMePanel() {
+    openPanel('', 'about'); 
+    await renderAboutMePanel(); 
 }
 
 
@@ -869,9 +875,19 @@ async function switchLanguage(newLang) {
         }
     });
     
-    window.addEventListener('popstate', (event) => {
-        if (panel.style.display === 'block') { closePanel(); }
-    });
+   window.addEventListener('popstate', (event) => {
+    if (event.state && event.state.panelOpen) {
+
+        if (event.state.id === 'about') {
+
+            renderAboutMePanel();
+        }
+
+    } else {
+
+        closePanel();
+    }
+});
     
     const setRealViewportHeight = () => {
          document.documentElement.style.setProperty('--app-height', `${window.innerHeight}px`);
