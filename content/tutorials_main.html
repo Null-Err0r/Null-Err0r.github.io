@@ -7,12 +7,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <style>
-
     :root {
       --primary-color: #00ffcc;
       --bg-color: #1a1a1a;
       --text-color: #e0e0e0;
     }
+
     html, body {
       background-color: #1a1a1a;
       color: var(--text-color);
@@ -23,9 +23,10 @@
       display: flex;
       flex-direction: column;
       justify-content: center; 
-      height: 100vh;
+      height: var(--app-height, 100vh); 
       box-sizing: border-box;
     }
+
     .button-container {
       display: flex;
       justify-content: center;
@@ -105,5 +106,15 @@
     </a>
   </div>
 
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const setRealViewportHeight = () => {
+        document.documentElement.style.setProperty('--app-height', `${window.innerHeight}px`);
+      };
+      
+      window.addEventListener('resize', setRealViewportHeight);
+      setRealViewportHeight();
+    });
+  </script>
   </body>
 </html>
