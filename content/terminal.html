@@ -7,11 +7,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
-   
+
        <style>
     :root {
         --background: #1a1a1a;
-        --window-bg: #1e1e1e; 
+        --window-bg: #1e1e1e;
         --title-bar: #16213e;
         --foreground: #e0e0e0;
         --cyan: #00e5ff;
@@ -19,8 +19,8 @@
         --red: #ff5555;
         --purple: #bd93f9;
         --comment: #6272a4;
-        --card-bg: #2c2c32; 
-        --border-color: rgba(189, 147, 249, 0.2); 
+        --card-bg: #2c2c32;
+        --border-color: rgba(189, 147, 249, 0.2);
         --font-primary: 'Fira Code', monospace;
         --font-secondary: 'Vazirmatn', sans-serif;
         --app-height: 100vh;
@@ -40,11 +40,10 @@
         margin: 0;
         padding: 0;
         width: 100%;
-        height: var(--app-height); 
+        height: var(--app-height, 100vh);
         display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden; 
+        flex-direction: column;
+        overflow: hidden;
         background-color: var(--background);
         color: var(--foreground);
         font-family: var(--font-primary);
@@ -52,7 +51,6 @@
 
     #terminal-window {
         width: 90%;
-        height: 90%;
         max-width: 1200px;
         background-color: var(--window-bg);
         border: 1px solid var(--border-color);
@@ -63,8 +61,11 @@
         overflow: hidden;
         position: relative;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%239C92AC' fill-opacity='0.03' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
+        margin: auto;
+        flex-grow: 1;
+        min-height: 0;
     }
-    
+
     .title-bar {
         background-color: var(--title-bar);
         color: var(--foreground);
@@ -80,7 +81,7 @@
         justify-content: center;
     }
 
-    .title-bar .controls { 
+    .title-bar .controls {
         position: absolute;
         left: 15px;
         display: flex;
@@ -104,7 +105,7 @@
         word-wrap: break-word;
         overscroll-behavior-y: contain;
     }
-    
+
     #terminal::-webkit-scrollbar { width: 10px; }
     #terminal::-webkit-scrollbar-track { background: var(--window-bg); }
     #terminal::-webkit-scrollbar-thumb { background: var(--purple); border-radius: 5px; border: 2px solid var(--window-bg); }
@@ -123,17 +124,17 @@
     }
     .prompt .user { color: var(--green); }
     #command-input { background: transparent; border: none; color: var(--foreground); font-family: inherit; font-size: inherit; outline: none; flex: 1; text-shadow: 0 0 2px var(--foreground); }
-    
+
     .output-line { white-space: pre-wrap; margin-bottom: 0.5rem; line-height: 1.6; }
     .output-line.command { color: var(--foreground); }
     .output-line.error { color: var(--red); text-shadow: 0 0 5px var(--red); }
     .output-line.info, .output-line b, .output-line strong { color: var(--cyan); text-shadow: 0 0 4px var(--cyan); }
-    
+
     .command-section h3, .output-line h3 {
         color: var(--green);
         text-shadow: 0 0 5px var(--green);
         border-bottom: 2px solid var(--green);
-        padding-bottom: 8px; 
+        padding-bottom: 8px;
         margin-top: 2rem;
         margin-bottom: 1.5rem;
         font-size: 1.4em;
@@ -143,12 +144,12 @@
         color: var(--purple);
         margin-top: 2rem;
         margin-bottom: 1rem;
-        border-left: 4px solid var(--purple); 
+        border-left: 4px solid var(--purple);
         padding-left: 12px;
         font-size: 1.1em;
         font-weight: 700;
     }
-    
+
     .command-item {
         background-color: var(--card-bg);
         border: 1px solid var(--border-color);
@@ -165,7 +166,7 @@
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
         border-left-color: var(--cyan);
     }
-    
+
     .command-item b { color: var(--cyan); font-size: 1.05em; }
     .command-item .desc { color: #b0bec5; font-size: 0.95em; margin-left: 5px; }
 
@@ -174,7 +175,7 @@
         direction: rtl; text-align: right; display: block;
         margin-top: 6px; color: #b0bec5; text-shadow: none; font-size: 0.95em;
     }
-    
+
     .example {
         background: rgba(0, 0, 0, 0.3);
         padding: 10px;
@@ -186,15 +187,15 @@
         word-wrap: break-word;
         border-left: 3px solid var(--comment);
     }
-    
+
 
     table {
         width: 100%;
-        border-collapse: separate; 
+        border-collapse: separate;
         border-spacing: 0;
         margin: 2rem 0;
         font-size: 0.9em;
-        display: table; 
+        display: table;
         max-width: 100%;
         overflow-x: auto;
         border: 1px solid var(--border-color);
@@ -204,7 +205,7 @@
     th, td {
         padding: 12px 15px;
         text-align: left;
-        white-space: nowrap; 
+        white-space: nowrap;
         border-bottom: 1px solid var(--border-color);
     }
     th {
@@ -230,18 +231,28 @@
     @media (max-width: 768px) {
         html { font-size: 13px; }
         #terminal-window {
-            width: 100%; height: 100%; max-width: none;
-            border-radius: 0; border: none; box-shadow: none;
+            width: 100%;
+            height: 100%;
+            max-width: none;
+            border-radius: 0;
+            border: none;
+            box-shadow: none;
+            margin: 0;
         }
         .title-bar .controls-container { display: none; }
         #terminal { padding: 10px; }
     }
-    
-    #output { flex-grow: 1; overflow-y: auto; min-height: 0; padding-right: 5px; }
+
+    #output {
+        flex-grow: 1;
+        overflow-y: auto;
+        min-height: 0;
+        padding-right: 5px;
+    }
     #command-input::placeholder { color: var(--comment); opacity: 0.8; }
-           
+
 </style>
- 
+
     <script src="js/app.fingerprint.js"></script>
 </head>
 <body>
@@ -264,9 +275,9 @@
             </div>
         </div>
     </div>
-    
+
     <div id="fingerprint-output" style="display: none;"></div>
-    
+
 <div id="commands-data" style="display: none;">
     <div id="ascii-art">
       <pre style="color: var(--cyan); text-shadow: 0 0 2px var(--cyan); font-size: 8px;">
@@ -305,7 +316,7 @@
         <div class="command-item"><b>touch, echo</b><div>Create an empty file; print text.</div><div class="lang-fa">ساخت فایل خالی؛ چاپ کردن متن.</div><code class="example">touch file.log, echo "root:toor" > creds.txt</code></div>
         <div class="command-item"><b>find, locate</b><div>Search for files by name/properties or a pre-built database.</div><div class="lang-fa">جستجوی فایل بر اساس نام/ویژگی یا با دیتابیس.</div><code class="example">find / -name "config.php", locate authorized_keys</code></div>
         <div class="command-item"><b>tar, zip, unzip</b><div>Archiving and compression utilities.</div><div class="lang-fa">ابزارهای آرشیو و فشرده‌سازی.</div><code class="example">tar -czvf backup.tar.gz /var/www, zip -r a.zip .</code></div>
-        
+
         <h4>✍️ Text Processing</h4>
         <div class="command-item"><b>grep</b><div>Searches for patterns in text.</div><div class="lang-fa">الگوهای متنی را جستجو می‌کند.</div><code class="example">grep -r "password" /etc, ps aux | grep -i "nginx"</code></div>
         <div class="command-item"><b>awk, sed</b><div>Pattern scanning/processing language; stream editor.</div><div class="lang-fa">زبان پردازش متن مبتنی بر الگو؛ ویرایشگر جریانی.</div><code class="example">awk -F':' '{print $1}' /etc/passwd, sed -i 's/127.0.0.1/0.0.0.0/' /etc/mysql/my.cnf</code></div>
@@ -367,7 +378,7 @@
         <div class="command-item"><b>push, pop</b><div>Pushes/pops an operand onto/from the stack.</div><div class="lang-fa">قرار دادن/برداشتن عملوند روی/از پشته.</div><code class="example">push eax ; pop ebx</code></div>
         <div class="command-item"><b>syscall / int 0x80</b><div>Triggers a kernel system call.</div><div class="lang-fa">فعال‌سازی یک فراخوانی سیستمی هسته.</div><code class="example">mov eax, 1 ; (sys_exit in 32-bit Linux)</code></div>
         <div class="command-item"><b>Shellcode</b><div>A small piece of code used as a payload in exploitation.</div><div class="lang-fa">قطعه کد کوچکی که به عنوان پیلود در بهره‌برداری استفاده می‌شود.</div><code class="example">Typically must be null-free and position-independent.</code></div>
-        
+
         <h4>Smali (Android DEX Assembly)</h4>
         <div class="command-item"><b>invoke-virtual / -static / -direct</b><div>Invokes a non-static, static, or private/constructor method.</div><div class="lang-fa">فراخوانی یک متد غیر استاتیک، استاتیک یا خصوصی/سازنده.</div><code class="example">invoke-static {v1}, Landroid/util/Base64;->decode(Ljava/lang/String;)[B</code></div>
         <div class="command-item"><b>const-string</b><div>Loads a literal string into a register.</div><div class="lang-fa">یک رشته متنی را در یک رجیستر بارگذاری می‌کند.</div><code class="example">const-string v0, "API_KEY_SECRET"</code></div>
@@ -384,7 +395,7 @@
         <div class="command-item"><b>aaa</b><div>"Analyze All". Performs an automatic analysis of the binary.</div><div class="lang-fa">"تحلیل همه". یک تحلیل خودکار از باینری انجام می‌دهد.</div><code class="example">Open file and run 'aaa' as the first step.</code></div>
         <div class="command-item"><b>iI, ii, ie</b><div>Shows binary info, imports, and entry points.</div><div class="lang-fa">نمایش اطلاعات باینری، واردات و نقاط ورود.</div><code class="example">iI ; ii ; ie</code></div>
         <div class="command-item"><b>iz, izz</b><div>Lists strings from data section or the entire binary.</div><div class="lang-fa">لیست رشته‌ها از بخش داده یا کل باینری.</div><code class="example">izz | grep -i "password"</code></div>
-        
+
         <h4>🗺️ Navigation & Disassembly</h4>
         <div class="command-item"><b>afl</b><div>"Analyze Function List". Lists all identified functions.</div><div class="lang-fa">"لیست توابع تحلیلی". لیست تمام توابع شناسایی شده.</div><code class="example">afl | grep main</code></div>
         <div class="command-item"><b>s &lt;addr&gt;</b><div>"Seek". Changes the current offset to a new location.</div><div class="lang-fa">"جستجو". تغییر آفست فعلی به مکان جدید.</div><code class="example">s main, s 0x00401120</code></div>
@@ -397,7 +408,7 @@
         <div class="command-item"><b>ood</b><div>"Open in Debug mode". Reopens the file in debug mode.</div><div class="lang-fa">"باز کردن در حالت دیباگ". باز کردن مجدد فایل در حالت دیباگ.</div><code class="example">r2 -d /bin/ls; ood</code></div>
         <div class="command-item"><b>db, dc, ds</b><div>Sets a breakpoint; continues execution; steps one instruction.</div><div class="lang-fa">نقطه توقف می‌گذارد؛ اجرا را ادامه می‌دهد؛ یک دستور را اجرا می‌کند.</div><code class="example">db main; dc; ds</code></div>
     </div>
-    
+
     <div id="help-compare" class="command-section">
         <h3>📊 Command Comparison Table</h3>
         <table>
@@ -470,8 +481,7 @@
 </div>
 
 <script>
-    // --- START: MODIFIED SCRIPT ---
-    document.addEventListener('DOMContentLoaded', () => { 
+    document.addEventListener('DOMContentLoaded', () => {
         const output = document.getElementById('output');
         const commandInput = document.getElementById('command-input');
         const terminal = document.getElementById('terminal');
@@ -482,7 +492,7 @@
         let historyIndex = -1;
         const typingSpeed = 10;
         let isTyping = false;
-        
+
         let fingerprintInstance = null;
         try {
             if (typeof Fingerprint === 'undefined') {
@@ -540,7 +550,7 @@
                 }, speed);
             });
         }
-        
+
         function scrollToBottom() {
             requestAnimationFrame(() => { output.scrollTop = output.scrollHeight; });
         }
@@ -554,7 +564,7 @@
             } else {
                 line.innerHTML = text;
             }
-            scrollToBottom(); 
+            scrollToBottom();
         }
 
         function printPrompt(command) {
@@ -573,7 +583,7 @@
                 cursor.style.display = 'none';
             }
         }
-        
+
         async function executeCommand(command) {
             isTyping = true;
             toggleInput(false);
@@ -592,7 +602,7 @@
                     const contentEl = document.getElementById(`help-${cmd}`);
                     if (contentEl) await printToTerminal(contentEl.innerHTML, 'output-line', false);
                 } else {
-                    switch (command.toLowerCase().trim()) { 
+                    switch (command.toLowerCase().trim()) {
                         case 'help':
                         case 'راهنما':
                             await printToTerminal(document.getElementById('help-main').innerHTML, 'output-line', false);
@@ -739,7 +749,7 @@
                 }
             }
         });
-        
+
         terminal.addEventListener('click', (e) => {
             if(e.target === terminal || e.target === output) {
                 if (!commandInput.disabled) commandInput.focus();
@@ -751,10 +761,9 @@
         };
         window.addEventListener('resize', setRealViewportHeight);
         setRealViewportHeight();
-        
+
         initTerminal();
     });
-    // --- END: MODIFIED SCRIPT ---
 </script>
 </body>
 </html>
