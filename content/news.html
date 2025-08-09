@@ -14,7 +14,18 @@
             --border-color: #00cc7a;
             --hover-bg-color: #004d2b;
         }
-        body { background-color: var(--bg-color); color: var(--text-color); font-family: 'Vazirmatn', sans-serif; margin: 0; padding: 15px; }
+
+        html { box-sizing: border-box; }
+        *, *::before, *::after { box-sizing: inherit; }
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-color); 
+            font-family: 'Vazirmatn', sans-serif; 
+            margin: 0; 
+            padding: 15px; 
+            min-height: var(--app-height, 100vh);
+        }
+
         #header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         #header h1 { color: var(--primary-color); font-size: 1.6rem; margin: 0; }
         #refresh-button { background: none; border: 1px solid var(--border-color); color: var(--primary-color); font-size: 1.6rem; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; transition: all 0.4s ease; display: flex; align-items: center; justify-content: center; }
@@ -39,7 +50,7 @@
     </div>
 
 <div id="loader">
-  ... Receiving
+   ...  Receiving 
 </div>
 
 <div id="news-container" class="hidden">
@@ -60,13 +71,11 @@
 <script>
 
     const decoyPartB64 = 'ZmF0aWthbG8=';
-
     const ENCRYPTED_URLS = {
         exploitdb: 'JQZaUCB7YkcTFAgLFx4cTBQXHR4YWggcAB4LLxtAUzIsJEYSDhYOFx4cTwAABEk=',
         cisa: 'JQZaUCB7YkcGCBcEXxwdDhwcXAcWFRsPAwUBPhNDSX02IhoOBBYWXAgKF0s=',
         takian: 'JQZaUCB7YkcRAA8MEwJCERYKCh9PFR4KEwgNJBxdQT4oYx8KEw8AAB9BBQETXQ=='
     };
-
     function generateKey() {
         const p1 = document.title; 
         const p2 = document.getElementById('header').id; 
@@ -74,7 +83,6 @@
         const p4 = atob(decoyPartB64); 
         return p1 + p2 + p3 + p4;
     }
-
     function decryptUrl(encodedStr) {
         try {
             const dynamicKey = generateKey();
@@ -89,21 +97,17 @@
             return "";
         }
     }
-    
     const EXPLOITDB_PROXY_URL = decryptUrl(ENCRYPTED_URLS.exploitdb);
     const CISA_PROXY_URL = decryptUrl(ENCRYPTED_URLS.cisa);
     const TAKIAN_PROXY_URL = decryptUrl(ENCRYPTED_URLS.takian);
-
     const loader = document.getElementById('loader');
     const newsContainer = document.getElementById('news-container');
     const refreshButton = document.getElementById('refresh-button');
-    
     const allSourcesElements = {
         exploitdb: { list: document.getElementById('exploitdb-list'), section: document.getElementById('exploitdb-section') },
         cisa: { list: document.getElementById('cisa-list'), section: document.getElementById('cisa-section') },
         takian: { list: document.getElementById('takian-list'), section: document.getElementById('takian-section') }
     };
-
     async function fullLoadNews() {
         loader.classList.remove('hidden');
         newsContainer.classList.add('hidden');
@@ -133,7 +137,19 @@
         } finally { loader.classList.add('hidden'); newsContainer.classList.remove('hidden'); }
     }
     refreshButton.addEventListener('click', fullLoadNews);
-    document.addEventListener('DOMContentLoaded', fullLoadNews);
+    
+
+    const setRealViewportHeight = () => {
+        document.documentElement.style.setProperty('--app-height', `${window.innerHeight}px`);
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        fullLoadNews();
+        setRealViewportHeight();
+    });
+
+    window.addEventListener('resize', setRealViewportHeight);
+
 </script>
 
 </body>
