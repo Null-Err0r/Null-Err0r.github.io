@@ -163,7 +163,7 @@
             if (isUrl) {
                 targetUrl = query.startsWith('http') ? query : 'https://' + query;
             } else {
-                targetUrl = `https://searx.be/search?q=${encodeURIComponent(query)}&debug=true`;
+                targetUrl = `https://www.duckduckgo.com/?q=${encodeURIComponent(query)}`;
             }
             loadUrlInProxy(targetUrl, true);
         }
