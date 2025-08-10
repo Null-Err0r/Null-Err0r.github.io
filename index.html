@@ -651,17 +651,7 @@
   </div>
   <script>
     
-    const globeIframe = document.createElement('iframe');
-    globeIframe.id = 'globe-background';
-    globeIframe.src = 'https://nullglobeworker.awardbinsami.workers.dev/'; 
-    globeIframe.style.position = 'fixed';
-    globeIframe.style.top = '0';
-    globeIframe.style.left = '0';
-    globeIframe.style.width = '100vw';
-    globeIframe.style.height = '100vh';
-    globeIframe.style.border = 'none';
-    globeIframe.style.zIndex = '-2';
-    document.body.appendChild(globeIframe);
+
     
     const decoyPartB64 = 'ZGVsYmFyODY3MQ==';
     const ENCRYPTED_AI_WORKER_URL = 'JQZaUCB7YlsDHgwdQxUEBQ8KAB5JUVgAWVxZQVZDKRBHTiAgIB1LBQIbBQQeA08KABpL';
@@ -708,6 +698,27 @@
 
     const TIME_CORRECTION_OFFSET = 0 ;
 
+
+function loadGlobeBackground() {
+    const globeIframe = document.createElement('iframe');
+    globeIframe.id = 'globe-background';
+    globeIframe.style.opacity = '0';
+    globeIframe.style.transition = 'opacity 1.5s ease-in-out';
+    globeIframe.onload = () => {
+        globeIframe.style.opacity = '1';
+    };
+    
+    globeIframe.src = 'https://nullglobeworker.awardbinsami.workers.dev/'; 
+    globeIframe.style.position = 'fixed';
+    globeIframe.style.top = '0';
+    globeIframe.style.left = '0';
+    globeIframe.style.width = '100vw';
+    globeIframe.style.height = '100vh';
+    globeIframe.style.border = 'none';
+    globeIframe.style.zIndex = '-2';
+    document.body.appendChild(globeIframe);
+}
+    
     const messages = {
       en: {
         intro: [],
@@ -1347,11 +1358,17 @@ try {
 updateClocks();
 setInterval(updateClocks, 1000);
 window.addEventListener('resize', setRealViewportHeight);
+    
 window.onload = () => {
     setRealViewportHeight();
     if (isMobileDevice()) document.body.classList.add('mobile');
-    switchLanguage('fa');
+        switchLanguage('fa');
     synchronizeClock();
+    if ('requestIdleCallback' in window) {
+        requestIdleCallback(loadGlobeBackground, { timeout: 2000 });
+    } else {
+        setTimeout(loadGlobeBackground, 500); 
+    }
 };
 
 function handleWindowMessage(event) {
