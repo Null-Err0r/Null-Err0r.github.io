@@ -626,7 +626,7 @@
 </head>
 
 <body>
-  <iframe id="globe-background" src="https://nullglobeworker.awardbinsami.workers.dev/"></iframe>
+  
   <div id="tsparticles"></div>
   <div id="terminal" role="main" aria-label="Terminal Portfolio">
 
@@ -1404,5 +1404,33 @@ interactivity: {
 });
 
   </script>
+    <script>
+
+    function createGlobeBackground() {
+
+        if (document.getElementById('globe-background')) {
+            return;
+        }
+
+        const globeIframe = document.createElement('iframe');
+        globeIframe.id = 'globe-background';
+        globeIframe.src = 'https://nullglobeworker.awardbinsami.workers.dev/';
+
+        globeIframe.style.position = 'fixed';
+        globeIframe.style.top = '0';
+        globeIframe.style.left = '0';
+        globeIframe.style.width = '100%';
+        globeIframe.style.height = '100%';
+        globeIframe.style.border = 'none';
+        globeIframe.style.zIndex = '-2'; 
+
+        document.body.prepend(globeIframe);
+    }
+
+    document.addEventListener('DOMContentLoaded', createGlobeBackground);
+</script>
+
+</body>
+</html>
 </body>
 </html>
