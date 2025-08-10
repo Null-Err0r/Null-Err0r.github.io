@@ -1163,10 +1163,20 @@ function populateGuiButtons() {
         closePanel();
     }
 
-    function toggleTerminalMode() {
-        isTerminalMode = !isTerminalMode;
-        if (isTerminalMode) { initTerminal(); } else { showGuiWelcome(); }
+function toggleTerminalMode() {
+    isTerminalMode = !isTerminalMode;
+    if (isTerminalMode) {
+        initTerminal();
+        history.pushState({ terminalOpen: true }, "Terminal Mode", "#terminal");
+    } else {
+        if(location.hash === '#terminal') {
+            history.back();
+        } else {
+            showGuiWelcome();
+        }
     }
+}
+
 
 async function switchLanguage(newLang) {
     lang = newLang;
@@ -1251,16 +1261,18 @@ async function switchLanguage(newLang) {
         }
     });
 
-   window.addEventListener('popstate', (event) => {
-    if (event.state && event.state.panelOpen) {
-
+window.addEventListener('popstate', (event) => {
+    if (!event.state) {
+        isTerminalMode = false;
+        showGuiWelcome(); 
+        closePanel(); 
+    } else if (event.state.panelOpen) {
         if (event.state.id === 'about') {
-
             renderAboutMePanel();
         }
-
     } else {
-
+        isTerminalMode = false;
+        showGuiWelcome();
         closePanel();
     }
 });
