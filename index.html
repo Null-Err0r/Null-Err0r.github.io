@@ -257,7 +257,7 @@ html[lang="en"] #panel { text-align: left; animation-name: slideInEn; border-lef
 
 #panel-content {
     height: 100%;
-    overflow: hidden; 
+    overflow-y: auto;
     position: relative;
     padding-bottom: 60px;
 }
@@ -267,7 +267,9 @@ html[lang="en"] #panel { text-align: left; animation-name: slideInEn; border-lef
     border: none;
     background-color: #1a1a1a;
 }
-
+#panel.app-mode #panel-content {
+    overflow: hidden; 
+}
 #close-panel {
     position: absolute; top: 10px; left: 10px; padding: 4px 10px;
     background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
@@ -668,8 +670,14 @@ const aiAssistantContent = `
         await sleep(200);
     }
 
-function openPanel(content, stateId = 'generic') {
+
+
+function openPanel(content, stateId = 'generic', isApp = false) {
   history.pushState({ panelOpen: true, id: stateId }, null, `#panel-${stateId}`);
+  
+
+  panel.classList.toggle('app-mode', isApp);
+
   document.body.classList.add('split');
   panel.style.display = 'block';
   panelContent.innerHTML = `<div class="progress-container" id="progressContainer"><div class="progress-bar" id="progressBar"></div></div>${content}`;
@@ -755,17 +763,20 @@ async function openAboutMePanel() {
 }
 
 
-    function openAiPanel() {
-        const decryptedWorkerUrl = decryptUrl(ENCRYPTED_AI_WORKER_URL);
-        const finalAiHtml = aiAssistantContent.replace('%%WORKER_URL_PLACEHOLDER%%', decryptedWorkerUrl);
-        openPanel(`<iframe srcdoc="${finalAiHtml.replace(/"/g, '&quot;')}"></iframe>`);
-        return '';
-    }
+
+
+function openAiPanel() {
+    const decryptedWorkerUrl = decryptUrl(ENCRYPTED_AI_WORKER_URL);
+    const finalAiHtml = aiAssistantContent.replace('%%WORKER_URL_PLACEHOLDER%%', decryptedWorkerUrl);
+
+    openPanel(`<iframe srcdoc="${finalAiHtml.replace(/"/g, '&quot;')}"></iframe>`, 'ai', true);
+    return '';
+}
 
 const commandFunctions = {
     'aboutme': openAboutMePanel,
     'news': () => { openPanel(`<iframe src="content/news.html"></iframe>`); return ''; },
-    'tutorial': () => { openPanel(`<iframe src="content/tutorials_main.html"></iframe>`); return ''; },
+    'tutorial': () => { openPanel('<iframe src="content/tutorials_main.html"></iframe>', 'tutorial', true); return ''; },
     'clear': () => { initTerminal(true); return ''; }
 };
 
