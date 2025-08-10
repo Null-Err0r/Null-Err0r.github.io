@@ -650,6 +650,19 @@
     <div id="panel-content"></div>
   </div>
   <script>
+    
+    const globeIframe = document.createElement('iframe');
+    globeIframe.id = 'globe-background';
+    globeIframe.src = 'https://nullglobeworker.awardbinsami.workers.dev/'; 
+    globeIframe.style.position = 'fixed';
+    globeIframe.style.top = '0';
+    globeIframe.style.left = '0';
+    globeIframe.style.width = '100vw';
+    globeIframe.style.height = '100vh';
+    globeIframe.style.border = 'none';
+    globeIframe.style.zIndex = '-2';
+    document.body.appendChild(globeIframe);
+    
     const decoyPartB64 = 'ZGVsYmFyODY3MQ==';
     const ENCRYPTED_AI_WORKER_URL = 'JQZaUCB7YlsDHgwdQxUEBQ8KAB5JUVgAWVxZQVZDKRBHTiAgIB1LBQIbBQQeA08KABpL';
     function generateKey() {
@@ -1404,30 +1417,5 @@ interactivity: {
 });
 
   </script>
-    <script>
-
-    function createGlobeBackground() {
-
-        if (document.getElementById('globe-background')) {
-            return;
-        }
-
-        const globeIframe = document.createElement('iframe');
-        globeIframe.id = 'globe-background';
-        globeIframe.src = 'https://nullglobeworker.awardbinsami.workers.dev/';
-
-        globeIframe.style.position = 'fixed';
-        globeIframe.style.top = '0';
-        globeIframe.style.left = '0';
-        globeIframe.style.width = '100%';
-        globeIframe.style.height = '100%';
-        globeIframe.style.border = 'none';
-        globeIframe.style.zIndex = '-2'; 
-
-        document.body.prepend(globeIframe);
-    }
-
-    document.addEventListener('DOMContentLoaded', createGlobeBackground);
-</script>
 </body>
 </html>
