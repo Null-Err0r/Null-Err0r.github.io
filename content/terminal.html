@@ -97,13 +97,14 @@
     .title-bar .control-dot.green { background-color: #27c93f; }
 
     #terminal {
-        height: 100%;
+
         display: flex;
         flex-direction: column;
         flex-grow: 1;
         padding: 1rem;
         word-wrap: break-word;
         overscroll-behavior-y: contain;
+        min-height: 0;
     }
 
     #terminal::-webkit-scrollbar { width: 10px; }
