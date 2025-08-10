@@ -3,239 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mr. SAM</title>
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>مرورگر وب حرفه‌ای V7</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         :root {
-            --background-color: #121212;
-            --surface-color: #1e1e1e;
-            --primary-color: #00ffcc;
-            --primary-variant-color: #00b38f;
-            --text-color: #e0e0e0;
-            --text-secondary-color: #a0a0a0;
-            --border-color: #333;
-            --shadow-color: rgba(0, 255, 204, 0.1);
-            --address-bar-height: 3.5rem;
+            --primary-bg: #1e1e1e;
+            --secondary-bg: #2d2d2d;
+            --border-color: #444;
+            --text-color: #f1f1f1;
+            --accent-color: #007acc;
+            --accent-hover-color: #0099ff;
         }
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        html { font-size: 16px; }
-        body {
-            font-family: 'Vazirmatn', sans-serif;
-            background-color: var(--background-color);
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body, html {
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--primary-bg);
             color: var(--text-color);
+            overflow: hidden;
+        }
+        .browser-container {
             display: flex;
             flex-direction: column;
             height: 100vh;
-            overflow: hidden;
+            background-color: var(--secondary-bg);
         }
-        .proxy-header {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background-color: var(--surface-color);
+        
+        .browser-header-wrapper {
+            background-color: var(--primary-bg);
             border-bottom: 1px solid var(--border-color);
-            height: var(--address-bar-height);
-            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 20;
         }
-        .proxy-header button {
-            background: none;
-            color: var(--text-secondary-color);
-            border: none;
-            padding: 0.5rem;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: background-color 0.2s, color 0.2s;
-            width: 2.5rem;
-            height: 2.5rem;
-            font-size: 1rem;
-            flex-shrink: 0;
+
+        .shortcut-bar {
+            display: flex;
+            padding: 8px 18px; 
+            overflow-x: auto;
+            justify-content: space-around;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
-        .proxy-header button:hover:not(:disabled) {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: var(--text-color);
-        }
-        .proxy-header button:disabled { opacity: 0.4; cursor: not-allowed; }
-        .address-bar-container {
-            flex-grow: 1;
+        .shortcut-bar::-webkit-scrollbar { display: none; }
+
+        .main-nav-bar {
             display: flex;
             align-items: center;
-            background-color: var(--background-color);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            overflow: hidden;
-            transition: border-color 0.3s, box-shadow 0.3s;
+            padding: 8px 10px;
+            gap: 10px;
+            flex-wrap: nowrap;
         }
-        .address-bar-container:focus-within {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 10px var(--shadow-color);
+
+        .nav-buttons {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        #url-input {
-            flex-grow: 1;
-            background-color: transparent;
-            border: none;
-            padding: 0.75rem 1rem;
-            font-family: inherit;
-            font-size: 1rem;
+
+        .nav-buttons button, .shortcut-bar button {
+            background: none; border: none;
             color: var(--text-color);
-            outline: none;
-            direction: ltr;
-            text-align: left;
+            font-size: 18px; cursor: pointer;
+            padding: 8px; border-radius: 50%;
+            width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            transition: background-color 0.2s ease, transform 0.2s ease;
         }
-        #search-button {
-            padding: 0 1rem;
-            color: var(--primary-color);
-            height: 100%;
+        .nav-buttons button:hover, .shortcut-bar button:hover {
+            background-color: var(--secondary-bg);
+            transform: scale(1.1);
         }
-        .iframe-container { flex-grow: 1; overflow: hidden; position: relative; }
-        #proxy-frame { width: 100%; height: 100%; border: none; background-color: #282a36; }
+        .nav-buttons button:disabled {
+            color: #666; cursor: not-allowed;
+            background-color: transparent; transform: none;
+        }
+        
+        .url-input-wrapper { flex-grow: 1; min-width: 100px; position: relative; }
+        #url-input {
+            width: 100%; padding: 10px 40px 10px 15px;
+            background-color: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color); border-radius: 20px;
+            font-size: 14px; outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            text-align: left; direction: ltr;
+        }
+        #url-input:focus { border-color: var(--accent-color); box-shadow: 0 0 0 2px var(--accent-color); }
+        .url-input-wrapper .fa-globe { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #888; }
+        #go-btn { background-color: var(--accent-color); }
+        #go-btn:hover { background-color: var(--accent-hover-color) !important; }
+
+        .browser-content { flex-grow: 1; position: relative; }
+        .loading-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(45, 45, 45, 0.8);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 10; display: none;
+        }
         .loader {
-            position: absolute; inset: 0;
-            background-color: rgba(18, 18, 18, 0.85);
-            backdrop-filter: blur(5px);
-            display: none;
-            align-items: center; justify-content: center;
-            gap: 1rem; z-index: 10;
-        }
-        .loader.is-active { display: flex; }
-        .spinner {
-            width: 50px; height: 50px;
-            border: 5px solid var(--border-color);
-            border-top-color: var(--primary-color);
-            border-radius: 50%;
+            border: 5px solid #f3f3f3; border-top: 5px solid var(--accent-color);
+            border-radius: 50%; width: 50px; height: 50px;
             animation: spin 1s linear infinite;
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #browser-frame { width: 100%; height: 100%; border: none; background-color: #fff; }
+
+        @media (max-width: 768px) {
+            .shortcut-bar {
+                justify-content: flex-start;
+                gap: 12px;
+            }
+        }
     </style>
 </head>
 <body>
-    <header class="proxy-header">
-        <button id="back-button" aria-label="بازگشت"><i class="fas fa-arrow-right"></i></button>
-        <button id="forward-button" aria-label="رفتن به جلو"><i class="fas fa-arrow-left"></i></button>
-        <button id="reload-button" aria-label="بارگذاری مجدد"><i class="fas fa-sync-alt"></i></button>
-        
-        <div class="address-bar-container">
-            <input type="text" id="url-input" placeholder=" url ... " autocomplete="off" spellcheck="false">
-            <button id="search-button" aria-label="جستجو"><i class="fas fa-search"></i></button>
-        </div>
+    <div class="browser-container">
+        <header class="browser-header-wrapper">
+            <div class="shortcut-bar">
+                <button class="shortcut-btn" title="Telegram" data-url="https://web.telegram.org/k/"><i class="fa-brands fa-telegram"></i></button>
+                <button class="shortcut-btn" title="WhatsApp" data-url="https://web.whatsapp.com/"><i class="fa-brands fa-whatsapp"></i></button>
+                <button class="shortcut-btn" title="Instagram" data-url="https://www.instagram.com/"><i class="fa-brands fa-instagram"></i></button>
+                <button class="shortcut-btn" title="YouTube" data-url="https://www.youtube.com/"><i class="fa-brands fa-youtube"></i></button>
+                <button class="shortcut-btn" title="VirusTotal" data-url="https://www.virustotal.com/gui/home/upload"><i class="fa-solid fa-shield-virus"></i></button>
+                <button class="shortcut-btn" title="LinkedIn" data-url="https://www.linkedin.com/"><i class="fa-brands fa-linkedin"></i></button>
+                <button class="shortcut-btn" title="Facebook" data-url="https://www.facebook.com/"><i class="fa-brands fa-facebook"></i></button>
 
-    </header>
-    <div class="iframe-container">
-        <iframe id="proxy-frame" title="محتوای پروکسی شده"></iframe>
-        <div id="loader" class="loader">
-            <div class="spinner"></div>
-            <p>در حال بارگذاری ...</p>
-        </div>
+            </div>
+            <div class="main-nav-bar">
+                <div class="nav-buttons">
+                    <button id="back-btn" title="Back"><i class="fa fa-arrow-left"></i></button>
+                    <button id="forward-btn" title="Forward"><i class="fa fa-arrow-right"></i></button>
+                    <button id="reload-btn" title="Reload"><i class="fa fa-redo"></i></button>
+                </div>
+                <div class="url-input-wrapper">
+                     <i class="fa fa-globe"></i>
+                    <input type="text" id="url-input" placeholder="آدرس سایت...">
+                </div>
+                <div class="nav-buttons">
+                     <button id="go-btn" title="Go"><i class="fa fa-search"></i></button>
+                </div>
+            </div>
+        </header>
+
+        <main class="browser-content">
+            <div class="loading-overlay" id="loading-overlay">
+                <div class="loader"></div>
+            </div>
+            <iframe id="browser-frame" sandbox="allow-forms allow-modals allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation" src="about:blank"></iframe>
+        </main>
     </div>
+
     <script>
-        const urlInput = document.getElementById('url-input');
-        const searchButton = document.getElementById('search-button');
-        let proxyFrame = document.getElementById('proxy-frame');
-        const loader = document.getElementById('loader');
-        const backButton = document.getElementById('back-button');
-        const forwardButton = document.getElementById('forward-button');
-        const reloadButton = document.getElementById('reload-button');
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlInput = document.getElementById('url-input');
+            const goBtn = document.getElementById('go-btn');
+            const backBtn = document.getElementById('back-btn');
+            const forwardBtn = document.getElementById('forward-btn');
+            const reloadBtn = document.getElementById('reload-btn');
+            const browserFrame = document.getElementById('browser-frame');
+            const loadingOverlay = document.getElementById('loading-overlay');
+            const shortcutButtons = document.querySelectorAll('.shortcut-bar button');
 
-        const sessionHistory = { stack: [], currentIndex: -1 };
+            const loadUrl = (url) => {
+                if (!url) return;
+                let fullUrl = url.trim();
+                if (!fullUrl.startsWith('http://') && !fullUrl.startsWith('https://')) { fullUrl = 'https://' + fullUrl; }
+                loadingOverlay.style.display = 'flex';
+                urlInput.value = fullUrl;
+                browserFrame.src = fullUrl;
+            };
 
-        searchButton.addEventListener('click', performSearch);
-        urlInput.addEventListener('keyup', (event) => {
-            if (event.key === 'Enter') {
-                performSearch();
-            }
+            goBtn.addEventListener('click', () => loadUrl(urlInput.value));
+            urlInput.addEventListener('keydown', (event) => { if (event.key === 'Enter') { event.preventDefault(); loadUrl(urlInput.value); } });
+            backBtn.addEventListener('click', () => { try { browserFrame.contentWindow.history.back(); } catch(e){} });
+            forwardBtn.addEventListener('click', () => { try { browserFrame.contentWindow.history.forward(); } catch(e){} });
+            reloadBtn.addEventListener('click', () => { loadingOverlay.style.display = 'flex'; browserFrame.src = browserFrame.src; });
+            shortcutButtons.forEach(button => { button.addEventListener('click', () => { loadUrl(button.dataset.url); }); });
+            browserFrame.addEventListener('load', () => {
+                loadingOverlay.style.display = 'none';
+                try {
+                    const currentUrl = browserFrame.contentWindow.location.href;
+                    if (currentUrl !== 'about:blank') { urlInput.value = currentUrl; }
+                } catch (e) { console.warn("Cross-origin restriction prevented URL update."); }
+            });
+            browserFrame.addEventListener('error', () => { loadingOverlay.style.display = 'none'; });
+            loadUrl('https://www.virustotal.com/gui/home/upload');
         });
-
-        backButton.addEventListener('click', goBack);
-        forwardButton.addEventListener('click', goForward);
-        reloadButton.addEventListener('click', reloadCurrent);
-        proxyFrame.addEventListener('load', handleFrameLoad);
-
-        function performSearch() {
-            const query = urlInput.value.trim();
-            if (!query) return;
-            processQuery(query);
-        }
-
-        function processQuery(query) {
-            let targetUrl;
-            const isUrl = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/.test(query);
-            if (isUrl) {
-                targetUrl = query.startsWith('http') ? query : 'https://' + query;
-            } else {
-                targetUrl = `https://www.duckduckgo.com/?q=${encodeURIComponent(query)}`;
-            }
-            loadUrlInProxy(targetUrl, true);
-        }
-
-        function loadUrlInProxy(url, isNewNavigation = false) {
-            loader.classList.add('is-active');
-            try {
-                const encodedUrl = btoa(url);
-                const proxyUrl = `/p/${encodedUrl}`;
-                
-                const container = proxyFrame.parentElement;
-                const newFrame = document.createElement('iframe');
-                newFrame.id = 'proxy-frame';
-                newFrame.title = 'محتوای پروکسی شده';
-                newFrame.addEventListener('load', handleFrameLoad);
-                
-                container.replaceChild(newFrame, proxyFrame);
-                proxyFrame = newFrame;
-                proxyFrame.src = proxyUrl;
-
-                if (isNewNavigation) {
-                    if (sessionHistory.currentIndex < sessionHistory.stack.length - 1) {
-                       sessionHistory.stack.splice(sessionHistory.currentIndex + 1);
-                    }
-                    sessionHistory.stack.push(url);
-                    sessionHistory.currentIndex = sessionHistory.stack.length - 1;
-                }
-                updateHistoryButtons();
-                urlInput.value = url;
-
-            } catch (e) {
-                console.error("Error in loadUrlInProxy:", e);
-                alert("یک خطا در پردازش آدرس رخ داد.");
-                loader.classList.remove('is-active');
-            }
-        }
-        
-        function handleFrameLoad() {
-            loader.classList.remove('is-active');
-            const finalUrl = sessionHistory.stack[sessionHistory.currentIndex];
-            if (finalUrl) {
-                urlInput.value = finalUrl;
-            }
-        }
-
-        function goBack() {
-            if (sessionHistory.currentIndex > 0) {
-                sessionHistory.currentIndex--;
-                loadUrlInProxy(sessionHistory.stack[sessionHistory.currentIndex], false);
-            }
-        }
-
-        function goForward() {
-            if (sessionHistory.currentIndex < sessionHistory.stack.length - 1) {
-                sessionHistory.currentIndex++;
-                loadUrlInProxy(sessionHistory.stack[sessionHistory.currentIndex], false);
-            }
-        }
-
-        function reloadCurrent() {
-            if (sessionHistory.currentIndex !== -1) {
-                loadUrlInProxy(sessionHistory.stack[sessionHistory.currentIndex], false);
-            }
-        }
-
-        function updateHistoryButtons() {
-            backButton.disabled = sessionHistory.currentIndex <= 0;
-            forwardButton.disabled = sessionHistory.currentIndex >= sessionHistory.stack.length - 1;
-            reloadButton.disabled = sessionHistory.currentIndex === -1;
-        }
-
-        updateHistoryButtons();
     </script>
 </body>
 </html>
