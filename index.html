@@ -13,76 +13,38 @@
   <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png" />
   <link rel="manifest" href="favicon/site.webmanifest" />
 
-<style>
+  <style>
   :root {
   --primary-color: #00ffcc;
   --bg-color: #1a1a1a;
   --text-color: #e0e0e0;
 }
-
-/* --- START: CORRECTED CODE --- */
-
 html, body {
-  margin: 0;
-  padding: 0;
-  background-color: transparent;
-  font-family: 'Vazirmatn', 'Fira Mono', monospace;
-  color: var(--primary-color);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  user-select: none;
-  direction: rtl;
-  display: flex;
-  position: relative;
-  touch-action: manipulation;
+  height: 100%; min-height: var(--app-height, 100vh); margin: 0; padding: 0; background-color: transparent;
+  font-family: 'Vazirmatn', 'Fira Mono', monospace; color: var(--primary-color);
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  user-select: none; overflow: hidden; direction: rtl;
+  display: flex; position: relative; touch-action: manipulation;
 }
-
-body {
-    height: var(--app-height, 100vh);
-    flex-direction: column;
-    overflow: hidden;
-}
-
-#terminal {
-  height: auto;
-  width: 100vw;
-  display: flex;
-  flex-direction: column;
-  background-color: transparent;
-  padding: 10px;
-  box-sizing: border-box;
-  text-align: right;
-  transition: width 0.3s ease;
-  z-index: 1;
-  flex-grow: 1;
-  min-height: 0;
-}
-
-#output {
-  flex-grow: 1;
-  overflow-y: auto;
-  overflow-x: auto;
-  white-space: pre;
-  line-height: 1.4;
-  font-size: 1rem;
-  user-select: text;
-  margin: 10px 0;
-  color: #ffffff;
-  text-align: inherit;
-  padding-bottom: 20px;
-}
-
-/* --- END: CORRECTED CODE --- */
-
-
 #tsparticles { position: fixed; width: 100%; height: 100%; z-index: -1; }
 html[lang="en"] { font-family: 'Fira Mono', monospace; direction: ltr; }
 
-
+#terminal {
+  height: var(--app-height, 100vh); width: 100vw; display: flex; flex-direction: column;
+  background-color: transparent; padding: 10px; box-sizing: border-box;
+  text-align: right; transition: width 0.3s ease; z-index: 1; overflow-y: auto;
+}
 html[lang="en"] #terminal { text-align: left; }
 .split #terminal { width: 50vw; }
 
-
+#output {
+  flex-grow: 1; overflow-y: auto;
+    overflow-x: auto;
+  white-space: pre;
+   line-height: 1.4;
+  font-size: 1rem; user-select: text; margin: 10px 0; color: #ffffff;
+  text-align: inherit; max-height: calc(100vh - 80px); padding-bottom: 20px;
+}
 
 body:not(.terminal-mode) #output {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -194,10 +156,15 @@ html[lang="en"] #time-fa { display: none; }
         overflow-y: auto !important;
     }
 
+
+
+
     #terminal {
         padding-top: 70px !important;
+
         padding-bottom: 20px !important;
     }
+
 
     .lang-buttons {
         position: fixed;
@@ -290,7 +257,7 @@ html[lang="en"] #panel { text-align: left; animation-name: slideInEn; border-lef
 
 #panel-content {
     height: 100%;
-    overflow-y: auto;
+    overflow: hidden; 
     position: relative;
     padding-bottom: 60px;
 }
@@ -363,7 +330,6 @@ html[lang="en"] #panel { text-align: left; animation-name: slideInEn; border-lef
 .bio-container .link-button i { margin-left: 0.5rem; }
  </style>
 
-
 </head>
 
 <body>
@@ -376,7 +342,7 @@ html[lang="en"] #panel { text-align: left; animation-name: slideInEn; border-lef
     <button class="lang-btn" id="langEnBtn" aria-label="Switch to English">English</button>
     <span id="time-fa" class="time-display"></span>
     <span id="time-en" class="time-display"></span>
-    <img src="content/shapes.gif" alt="Globe GIF" class="header-gif" />
+    <img src="res/shapes.gif" alt="Globe GIF" class="header-gif" />
 </div>
 
     <div id="gui-controls"></div>
@@ -474,7 +440,8 @@ gibberish: [
       }
     };
 
-    const aiAssistantContent = `
+
+const aiAssistantContent = `
     <!DOCTYPE html>
     <html lang="fa" dir="rtl">
     <head>
@@ -504,8 +471,18 @@ gibberish: [
             }
             html { box-sizing: border-box; font-size: 16px; }
             *, *::before, *::after { box-sizing: inherit; }
-            body { margin: 0; padding: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; background-color: var(--background); color: var(--foreground); font-family: var(--font-primary); }
-            #chat-window { width: 100%; height: 100%; max-width: 1000px; background-color: var(--window-bg); border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 0 35px rgba(0, 255, 204, 0.2); display: flex; flex-direction: column; overflow: hidden; position: relative; }
+            /* [FIX] Removed display:flex and alignment properties to ensure body's child fills the height correctly. */
+            body { 
+                margin: 0; 
+                padding: 0; 
+                width: 100%; 
+                height: var(--app-height); 
+                overflow: hidden; 
+                background-color: var(--background); 
+                color: var(--foreground); 
+                font-family: var(--font-primary); 
+            }
+            #chat-window { width: 100%; height: 100%; max-width: 1000px; background-color: var(--window-bg); border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 0 35px rgba(0, 255, 204, 0.2); display: flex; flex-direction: column; overflow: hidden; position: relative; margin: 0 auto; /* Added for centering */ }
             .title-bar { background-color: var(--title-bar); color: var(--foreground); padding: 8px 12px; font-weight: bold; border-bottom: 1px solid var(--border-color); text-align: center; cursor: default; flex-shrink: 0; font-family: var(--font-code); }
             #conversation-container { flex-grow: 1; padding: 20px; overflow-y: auto; scroll-behavior: smooth; display: flex; flex-direction: column; gap: 20px; }
             #conversation-container::-webkit-scrollbar { width: 8px; }
@@ -653,6 +630,8 @@ gibberish: [
     </body>
     </html>
     `;
+
+
 
     const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
     const isMobileDevice = () => /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
