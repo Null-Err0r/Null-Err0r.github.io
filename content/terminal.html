@@ -27,6 +27,7 @@
     }
 
     html {
+        height: 100%;
         box-sizing: border-box;
         font-size: clamp(14px, calc(0.25vw + 12.5px), 16px);
         scroll-behavior: smooth;
@@ -40,7 +41,7 @@
         margin: 0;
         padding: 0;
         width: 100%;
-        height: var(--app-height, 100vh);
+        height: 100%;
         display: flex;
         flex-direction: column;
         overflow: hidden;
@@ -756,12 +757,6 @@
                 if (!commandInput.disabled) commandInput.focus();
             }
         });
-
-        const setRealViewportHeight = () => {
-            document.documentElement.style.setProperty('--app-height', `${window.innerHeight}px`);
-        };
-        window.addEventListener('resize', setRealViewportHeight);
-        setRealViewportHeight();
 
         initTerminal();
     });
