@@ -871,7 +871,6 @@ const aiAssistantContent = `
                     if (!response.ok) throw new Error(\`Server error: \${response.statusText}\`);
                     const reader = response.body.getReader();
                     const decoder = new TextDecoder();
-                    let fullResponse = '';
                     while (true) {
                         const { done, value } = await reader.read();
                         if (done) break;
