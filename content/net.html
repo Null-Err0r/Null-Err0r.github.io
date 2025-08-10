@@ -18,14 +18,8 @@
             --shadow-color: rgba(0, 255, 204, 0.1);
             --address-bar-height: 3.5rem;
         }
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        html {
-            font-size: 16px;
-        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { font-size: 16px; }
         body {
             font-family: 'Vazirmatn', sans-serif;
             background-color: var(--background-color);
@@ -56,16 +50,14 @@
             width: 2.5rem;
             height: 2.5rem;
             font-size: 1rem;
+            flex-shrink: 0;
         }
         .proxy-header button:hover:not(:disabled) {
             background-color: rgba(255, 255, 255, 0.1);
             color: var(--text-color);
         }
-        .proxy-header button:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-        #proxy-form {
+        .proxy-header button:disabled { opacity: 0.4; cursor: not-allowed; }
+        .address-bar-container {
             flex-grow: 1;
             display: flex;
             align-items: center;
@@ -75,7 +67,7 @@
             overflow: hidden;
             transition: border-color 0.3s, box-shadow 0.3s;
         }
-        #proxy-form:focus-within {
+        .address-bar-container:focus-within {
             border-color: var(--primary-color);
             box-shadow: 0 0 10px var(--shadow-color);
         }
@@ -91,45 +83,30 @@
             direction: ltr;
             text-align: left;
         }
-        .iframe-container {
-            flex-grow: 1;
-            overflow: hidden;
-            position: relative;
-        }
-        #proxy-frame {
-            width: 100%;
+        #search-button {
+            padding: 0 1rem;
+            color: var(--primary-color);
             height: 100%;
-            border: none;
-            background-color: #282a36; 
         }
+        .iframe-container { flex-grow: 1; overflow: hidden; position: relative; }
+        #proxy-frame { width: 100%; height: 100%; border: none; background-color: #282a36; }
         .loader {
-            position: absolute;
-            inset: 0;
+            position: absolute; inset: 0;
             background-color: rgba(18, 18, 18, 0.85);
             backdrop-filter: blur(5px);
             display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-            z-index: 10;
+            align-items: center; justify-content: center;
+            gap: 1rem; z-index: 10;
         }
-        .loader.is-active {
-            display: flex;
-        }
+        .loader.is-active { display: flex; }
         .spinner {
-            width: 50px;
-            height: 50px;
+            width: 50px; height: 50px;
             border: 5px solid var(--border-color);
             border-top-color: var(--primary-color);
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -137,45 +114,49 @@
         <button id="back-button" aria-label="بازگشت"><i class="fas fa-arrow-right"></i></button>
         <button id="forward-button" aria-label="رفتن به جلو"><i class="fas fa-arrow-left"></i></button>
         <button id="reload-button" aria-label="بارگذاری مجدد"><i class="fas fa-sync-alt"></i></button>
-        <form id="proxy-form">
-            <input type="text" id="url-input" placeholder=" url ... " required autocomplete="off" spellcheck="false">
-        </form>
+        
+        <div class="address-bar-container">
+            <input type="text" id="url-input" placeholder=" url ... " autocomplete="off" spellcheck="false">
+            <button id="search-button" aria-label="جستجو"><i class="fas fa-search"></i></button>
+        </div>
+
     </header>
     <div class="iframe-container">
-        <iframe id="proxy-frame" title="محتوای پروکسی شده"</iframe>
+        <iframe id="proxy-frame" title="محتوای پروکسی شده"></iframe>
         <div id="loader" class="loader">
             <div class="spinner"></div>
             <p>در حال بارگذاری ...</p>
         </div>
     </div>
     <script>
-
-        const proxyForm = document.getElementById('proxy-form');
         const urlInput = document.getElementById('url-input');
-        const proxyFrame = document.getElementById('proxy-frame');
+        const searchButton = document.getElementById('search-button');
+        let proxyFrame = document.getElementById('proxy-frame');
         const loader = document.getElementById('loader');
         const backButton = document.getElementById('back-button');
         const forwardButton = document.getElementById('forward-button');
         const reloadButton = document.getElementById('reload-button');
 
-        const sessionHistory = {
-            stack: [],
-            currentIndex: -1,
-        };
+        const sessionHistory = { stack: [], currentIndex: -1 };
 
-        proxyForm.addEventListener('submit', handleSubmit);
+        searchButton.addEventListener('click', performSearch);
+        urlInput.addEventListener('keyup', (event) => {
+            if (event.key === 'Enter') {
+                performSearch();
+            }
+        });
+
         backButton.addEventListener('click', goBack);
         forwardButton.addEventListener('click', goForward);
         reloadButton.addEventListener('click', reloadCurrent);
         proxyFrame.addEventListener('load', handleFrameLoad);
 
-        function handleSubmit(event) {
-            event.preventDefault();
+        function performSearch() {
             const query = urlInput.value.trim();
             if (!query) return;
-
             processQuery(query);
         }
+
         function processQuery(query) {
             let targetUrl;
             const isUrl = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/.test(query);
@@ -189,23 +170,33 @@
 
         function loadUrlInProxy(url, isNewNavigation = false) {
             loader.classList.add('is-active');
-            proxyFrame.src = 'about:blank'; 
-
             try {
                 const encodedUrl = btoa(url);
                 const proxyUrl = `/p/${encodedUrl}`;
-                proxyFrame.src = proxyUrl;              
+                
+                const container = proxyFrame.parentElement;
+                const newFrame = document.createElement('iframe');
+                newFrame.id = 'proxy-frame';
+                newFrame.title = 'محتوای پروکسی شده';
+                newFrame.addEventListener('load', handleFrameLoad);
+                
+                container.replaceChild(newFrame, proxyFrame);
+                proxyFrame = newFrame;
+                proxyFrame.src = proxyUrl;
+
                 if (isNewNavigation) {
-                    sessionHistory.currentIndex++;
-                    sessionHistory.stack.splice(sessionHistory.currentIndex); 
+                    if (sessionHistory.currentIndex < sessionHistory.stack.length - 1) {
+                       sessionHistory.stack.splice(sessionHistory.currentIndex + 1);
+                    }
                     sessionHistory.stack.push(url);
+                    sessionHistory.currentIndex = sessionHistory.stack.length - 1;
                 }
                 updateHistoryButtons();
                 urlInput.value = url;
 
             } catch (e) {
-                console.error("URL Encoding Failed:", e);
-                alert("آدرس وارد شده نامعتبر است.");
+                console.error("Error in loadUrlInProxy:", e);
+                alert("یک خطا در پردازش آدرس رخ داد.");
                 loader.classList.remove('is-active');
             }
         }
@@ -221,20 +212,20 @@
         function goBack() {
             if (sessionHistory.currentIndex > 0) {
                 sessionHistory.currentIndex--;
-                loadUrlInProxy(sessionHistory.stack[sessionHistory.currentIndex]);
+                loadUrlInProxy(sessionHistory.stack[sessionHistory.currentIndex], false);
             }
         }
 
         function goForward() {
             if (sessionHistory.currentIndex < sessionHistory.stack.length - 1) {
                 sessionHistory.currentIndex++;
-                loadUrlInProxy(sessionHistory.stack[sessionHistory.currentIndex]);
+                loadUrlInProxy(sessionHistory.stack[sessionHistory.currentIndex], false);
             }
         }
 
         function reloadCurrent() {
             if (sessionHistory.currentIndex !== -1) {
-                proxyFrame.src = proxyFrame.src;
+                loadUrlInProxy(sessionHistory.stack[sessionHistory.currentIndex], false);
             }
         }
 
