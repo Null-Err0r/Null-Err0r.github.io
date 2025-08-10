@@ -407,24 +407,6 @@
     padding-bottom: 3.75rem; /* 60px */
   }
 
-   #panel.app-mode {
-  padding: 0 !important; 
-}
-
-#panel.app-mode #panel-content {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  padding: 0 !important; 
-  overflow: hidden; 
-}
-
-#panel.app-mode #close-panel {
-    z-index: 1001; 
-}
-
   #panel-content iframe {
     width: 100%;
     height: 100%;
@@ -741,7 +723,7 @@ gibberish: [
     };
 
 
-    const aiAssistantContent = `
+const aiAssistantContent = `
     <!DOCTYPE html>
     <html lang="fa" dir="rtl">
     <head>
@@ -767,14 +749,44 @@ gibberish: [
                 --dracula-bg: #282a36;
                 --font-primary: 'Vazirmatn', sans-serif;
                 --font-code: 'Fira Code', monospace;
-                --app-height: 100vh;
             }
-            html { box-sizing: border-box; font-size: 16px; }
+            html {
+                box-sizing: border-box;
+                font-size: 16px;
+                height: 100%; /* [FIX] Set html height to 100% */
+            }
             *, *::before, *::after { box-sizing: inherit; }
-            body { margin: 0; padding: 0; width: 100%; height: var(--app-height); display: flex; align-items: center; justify-content: center; overflow: hidden; background-color: var(--background); color: var(--foreground); font-family: var(--font-primary); }
-            #chat-window { width: 100%; height: 100%; max-width: 1000px; background-color: var(--window-bg); border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 0 35px rgba(0, 255, 204, 0.2); display: flex; flex-direction: column; overflow: hidden; position: relative; }
+
+            body {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                height: 100%; /* [FIX] Changed from var(--app-height) to 100% */
+                overflow: hidden;
+                background-color: var(--background);
+                color: var(--foreground);
+                font-family: var(--font-primary);
+                display: flex; /* [FIX] Make body a flex container */
+                flex-direction: column;
+            }
+            #chat-window {
+                width: 100%;
+                max-width: 1000px;
+                background-color: var(--window-bg);
+                /* border properties can be simplified or removed if panel has border */
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                box-shadow: 0 0 35px rgba(0, 255, 204, 0.2);
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+                position: relative;
+                margin: 0 auto;
+                flex-grow: 1; /* [FIX] Allow chat window to fill the flex body */
+                min-height: 0; /* [FIX] Prevent flexbox overflow bugs */
+            }
             .title-bar { background-color: var(--title-bar); color: var(--foreground); padding: 8px 12px; font-weight: bold; border-bottom: 1px solid var(--border-color); text-align: center; cursor: default; flex-shrink: 0; font-family: var(--font-code); }
-            #conversation-container { flex-grow: 1; padding: 20px; overflow-y: auto; scroll-behavior: smooth; display: flex; flex-direction: column; gap: 20px; }
+            #conversation-container { flex-grow: 1; padding: 20px; overflow-y: auto; scroll-behavior: smooth; display: flex; flex-direction: column; gap: 20px; min-height: 0; }
             #conversation-container::-webkit-scrollbar { width: 8px; }
             #conversation-container::-webkit-scrollbar-track { background: var(--window-bg); }
             #conversation-container::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
@@ -807,12 +819,12 @@ gibberish: [
             @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
             .message.ai pre { background-color: var(--dracula-bg); color: #f8f8f2; padding: 1em; border-radius: 5px; overflow-x: auto; font-family: var(--font-code); font-size: 0.9em; margin-top: 10px; }
             .message.ai code { font-family: var(--font-code); }
-            @media (max-width: 768px) { html { font-size: 14px; } #chat-window { width: 100%; height: 100%; max-width: none; border-radius: 0; border: none; box-shadow: none; } #conversation-container { padding: 15px; } .message { max-width: 90%; } }
+            @media (max-width: 768px) { html { font-size: 14px; } #chat-window { width: 100%; height: 100%; max-width: none; border-radius: 0; border: none; box-shadow: none; margin: 0; } #conversation-container { padding: 15px; } .message { max-width: 90%; } }
         </style>
     </head>
     <body>
         <main id="chat-window">
-            <header class="title-bar">AI Assistant</header> 
+            <header class="title-bar">AI Assistant</header>
             <section id="conversation-container"></section>
             <form id="input-area">
                 <textarea id="prompt-input" placeholder=" Write ( Shift+Enter for new line ) " rows="1"></textarea>
@@ -827,7 +839,8 @@ gibberish: [
             const inputForm = document.getElementById('input-area');
             const promptInput = document.getElementById('prompt-input');
             const submitButton = document.getElementById('submit-button');
-            const setRealViewportHeight = () => document.documentElement.style.setProperty('--app-height', \`\${window.innerHeight}px\`);
+            // [FIX] The setRealViewportHeight function is no longer needed for layout and can be removed.
+            // const setRealViewportHeight = () => document.documentElement.style.setProperty('--app-height', \`\${window.innerHeight}px\`);
             const scrollToBottom = () => conversationContainer.scrollTop = conversationContainer.scrollHeight;
             const autoResizeTextarea = () => { promptInput.style.height = 'auto'; promptInput.style.height = \`\${promptInput.scrollHeight}px\`; };
             const formatMessageContent = (text) => { const escapedText = text.replace(/</g, "&lt;").replace(/>/g, "&gt;"); return escapedText.replace(/\\\`\\\`\\\`([\\s\\S]*?)\\\`\\\`\\\`/g, '<pre><code>$1</code></pre>'); };
@@ -852,7 +865,7 @@ gibberish: [
                 submitButton.disabled = true;
                 const aiMessageDiv = addMessage('ai', '<div class="typing-indicator"><span></span><span></span><span></span></div>');
                 const aiContentDiv = aiMessageDiv.querySelector('.content');
-                let fullResponse = ''; 
+                let fullResponse = '';
                 try {
                     const response = await fetch(WORKER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt }) });
                     if (!response.ok) throw new Error(\`Server error: \${response.statusText}\`);
@@ -885,7 +898,7 @@ gibberish: [
                     submitButton.disabled = false;
                     promptInput.focus();
                     if (fullResponse.trim() === 'بریم تو کار یخ شکن') {
-                        console.log("Sending 'openProxy' signal from iframe..."); 
+                        console.log("Sending 'openProxy' signal from iframe...");
                         parent.postMessage({ type: 'openProxynet' }, '*');
                     }
                 }
@@ -909,18 +922,17 @@ gibberish: [
                     setTimeout(() => { copyButton.classList.remove('copied'); }, 2000);
                 }).catch(err => { console.error('Failed to copy text: ', err); alert('Failed to copy!'); });
             };
-            window.addEventListener('resize', setRealViewportHeight);
+            // window.addEventListener('resize', setRealViewportHeight); // No longer needed
             inputForm.addEventListener('submit', handleFormSubmit);
             conversationContainer.addEventListener('click', handleCopyClick);
             promptInput.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); inputForm.requestSubmit(); } });
-            setRealViewportHeight();
+            // setRealViewportHeight(); // No longer needed
             addMessage('ai', 'آماده گفتگو هستم <br> I am ready to talk');
             promptInput.focus();
         <\/script>
     </body>
     </html>
     `;
-
 
 
     const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
