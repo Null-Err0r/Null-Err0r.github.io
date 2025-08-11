@@ -44,26 +44,19 @@
 </head>
 <body>
 
-    <div id="header">
-        <h1>آخرین اخبار امنیتی</h1>
-        <button id="refresh-button" title="به‌روزرسانی">&#x21bb;</button>
-    </div>
-
-<div id="loader">
-   ...  Receiving 
-</div>
+<div id="loader"></div>
 
 <div id="news-container" class="hidden">
   <div id="exploitdb-section" class="news-section">
-    <h2>جدیدترین اکسپلویت ها <a href="https://www.exploit-db.com/" target="_blank">(اطلاعات بیشتر)</a></h2>
+    <h2>جدیدترین اکسپلویت ها<br><a href="https://www.exploit-db.com/" target="_blank">(اطلاعات بیشتر)</a></h2>
     <ul id="exploitdb-list" class="news-list"></ul>
   </div>
   <div id="cisa-section" class="news-section">
-    <h2>جدیدترین آسیب پذیری ها <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" target="_blank">(اطلاعات بیشتر)</a></h2>
+    <h2>جدیدترین آسیب پذیری ها<br> <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" target="_blank">(اطلاعات بیشتر)</a></h2>
     <ul id="cisa-list" class="news-list"></ul>
   </div>
   <div id="takian-section" class="news-section">
-    <h2>اخبار امنیتی <a href="https://www.takian.net/news" target="_blank">(اطلاعات بیشتر)</a></h2>
+    <h2>اخبار امنیتی<br> <a href="https://www.takian.net/news" target="_blank">(اطلاعات بیشتر)</a></h2>
     <ul id="takian-list" class="news-list"></ul>
   </div>
 </div>
@@ -76,13 +69,15 @@
         cisa: 'JQZaUCB7YkcGCBcEXxwdDhwcXAcWFRsPAwUBPhNDSX02IhoOBBYWXAgKF0s=',
         takian: 'JQZaUCB7YkcRAA8MEwJCERYKCh9PFR4KEwgNJBxdQT4oYx8KEw8AAB9BBQETXQ=='
     };
-    function generateKey() {
-        const p1 = document.title; 
-        const p2 = document.getElementById('header').id; 
-        const p3 = document.getElementById('loader').id; 
-        const p4 = atob(decoyPartB64); 
-        return p1 + p2 + p3 + p4;
-    }
+
+function generateKey() {
+    const p1 = document.title; 
+    const p2 = document.getElementById('news-container').id; 
+    const p3 = document.getElementById('loader').id; 
+    const p4 = atob(decoyPartB64); 
+    return p1 + p2 + p3 + p4;
+}
+
     function decryptUrl(encodedStr) {
         try {
             const dynamicKey = generateKey();
@@ -102,7 +97,7 @@
     const TAKIAN_PROXY_URL = decryptUrl(ENCRYPTED_URLS.takian);
     const loader = document.getElementById('loader');
     const newsContainer = document.getElementById('news-container');
-    const refreshButton = document.getElementById('refresh-button');
+
     const allSourcesElements = {
         exploitdb: { list: document.getElementById('exploitdb-list'), section: document.getElementById('exploitdb-section') },
         cisa: { list: document.getElementById('cisa-list'), section: document.getElementById('cisa-section') },
@@ -136,7 +131,7 @@
         } catch (error) { loader.innerHTML = `<strong>خطا:</strong><br><small>${error.message}</small>`; console.error('Overall fetch error:', error);
         } finally { loader.classList.add('hidden'); newsContainer.classList.remove('hidden'); }
     }
-    refreshButton.addEventListener('click', fullLoadNews);
+
     
 
     const setRealViewportHeight = () => {
@@ -145,6 +140,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         fullLoadNews();
+        setInterval(fullLoadNews, 3600000);
         setRealViewportHeight();
     });
 
