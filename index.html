@@ -620,78 +620,100 @@
   border: none;
   z-index: -2;
 }
-  
+
 .fab-button {
   position: fixed;
-  bottom: 1.25rem; /* 20px */
-  width: 3.4375rem; /* 55px */
-  height: 3.4375rem; /* 55px */
+  bottom: 1.25rem;
+  z-index: 1000;
+
+  width: 3.4375rem; 
+  height: 3.4375rem;
+  background-color: transparent;
+  border: 1px solid rgba(0, 255, 204, 0.5);
   border-radius: 50%;
+  color: var(--primary-color);
+  
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  font-size: 1.5rem; 
   cursor: pointer;
-  
-  background: rgba(0, 255, 204, 0.1);
-  border: 1px solid rgba(0, 255, 204, 0.2);
-  backdrop-filter: blur(0.625rem); /* 10px */
-  box-shadow: 0 0.25rem 1.25rem rgba(0, 0, 0, 0.2); /* 0 4px 20px */
-  
-  color: var(--primary-color);
-  font-size: 1.5rem; /* 24px */
   transition: all 0.3s ease;
 }
 
-.fab-button:hover {
-  background: rgba(0, 255, 204, 0.25);
-  transform: translateY(-0.25rem) scale(1.05); /* -4px */
-  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.3); /* 0 8px 24px */
-}
-
 #ai-fab {
-  right: 1.25rem; /* 20px */
+  right: 1.25rem;
 }
 #chatbot-fab {
-  left: 1.25rem; /* 20px */
+  left: 1.25rem;
 }
 
-body.terminal-mode .fab-button {
-    bottom: 4.5rem; /* 72px */
+.fab-button:hover {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 15px -2px var(--primary-color);
+  transform: translateY(-0.25rem) scale(1.05);
 }
 
-@media (max-width: 48rem) { /* 768px */
-  .fab-button {
-    width: 3.125rem; /* 50px */
-    height: 3.125rem; /* 50px */
-    font-size: 1.375rem; /* 22px */
-    bottom: 1rem; /* 16px */
+@keyframes illuminate {
+  0% {
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
   }
-  #ai-fab {
-    right: 1rem; /* 16px */
+  50% {
+    text-shadow: 0 0 16px var(--primary-color), 0 0 12px #fff;
   }
-  #chatbot-fab {
-    left: 1rem; /* 16px */
-  }
-  body.terminal-mode .fab-button {
-    bottom: 4rem; /* 64px */
+  100% {
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
   }
 }
 
-.fab-button .icon-combo {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.125rem; /* 2px */
-    font-size: 1.3rem; 
-} 
+.icon-combo {
+  position: relative;
+  width: 2.2rem;
+  height: 2.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-/* ================= Tooltip for FABs ================= */
 
-/* قانون جدید: این باعث می‌شود تولتیپ به طور پیش‌فرض 
-  در همه اندازه‌ها (مخصوصاً موبایل) مخفی باشد.
-*/
+.icon-combo i {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+
+.icon-back { 
+  font-size: 2.2rem;
+  color: var(--primary-color);
+}
+
+
+.icon-front { 
+  font-size: 0.7rem;
+  color: rgba(0, 255, 204, 0.5);
+  top: 85%;
+}
+
+.fab-button:hover .icon-front {
+  color: #fff;
+  text-shadow: 0 0 8px #fff;
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
+.fab-button:hover .icon-back {
+  animation: illuminate 1.2s ease-in-out;
+}
+
+
+
+
+
+
 .fab-tooltip {
-  display: none;
+  display: none; 
 }
 
 @media (min-width: 48.01rem) { 
@@ -726,6 +748,24 @@ body.terminal-mode .fab-button {
   .fab-button:hover .fab-tooltip {
     opacity: 1;
     visibility: visible;
+  }
+}
+
+@media (max-width: 48rem) {
+  .fab-button {
+    width: 3.125rem;
+    height: 3.125rem;
+    font-size: 1.375rem;
+    bottom: 1rem;
+  }
+  #ai-fab {
+    right: 1rem;
+  }
+  #chatbot-fab {
+    left: 1rem;
+  }
+  body.terminal-mode .fab-button {
+    bottom: 4rem;
   }
 }
 
@@ -1598,9 +1638,12 @@ interactivity: {
 </script>
   
 <button id="ai-fab" class="fab-button" aria-label="دستیار هوش مصنوعی">
-    <span class="icon-combo"><i class="fa-solid fa-brain"></i><i class="fa-solid fa-microchip"></i></span>
-    <span class="fab-tooltip">AI Assistant<br>دستیار هوش مصنوعی</span>
-  </button>
+  <span class="icon-combo">
+    <i class="fa-solid fa-brain icon-back"></i>
+    <i class="fa-solid fa-microchip icon-front"></i>
+  </span>
+  <span class="fab-tooltip">دستیار هوش مصنوعی</span>
+</button>
   <button id="chatbot-fab" class="fab-button" aria-label="چت بات">
     <i class="fa-solid fa-comments"></i>
     <span class="fab-tooltip">چت بات<br>ChatBot</span>
