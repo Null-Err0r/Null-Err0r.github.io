@@ -1212,24 +1212,9 @@ const aiAssistantContent = `
     </html>
     `;
 
-const chatbotPanelContent = `
-    <div style="display: flex; flex-direction: column; height: 100%; color: var(--foreground); font-family: var(--font-primary);">
-        <header style="background-color: var(--title-bar); color: var(--foreground); padding: 8px 12px; font-weight: bold; border-bottom: 1px solid var(--border-color); text-align: center; flex-shrink: 0;">
-            Chatbot Assistant
-        </header>
-        <div style="flex-grow: 1; padding: 20px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 1rem;">
-            <i class="fa-solid fa-comments" style="font-size: 4rem; color: var(--comment);"></i>
-            <h3 style="margin: 0;">Chatbot is under construction</h3>
-            <p style="color: #777; margin: 0;">این بخش در حال توسعه است</p>
-        </div>
-        <footer style="padding: 15px; border-top: 1px solid var(--border-color); text-align: center; color: #555; flex-shrink: 0;">
-            Input area will be here
-        </footer>
-    </div>
-`;
 
-function openChatbotPanel() {
-    openPanel(chatbotPanelContent, 'chatbot', true);
+function openTelegramLink() {
+    window.open('https://t.me/NullError_ir_Group', '_blank');
     return '';
 }
 
@@ -1399,7 +1384,7 @@ const commandStructure = {
     'updates': { fn: commandFunctions.news, label: "Security Updates", icon: "fa-solid fa-newspaper" },
     'commands': { fn: commandFunctions.openTerminalCommands },
     'ai': { fn: openAiPanel },
-    'chatbot': { fn: openChatbotPanel },
+    'chatbot': { fn: openTelegramLink },
     'help': { fn: () => messages.en.helpText },
     'clear': { fn: commandFunctions.clear },
     'exit': { fn: () => { if(isTerminalMode) toggleTerminalMode(); return ''; } }
@@ -1410,7 +1395,7 @@ const commandStructure = {
     'تازه ها': { fn: commandFunctions.news, label: "تازه های امنیت", icon: "fa-solid fa-newspaper" },
     'دستورات': { fn: commandFunctions.openTerminalCommands },
     'هوش مصنوعی': { fn: openAiPanel },
-    'چت بات': { fn: openChatbotPanel },
+    'چت بات': { fn: openTelegramLink },
     'راهنما': { fn: () => messages.fa.helpText },
     'پاک کن': { fn: commandFunctions.clear },
     'خروج': { fn: () => { if(isTerminalMode) toggleTerminalMode(); return ''; } }
@@ -1663,7 +1648,7 @@ window.onload = () => {
     }
     try {
         document.getElementById('ai-fab').addEventListener('click', openAiPanel);
-        document.getElementById('chatbot-fab').addEventListener('click', openChatbotPanel);
+        document.getElementById('chatbot-fab').addEventListener('click', openTelegramLink);
         console.log("Floating action buttons are now clickable.");
     } catch (e) {
         console.error("Could not make FABs clickable. Are they in the HTML?", e);
