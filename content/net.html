@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مرورگر وب حرفه‌ای V7</title>
+    <title>Mr. SAM</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         :root {
@@ -153,43 +153,59 @@
             <iframe id="browser-frame" sandbox="allow-forms allow-modals allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation" src="about:blank"></iframe>
         </main>
     </div>
+    
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const urlInput = document.getElementById('url-input');
-            const goBtn = document.getElementById('go-btn');
-            const backBtn = document.getElementById('back-btn');
-            const forwardBtn = document.getElementById('forward-btn');
-            const reloadBtn = document.getElementById('reload-btn');
-            const browserFrame = document.getElementById('browser-frame');
-            const loadingOverlay = document.getElementById('loading-overlay');
-            const shortcutButtons = document.querySelectorAll('.shortcut-bar button');
+        const WORKER_BASE_URL = 'https://proxynet.awardbinsami.workers.dev/'; 
 
-            const loadUrl = (url) => {
-                if (!url) return;
-                let fullUrl = url.trim();
-                if (!fullUrl.startsWith('http://') && !fullUrl.startsWith('https://')) { fullUrl = 'https://' + fullUrl; }
+        const urlInput = document.getElementById('url-input');
+        const goBtn = document.getElementById('go-btn');
+        const backBtn = document.getElementById('back-btn');
+        const forwardBtn = document.getElementById('forward-btn');
+        const reloadBtn = document.getElementById('reload-btn');
+        const browserFrame = document.getElementById('browser-frame');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const shortcutButtons = document.querySelectorAll('.shortcut-bar button');
+
+        const loadUrl = (url) => {
+            if (!url) return;
+            let fullUrl = url.trim();
+            if (!fullUrl.startsWith('http://') && !fullUrl.startsWith('https://')) {
+                fullUrl = 'https://' + fullUrl;
+            }
+            loadingOverlay.style.display = 'flex';
+            urlInput.value = fullUrl; 
+            browserFrame.src = WORKER_BASE_URL + fullUrl;
+        };
+
+        goBtn.addEventListener('click', () => loadUrl(urlInput.value));
+        urlInput.addEventListener('keydown', (event) => { if (event.key === 'Enter') { event.preventDefault(); loadUrl(urlInput.value); } });
+        backBtn.addEventListener('click', () => { try { browserFrame.contentWindow.history.back(); } catch(e){} });
+        forwardBtn.addEventListener('click', () => { try { browserFrame.contentWindow.history.forward(); } catch(e){} });
+        reloadBtn.addEventListener('click', () => {
+            if (browserFrame.src && browserFrame.src !== 'about:blank') {
                 loadingOverlay.style.display = 'flex';
-                urlInput.value = fullUrl;
-                browserFrame.src = fullUrl;
-            };
-
-            goBtn.addEventListener('click', () => loadUrl(urlInput.value));
-            urlInput.addEventListener('keydown', (event) => { if (event.key === 'Enter') { event.preventDefault(); loadUrl(urlInput.value); } });
-            backBtn.addEventListener('click', () => { try { browserFrame.contentWindow.history.back(); } catch(e){} });
-            forwardBtn.addEventListener('click', () => { try { browserFrame.contentWindow.history.forward(); } catch(e){} });
-            reloadBtn.addEventListener('click', () => { loadingOverlay.style.display = 'flex'; browserFrame.src = browserFrame.src; });
-            shortcutButtons.forEach(button => { button.addEventListener('click', () => { loadUrl(button.dataset.url); }); });
-            browserFrame.addEventListener('load', () => {
-                loadingOverlay.style.display = 'none';
-                try {
-                    const currentUrl = browserFrame.contentWindow.location.href;
-                    if (currentUrl !== 'about:blank') { urlInput.value = currentUrl; }
-                } catch (e) { console.warn("Cross-origin restriction prevented URL update."); }
-            });
-            browserFrame.addEventListener('error', () => { loadingOverlay.style.display = 'none'; });
-            loadUrl('https://www.virustotal.com/gui/home/upload');
+                browserFrame.src = browserFrame.src;
+            }
         });
-    </script>
+        shortcutButtons.forEach(button => { button.addEventListener('click', () => { loadUrl(button.dataset.url); }); });
+        
+        browserFrame.addEventListener('load', () => {
+            loadingOverlay.style.display = 'none';
+            try {
+                const currentUrlInIframe = browserFrame.contentWindow.location.href;
+            } catch (e) {
+                console.warn("Cross-origin restriction prevented URL update from iframe.");
+            }
+        });
+        browserFrame.addEventListener('error', () => {
+            loadingOverlay.style.display = 'none';
+        });
+        loadUrl('https://www.virustotal.com/gui/home/upload');
+    });
+    
+</script>
+
 </body>
 </html>
