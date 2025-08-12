@@ -1313,7 +1313,7 @@ const commandStructure = {
     'updates': { fn: commandFunctions.news, label: "Security Updates", icon: "fa-solid fa-newspaper" },
 
     'ai': { fn: openAiPanel },
-    'chatbot': { fn: openAiPanel },
+    'chatbot': { fn: openChatbotPanel },
     'help': { fn: () => messages.en.helpText },
     'clear': { fn: commandFunctions.clear },
     'exit': { fn: () => { if(isTerminalMode) toggleTerminalMode(); return ''; } }
@@ -1325,7 +1325,7 @@ const commandStructure = {
     'تازه ها': { fn: commandFunctions.news, label: "تازه های امنیت", icon: "fa-solid fa-newspaper" },
 
     'هوش مصنوعی': { fn: openAiPanel },
-    'چت بات': { fn: openAiPanel },
+    'چت بات': { fn: openChatbotPanel },
     'راهنما': { fn: () => messages.fa.helpText },
     'پاک کن': { fn: commandFunctions.clear },
     'خروج': { fn: () => { if(isTerminalMode) toggleTerminalMode(); return ''; } }
