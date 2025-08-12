@@ -625,7 +625,7 @@
   position: fixed;
   bottom: 4.5rem;
   z-index: 1000;
-
+  animation: breathe 4s infinite ease-in-out;
   width: 3.4375rem; 
   height: 3.4375rem;
   background-color: transparent;
@@ -649,9 +649,11 @@
 }
 
 .fab-button:hover {
+
+  animation-play-state: paused;
   border-color: var(--primary-color);
-  box-shadow: 0 0 15px -2px var(--primary-color);
-  transform: translateY(-0.25rem) scale(1.05);
+  box-shadow: 0 0 20px 0px var(--primary-color); 
+  transform: translateY(-0.25rem) scale(1.1);
 }
 
 @keyframes illuminate {
@@ -706,11 +708,6 @@
 .fab-button:hover .icon-back {
   animation: illuminate 1.2s ease-in-out;
 }
-
-
-
-
-
 
 .fab-tooltip {
   display: none; 
@@ -783,6 +780,72 @@ body.split #chatbot-fab {
     right: 5rem;
 }
 
+@keyframes breathe {
+  0% {
+    box-shadow: 0 0 15px -2px rgba(0, 255, 204, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 25px 0px rgba(0, 255, 204, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 15px -2px rgba(0, 255, 204, 0.4);
+  }
+}
+
+.welcome-logo {
+  position: relative;
+}
+
+.welcome-logo::after {
+  content: ''; 
+  position: absolute;
+  right: -0.6em;
+  top: -0.05em;
+  font-size: 1.1em;
+  animation: blink-cursor 1.1s infinite step-end;
+}
+
+@keyframes blink-cursor {
+  from, to { color: transparent; }
+  50% { color: var(--primary-color); }
+}
+
+.welcome-logo.typing-done::after {
+  display: none;
+}
+
+
+.glass-btn {
+  position: relative; 
+  overflow: hidden; 
+}
+
+.glass-btn::before {
+  content: '';
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  
+  left: var(--mouse-x, -75px);
+  top: var(--mouse-y, -75px);
+  
+  background: radial-gradient(circle closest-side, rgba(0, 255, 204, 0.3), transparent);
+  
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+.glass-btn:hover::before {
+  opacity: 1;
+}
+
+#ai-fab .icon-back {
+  font-size: 2rem; 
+}
+
+#ai-fab .icon-combo {
+  transform: rotate(-850deg); 
+}
 
 </style>
 
@@ -825,6 +888,15 @@ body.split #chatbot-fab {
         const p4 = atob(decoyPartB64);
         return p1 + p2 + p3 + p4;
     }
+    
+    function typeWriter(element, text, i = 0) {
+  if (i < text.length) {
+    element.innerHTML += text.charAt(i);
+    setTimeout(() => typeWriter(element, text, i + 1), 120); 
+  } else {
+    element.classList.add('typing-done');
+  }
+}
 
     function decryptUrl(encodedStr) {
         try {
@@ -1370,8 +1442,12 @@ function populateGuiButtons() {
 }
 
     function showGuiWelcome() {
-        output.innerHTML = `<div class="welcome-logo" onclick="toggleTerminalMode()">&lt;/Mr. SAM/&gt;</div><div class="welcome-hint" onclick="toggleTerminalMode()">${messages[lang].guiHint}</div>`;
-        document.body.classList.remove('terminal-mode'); closePanel();
+        output.innerHTML = `<div class="welcome-logo" onclick="toggleTerminalMode()"></div><div class="welcome-hint" onclick="toggleTerminalMode()">${messages[lang].guiHint}</div>`;
+        const logoElement = output.querySelector('.welcome-logo');
+        const logoText = '</Mr. SAM/>';
+        typeWriter(logoElement, logoText);
+        document.body.classList.remove('terminal-mode');
+        closePanel();
     }
 
     async function initTerminal(isSwitch = false) {
@@ -1667,6 +1743,25 @@ interactivity: {
     fpsLimit: 60
   }
 });
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const guiControls = document.getElementById('gui-controls');
+    if (guiControls) {
+        guiControls.addEventListener('mousemove', e => {
+            if (e.target.matches('.glass-btn')) {
+                const btn = e.target;
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                btn.style.setProperty('--mouse-x', x - 75 + 'px');
+                btn.style.setProperty('--mouse-y', y - 75 + 'px');
+            }
+        });
+    }
+});
+
 </script>
   
 <button id="ai-fab" class="fab-button" aria-label="دستیار هوش مصنوعی">
