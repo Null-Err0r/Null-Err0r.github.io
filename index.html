@@ -1304,14 +1304,11 @@ const commandFunctions = {
     'clear': () => { initTerminal(true); return ''; }
 };
 
-
 const commandStructure = {
   en: {
     'about': { fn: commandFunctions.aboutme, label: "About Me", icon: "fa-solid fa-id-card" },
     'commands': { fn: commandFunctions.tutorial, label: "Commands", icon: "fa-solid fa-terminal" },
     'updates': { fn: commandFunctions.news, label: "Security Updates", icon: "fa-solid fa-newspaper" },
-    'ai': { fn: openAiPanel, label: "AI Assistant", icon: '<span class="icon-combo"><i class="fa-solid fa-brain"></i><i class="fa-solid fa-microchip"></i></span>'},
-    'chatbot': { fn: openAiPanel, label: "Chat Bot", icon: "fa-solid fa-robot" },
     'help': { fn: () => messages.en.helpText },
     'clear': { fn: commandFunctions.clear },
     'exit': { fn: () => { if(isTerminalMode) toggleTerminalMode(); return ''; } }
@@ -1321,13 +1318,13 @@ const commandStructure = {
     'درباره': { fn: commandFunctions.aboutme, label: "درباره من", icon: "fa-solid fa-id-card" },
     'دستورات': { fn: commandFunctions.tutorial, label: "دستورات", icon: "fa-solid fa-terminal" },
     'تازه ها': { fn: commandFunctions.news, label: "تازه های امنیت", icon: "fa-solid fa-newspaper" },
-    'هوش مصنوعی': { fn: openAiPanel, label: "دستیار هوش مصنوعی", icon: '<span class="icon-combo"><i class="fa-solid fa-brain"></i><i class="fa-solid fa-microchip"></i></span>' },
-    'چت بات': { fn: openAiPanel, label: "چت بات", icon: "fa-solid fa-robot" },
     'راهنما': { fn: () => messages.fa.helpText },
     'پاک کن': { fn: commandFunctions.clear },
     'خروج': { fn: () => { if(isTerminalMode) toggleTerminalMode(); return ''; } }
   }
 };
+
+    
 function populateGuiButtons() {
     guiControls.innerHTML = '';
     const commandSet = lang === 'fa' ? commandStructure.fa : commandStructure.en;
