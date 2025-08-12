@@ -44,6 +44,7 @@
 </head>
 <body>
 
+<div id="header"></div>
 <div id="loader"></div>
 
 <div id="news-container" class="hidden">
@@ -72,7 +73,7 @@
 
 function generateKey() {
     const p1 = document.title; 
-    const p2 = document.getElementById('news-container').id; 
+    const p2 = document.getElementById('header').id; 
     const p3 = document.getElementById('loader').id; 
     const p4 = atob(decoyPartB64); 
     return p1 + p2 + p3 + p4;
@@ -109,7 +110,15 @@ function generateKey() {
         for (const key in allSourcesElements) { allSourcesElements[key].list.innerHTML = ''; allSourcesElements[key].section.classList.remove('hidden'); }
         const sources = [
             { name: 'ExploitDB', url: EXPLOITDB_PROXY_URL, elements: allSourcesElements.exploitdb, processor: (item, li) => { li.textContent = item.title; li.onclick = () => window.open(item.url, '_blank'); } },
-            { name: 'CISA', url: CISA_PROXY_URL, elements: allSourcesElements.cisa, processor: (item, li) => { li.textContent = item.vulnerabilityName; const cveId = item.cveID; if (cveId && typeof cveId === 'string' && cveId.startsWith('CVE-')) { const nistUrl = `https://nvd.nist.gov/vuln/detail/${cveId}`; li.onclick = () => window.open(nistUrl, '_blank'); } else { li.classList.add('not-clickable'); li.title = 'شناسه CVE معتبر یافت نشد.'; } } },
+            {
+    name: 'CISA',
+    url: CISA_PROXY_URL,
+    elements: allSourcesElements.cisa,
+    processor: (item, li) => {
+        li.textContent = item.title;
+        li.onclick = () => window.open(item.url, '_blank');
+    }
+},
             { name: 'Takian', url: TAKIAN_PROXY_URL, elements: allSourcesElements.takian, processor: (item, li) => { li.textContent = item.title; li.onclick = () => window.open(item.url, '_blank'); } }
         ];
         try {
