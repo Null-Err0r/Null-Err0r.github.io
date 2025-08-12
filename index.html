@@ -1372,7 +1372,7 @@ function openAiPanel() {
 const commandFunctions = {
     'aboutme': openAboutMePanel,
     'news': () => { openPanel(`<iframe src="content/news.html"></iframe>`); return ''; },
-    'openMainTutorials': () => { openPanel('<iframe src="content/tutorials_main.html"></iframe>', 'tutorial', true); return ''; },
+    'openMainTutorials': () => {window.open('/course', '_blank');  return ''; },
     'openTerminalCommands': () => { openPanel('<iframe src="content/terminal.html"></iframe>', 'commands', true); return ''; },
     'clear': () => { initTerminal(true); return ''; }
 };
