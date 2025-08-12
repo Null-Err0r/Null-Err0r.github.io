@@ -769,6 +769,21 @@
   }
 }
 
+
+#chatbot-fab {
+    transition: left 0.3s ease, right 0.3s ease;
+}
+
+
+body.split #chatbot-fab {
+
+    left: auto;
+    
+
+    right: 5rem;
+}
+
+
 </style>
 
 </head>
@@ -1252,7 +1267,7 @@ const getAboutContent = (currentLang) => {
 
     return currentLang === 'fa'
         ? `${commonHtmlStart}<h1>اسماعیل اسدی</h1><p class="bio">توسعه‌دهنده، پژوهشگر و علاقه‌مند به تکنولوژی</p>${commonHtmlEnd}`
-        : `${commonHtmlStart}<h1>Esmail Asadi</h1><p class="bio">Developer, Researcher, and Tech Enthusiast</p>${commonHtmlEnd}`;
+        : `${commonHtmlStart}<h1>Esmaeil Asadi</h1><p class="bio">Developer, Researcher, and Tech Enthusiast</p>${commonHtmlEnd}`;
 };
 
 
@@ -1300,18 +1315,17 @@ function openAiPanel() {
 const commandFunctions = {
     'aboutme': openAboutMePanel,
     'news': () => { openPanel(`<iframe src="content/news.html"></iframe>`); return ''; },
-    'tutorial': () => { openPanel('<iframe src="content/terminal.html"></iframe>', 'tutorial', true); return ''; },
+    'openMainTutorials': () => { openPanel('<iframe src="content/tutorials_main.html"></iframe>', 'tutorial', true); return ''; },
+    'openTerminalCommands': () => { openPanel('<iframe src="content/terminal.html"></iframe>', 'commands', true); return ''; },
     'clear': () => { initTerminal(true); return ''; }
 };
 
-
 const commandStructure = {
   en: {
-
     'about': { fn: commandFunctions.aboutme, label: "About Me", icon: "fa-solid fa-id-card" },
-    'commands': { fn: commandFunctions.tutorial, label: "Commands", icon: "fa-solid fa-terminal" },
+    'tutorials': { fn: commandFunctions.openMainTutorials, label: "Tutorials", icon: "fa-solid fa-graduation-cap" },
     'updates': { fn: commandFunctions.news, label: "Security Updates", icon: "fa-solid fa-newspaper" },
-
+    'commands': { fn: commandFunctions.openTerminalCommands },
     'ai': { fn: openAiPanel },
     'chatbot': { fn: openChatbotPanel },
     'help': { fn: () => messages.en.helpText },
@@ -1319,11 +1333,10 @@ const commandStructure = {
     'exit': { fn: () => { if(isTerminalMode) toggleTerminalMode(); return ''; } }
   },
   fa: {
-
     'درباره': { fn: commandFunctions.aboutme, label: "درباره من", icon: "fa-solid fa-id-card" },
-    'دستورات': { fn: commandFunctions.tutorial, label: "دستورات", icon: "fa-solid fa-terminal" },
+    'آموزش': { fn: commandFunctions.openMainTutorials, label: "آموزش", icon: "fa-solid fa-graduation-cap" },
     'تازه ها': { fn: commandFunctions.news, label: "تازه های امنیت", icon: "fa-solid fa-newspaper" },
-
+    'دستورات': { fn: commandFunctions.openTerminalCommands },
     'هوش مصنوعی': { fn: openAiPanel },
     'چت بات': { fn: openChatbotPanel },
     'راهنما': { fn: () => messages.fa.helpText },
@@ -1332,7 +1345,6 @@ const commandStructure = {
   }
 };
 
-    
 function populateGuiButtons() {
     guiControls.innerHTML = '';
     const commandSet = lang === 'fa' ? commandStructure.fa : commandStructure.en;
@@ -1478,18 +1490,15 @@ async function switchLanguage(newLang) {
     });
 
 window.addEventListener('popstate', (event) => {
-    if (!event.state) {
+    const state = event.state;
+    if (state && state.terminalOpen) {
+        isTerminalMode = true; 
+        closePanel(); 
+    } 
+    else {
         isTerminalMode = false;
         showGuiWelcome(); 
         closePanel(); 
-    } else if (event.state.panelOpen) {
-        if (event.state.id === 'about') {
-            renderAboutMePanel();
-        }
-    } else {
-        isTerminalMode = false;
-        showGuiWelcome();
-        closePanel();
     }
 });
 
