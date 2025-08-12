@@ -1300,15 +1300,20 @@ function openAiPanel() {
 const commandFunctions = {
     'aboutme': openAboutMePanel,
     'news': () => { openPanel(`<iframe src="content/news.html"></iframe>`); return ''; },
-    'tutorial': () => { openPanel('<iframe src="content/tutorials_main.html"></iframe>', 'tutorial', true); return ''; },
+    'tutorial': () => { openPanel('<iframe src="content/terminal.html"></iframe>', 'tutorial', true); return ''; },
     'clear': () => { initTerminal(true); return ''; }
 };
 
+
 const commandStructure = {
   en: {
+
     'about': { fn: commandFunctions.aboutme, label: "About Me", icon: "fa-solid fa-id-card" },
     'commands': { fn: commandFunctions.tutorial, label: "Commands", icon: "fa-solid fa-terminal" },
     'updates': { fn: commandFunctions.news, label: "Security Updates", icon: "fa-solid fa-newspaper" },
+
+    'ai': { fn: openAiPanel },
+    'chatbot': { fn: openAiPanel },
     'help': { fn: () => messages.en.helpText },
     'clear': { fn: commandFunctions.clear },
     'exit': { fn: () => { if(isTerminalMode) toggleTerminalMode(); return ''; } }
@@ -1318,6 +1323,9 @@ const commandStructure = {
     'درباره': { fn: commandFunctions.aboutme, label: "درباره من", icon: "fa-solid fa-id-card" },
     'دستورات': { fn: commandFunctions.tutorial, label: "دستورات", icon: "fa-solid fa-terminal" },
     'تازه ها': { fn: commandFunctions.news, label: "تازه های امنیت", icon: "fa-solid fa-newspaper" },
+
+    'هوش مصنوعی': { fn: openAiPanel },
+    'چت بات': { fn: openAiPanel },
     'راهنما': { fn: () => messages.fa.helpText },
     'پاک کن': { fn: commandFunctions.clear },
     'خروج': { fn: () => { if(isTerminalMode) toggleTerminalMode(); return ''; } }
