@@ -867,43 +867,52 @@ function loadGlobeBackground() {
     document.body.appendChild(globeIframe);
 }
     
-    const messages = {
-      en: {
-        intro: [],
-gibberish: [
-    "Initializing secure core ... [OK]",
-    "Verifying digital signature ... [MATCH]",
-    "Establishing encrypted link ... [LOCKED]",
-    "Analyzing system integrity ... [SECURE]",
-    "Loading security protocols ... [ACTIVE]",
-    "Awaiting secure handshake ... [CONFIRMED]",
-    "Final security check ... [PASS]"
-],
-        prompt: "> ", welcome: `Welcome`, promptHelp: `Type 'help' for commands. Press 'Esc' to exit terminal .`,
-            helpText: `:Available commands\n about: Who am I-\n projects: Show my projects-\n tutorial: Windows, Linux & RE commands-\n updates: The Newest in Security-\n ai: Open AI Assistant-\n donate: Support the project-\n clear: Clear the terminal-`,
-        projectsLoading: ` ... Updateing `, projectsError: `Error fetching . Visit: https://github.com/null-err0r`,
-        langSwitched: `Language switched to English.`, cmdNotFound: `Command not found. Type 'help'.`,
-        torDetected: `[!] Tor network detected.`, guiHint: "Press 'Esc' or click here to enter and exit Terminal "
-      },
-      fa: {
-         intro: [],
-gibberish: [
-    "راه‌اندازی هسته امن ... [تأیید]",
-    "بررسی امضای دیجیتال ... [مطابق]",
-    "ایجاد پیوند رمزنگاری‌شده ... [قفل شد]",
-    "تحلیل یکپارچگی سیستم ... [امن]",
-    "بارگذاری پروتکل‌های امنیتی ... [فعال]",
-    "در انتظار دست‌دهی امن ... [تأیید شد]",
-    "بررسی نهایی امنیت ... [موفق]"
-],
-
-        prompt: "> ", welcome: `خوش آمدید`, promptHelp: `برای شروع 'راهنما' را تایپ کنید. برای خروج از حالت ترمینال کلید 'Esc' را فشار دهید.`,
-        helpText: `دستورات موجود:\n- مشخصات: درباره من\n- کارها: نمایش پروژه‌ها\n- آموزش: دستورات ویندوز - لینوکس و مهندسی معکوس\n- تازه ها:  جدیدترین ها از دنیای امنیت\n- هوش مصنوعی:  فقط گفتگوی متنی با هوش مصنوعی \n- حمایت: حمایت مالی از پروژه\n- پاک کن: پاک کردن ترمینال`,
-        projectsLoading: `بروز رسانی ...`, projectsError: `خطا در دریافت . به این آدرس مراجعه کنید: https://github.com/null-err0r`,
-        langSwitched: `زبان به فارسی تغییر یافت.`, cmdNotFound: `دستور یافت نشد. برای مشاهده دستورات 'راهنما' را تایپ کنید.`,
-        torDetected: `[!] شبکه Tor شناسایی شد.`, guiHint: "برای ورود و خروج ترمینال کلید 'Esc' را فشار دهید یا اینجا کلیک کنید"
-      }
-    };
+const messages = {
+  en: {
+    intro: [],
+    gibberish: [
+        "Initializing secure core ... [OK]",
+        "Verifying digital signature ... [MATCH]",
+        "Establishing encrypted link ... [LOCKED]",
+        "Analyzing system integrity ... [SECURE]",
+        "Loading security protocols ... [ACTIVE]",
+        "Awaiting secure handshake ... [CONFIRMED]",
+        "Final security check ... [PASS]"
+    ],
+    prompt: "> ",
+    welcome: `Welcome`,
+    promptHelp: `Type 'help' for commands. Press 'Esc' to exit terminal.`,
+    helpText: `Available commands:\n- about: Who am I\n- commands: Windows, Linux & RE commands\n- updates: The Newest in Security\n- ai: Open AI Assistant\n- chatbot: Open AI Assistant\n- clear: Clear the terminal\n- exit: Exit terminal mode`,
+    projectsLoading: `... Updating ...`,
+    projectsError: `Error fetching. Visit: https://github.com/null-err0r`,
+    langSwitched: `Language switched to English.`,
+    cmdNotFound: `Command not found. Type 'help'.`,
+    torDetected: `[!] Tor network detected.`,
+    guiHint: "Press 'Esc' or click here to enter and exit Terminal"
+  },
+  fa: {
+    intro: [],
+    gibberish: [
+        "راه‌اندازی هسته امن ... [تأیید]",
+        "بررسی امضای دیجیتال ... [مطابق]",
+        "ایجاد پیوند رمزنگاری‌شده ... [قفل شد]",
+        "تحلیل یکپارچگی سیستم ... [امن]",
+        "بارگذاری پروتکل‌های امنیتی ... [فعال]",
+        "در انتظار دست‌دهی امن ... [تأیید شد]",
+        "بررسی نهایی امنیت ... [موفق]"
+    ],
+    prompt: "> ",
+    welcome: `خوش آمدید`,
+    promptHelp: `برای شروع 'راهنما' را تایپ کنید. برای خروج از حالت ترمینال کلید 'Esc' را فشار دهید.`,
+    helpText: `دستورات موجود:\n- درباره: درباره من\n- دستورات: دستورات ویندوز، لینوکس و مهندسی معکوس\n- تازه ها: جدیدترین ها از دنیای امنیت\n- هوش مصنوعی: گفتگوی متنی با هوش مصنوعی\n- چت بات: گفتگوی متنی با هوش مصنوعی\n- پاک کن: پاک کردن ترمینال\n- خروج: خروج از حالت ترمینال`,
+    projectsLoading: `در حال بروز رسانی ...`,
+    projectsError: `خطا در دریافت. به این آدرس مراجعه کنید: https://github.com/null-err0r`,
+    langSwitched: `زبان به فارسی تغییر یافت.`,
+    cmdNotFound: `دستور یافت نشد. برای مشاهده دستورات 'راهنما' را تایپ کنید.`,
+    torDetected: `[!] شبکه Tor شناسایی شد.`,
+    guiHint: "برای ورود و خروج از ترمینال کلید 'Esc' را فشار دهید یا اینجا کلیک کنید"
+  }
+};
 
 
 const aiAssistantContent = `
@@ -1295,21 +1304,30 @@ const commandFunctions = {
     'clear': () => { initTerminal(true); return ''; }
 };
 
-    const commandStructure = {
-      en: {
-        'aboutme': { fn: commandFunctions.aboutme, label: "About Me", icon: "fa-solid fa-id-card" },
-        'tutorial': { fn: commandFunctions.tutorial, label: "Tutorials", icon: "fa-solid fa-graduation-cap" },
-        'updates': { fn: commandFunctions.news, label: "Security Updates", icon: "fa-solid fa-newspaper" },
-        'help': { fn: () => messages.en.helpText }, 'clear': { fn: commandFunctions.clear }
-      },
-      fa: {
-         'درباره': { fn: commandFunctions.aboutme, label: "درباره من", icon: "fa-solid fa-id-card" },
-        'آموزش': { fn: commandFunctions.tutorial, label: "آموزش", icon: "fa-solid fa-graduation-cap" },
-        'تازه ها': { fn: commandFunctions.news, label: "تازه های امنیت", icon: "fa-solid fa-newspaper" },
-        'راهنما': { fn: () => messages.fa.helpText }, 'پاک کن': { fn: commandFunctions.clear }
-      }
-    };
 
+const commandStructure = {
+  en: {
+    'about': { fn: commandFunctions.aboutme, label: "About Me", icon: "fa-solid fa-id-card" },
+    'commands': { fn: commandFunctions.tutorial, label: "Commands", icon: "fa-solid fa-terminal" },
+    'updates': { fn: commandFunctions.news, label: "Security Updates", icon: "fa-solid fa-newspaper" },
+    'ai': { fn: openAiPanel, label: "AI Assistant", icon: '<span class="icon-combo"><i class="fa-solid fa-brain"></i><i class="fa-solid fa-microchip"></i></span>'},
+    'chatbot': { fn: openAiPanel, label: "Chat Bot", icon: "fa-solid fa-robot" },
+    'help': { fn: () => messages.en.helpText },
+    'clear': { fn: commandFunctions.clear },
+    'exit': { fn: () => { if(isTerminalMode) toggleTerminalMode(); return ''; } }
+  },
+  fa: {
+
+    'درباره': { fn: commandFunctions.aboutme, label: "درباره من", icon: "fa-solid fa-id-card" },
+    'دستورات': { fn: commandFunctions.tutorial, label: "دستورات", icon: "fa-solid fa-terminal" },
+    'تازه ها': { fn: commandFunctions.news, label: "تازه های امنیت", icon: "fa-solid fa-newspaper" },
+    'هوش مصنوعی': { fn: openAiPanel, label: "دستیار هوش مصنوعی", icon: '<span class="icon-combo"><i class="fa-solid fa-brain"></i><i class="fa-solid fa-microchip"></i></span>' },
+    'چت بات': { fn: openAiPanel, label: "چت بات", icon: "fa-solid fa-robot" },
+    'راهنما': { fn: () => messages.fa.helpText },
+    'پاک کن': { fn: commandFunctions.clear },
+    'خروج': { fn: () => { if(isTerminalMode) toggleTerminalMode(); return ''; } }
+  }
+};
 function populateGuiButtons() {
     guiControls.innerHTML = '';
     const commandSet = lang === 'fa' ? commandStructure.fa : commandStructure.en;
