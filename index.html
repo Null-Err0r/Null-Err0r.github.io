@@ -1253,12 +1253,21 @@ function openTelegramLink() {
         await sleep(200);
     }
 
-
-
 function openPanel(content, stateId = 'generic', isApp = false) {
   history.pushState({ panelOpen: true, id: stateId }, null, `#panel-${stateId}`);
-  panel.classList.toggle('app-mode', isApp);
+  renderPanelContent(content, isApp);
+}
+
+    function closePanel() {
+      document.body.classList.remove('split');
+      panel.style.display = 'none';
+      panelContent.innerHTML = '';
+      if(isTerminalMode) input.focus();
+    }
+    
+function renderPanelContent(content, isApp = false) {
   document.body.classList.add('split');
+  panel.classList.toggle('app-mode', isApp);
   panel.style.display = 'block';
   panelContent.innerHTML = `<div class="progress-container" id="progressContainer"><div class="progress-bar" id="progressBar"></div></div>${content}`;
   panelContent.scrollTop = 0;
@@ -1269,13 +1278,6 @@ function openPanel(content, stateId = 'generic', isApp = false) {
       setTimeout(() => { progressBar.style.width = '100%'; setTimeout(() => progressContainer.classList.remove('loading'), 1500); }, 100);
   }
 }
-
-    function closePanel() {
-      document.body.classList.remove('split');
-      panel.style.display = 'none';
-      panelContent.innerHTML = '';
-      if(isTerminalMode) input.focus();
-    }
 
     async function fetchProjects() {
       const importantRepoNames = [
@@ -1552,14 +1554,53 @@ async function switchLanguage(newLang) {
 
 window.addEventListener('popstate', (event) => {
     const state = event.state;
-    if (state && state.terminalOpen) {
-        isTerminalMode = true; 
-        closePanel(); 
-    } 
-    else {
+
+    if (!state) {
         isTerminalMode = false;
-        showGuiWelcome(); 
+        showGuiWelcome();
         closePanel(); 
+        return;
+    }
+
+    if (state.terminalOpen) {
+        isTerminalMode = true;
+        initTerminal();
+        return;
+    }
+    
+
+    if (state.panelOpen) {
+        isTerminalMode = false;
+
+        switch(state.id) {
+            case 'about':
+                renderAboutMePanel(); 
+                break;
+            case 'ai':
+                openAiPanel(); 
+                break;
+            case 'donate':
+                renderPanelContent('<iframe src=\'content/donate.html\'></iframe>');
+                break;
+            case 'privacy':
+                renderPanelContent('<iframe src=\'content/privacy.html\'></iframe>');
+                break;
+            case 'commands':
+                 renderPanelContent('<iframe src="content/terminal.html"></iframe>', true);
+                 break;
+            case 'tutorial':
+                 renderPanelContent('<iframe src="content/tutorials_main.html"></iframe>', true);
+                 break;
+
+            default:
+
+                showGuiWelcome();
+                closePanel();
+        }
+    } else {
+
+        showGuiWelcome();
+        closePanel();
     }
 });
 
