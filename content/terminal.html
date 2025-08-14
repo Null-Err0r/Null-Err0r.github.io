@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
-
+   <script src="app.fingerprint.js"></script>
        <style>
     :root {
         --background: #1a1a1a;
@@ -609,45 +609,77 @@
                         case 'راهنما':
                             await printToTerminal(document.getElementById('help-main').innerHTML, 'output-line', false);
                             break;
-                        case 'whoami':
-                        case 'من کی هستم':
-                            if (!fingerprintInstance) {
-                                await printToTerminal('Error: Fingerprint script not loaded correctly.', 'error', true);
-                                break;
-                            }
-                            await printToTerminal('Gathering system fingerprint...', 'info', true);
-                            const browserInfo = fingerprintInstance.getBrowserInfo(navigator.userAgent);
-                            const gpuInfo = fingerprintInstance.getGPUInfo();
-                            const suspicionInfo = fingerprintInstance.analyzeUserAgentSuspicion();
-                            const timezoneInfo = fingerprintInstance.getDetailedTimezoneInfo();
-                            let info = `\n<b>--- Fingerprint & Suspicion ---</b>\n` +
-                                       `<b>Hashed Fingerprint:</b> ${fingerprintInstance.generateHashedFingerprint()}\n` +
-                                       `<b>Suspicion Level:</b> ${suspicionInfo.level} (${suspicionInfo.score})\n` +
-                                       `<b>Reasons:</b> ${suspicionInfo.reasons.join(', ')}\n\n` +
-                                       `<b>--- Browser & OS ---</b>\n` +
-                                       `<b>Browser:</b> ${browserInfo.browser} ${browserInfo.version}\n` +
-                                       `<b>Engine:</b> ${fingerprintInstance.getBrowserEngine()}\n` +
-                                       `<b>Operating System:</b> ${browserInfo.os}\n` +
-                                       `<b>Platform:</b> ${navigator.platform}\n` +
-                                       `<b>User Agent:</b> ${navigator.userAgent}\n\n` +
-                                       `<b>--- Hardware & Display ---</b>\n` +
-                                       `<b>Device Type:</b> ${fingerprintInstance.getDeviceType()}\n` +
-                                       `<b>CPU Architecture:</b> ${fingerprintInstance.getArchitecture()}\n` +
-                                       `<b>CPU Cores:</b> ${navigator.hardwareConcurrency || 'N/A'}\n` +
-                                       `<b>Memory (Approx.):</b> ${fingerprintInstance.getApproximateMemory()}\n` +
-                                       `<b>Screen Resolution:</b> ${window.screen.width}x${window.screen.height}\n` +
-                                       `<b>Color Depth:</b> ${window.screen.colorDepth}-bit\n` +
-                                       `<b>GPU Vendor:</b> ${gpuInfo.vendor}\n` +
-                                       `<b>GPU Renderer:</b> ${gpuInfo.renderer}\n\n` +
-                                       `<b>--- Privacy & Anonymity ---</b>\n` +
-                                       `<b>Cookies Enabled:</b> ${navigator.cookieEnabled ? 'Yes' : 'No'}\n` +
-                                       `<b>Do Not Track:</b> ${fingerprintInstance.getDNTStatus()}\n` +
-                                       `<b>Incognito Mode:</b> ${fingerprintInstance.isIncognitoMode() ? 'Likely Yes' : 'No'}\n` +
-                                       `<b>Canvas Fingerprint:</b> ${fingerprintInstance.getCanvasFingerprint()}\n\n` +
-                                       `<b>--- Regional ---</b>\n` +
-                                       `<b>Languages:</b> ${(navigator.languages || []).join(', ')}\n` +
-                                       `<b>Timezone:</b> ${timezoneInfo['Timezone Name']}\n` +
-                                       `<b>Timezone Offset:</b> ${timezoneInfo['Timezone Offset']}\n`;
+            case 'whoami':
+            case 'من کی هستم':
+                if (!fingerprintInstance) {
+                    await printToTerminal('Error: Fingerprint script not loaded correctly.', 'error', true);
+                    break;
+                }
+                await printToTerminal('Gathering advanced system fingerprint...', 'info', true);
+
+                const browserInfo = fingerprintInstance.getBrowserInfo();
+                const gpuInfo = fingerprintInstance.getGPUInfo();
+                const suspicionInfo = fingerprintInstance.analyzeUserAgentSuspicion();
+                const timezoneInfo = fingerprintInstance.getDetailedTimezoneInfo();
+
+                let batteryInfo = 'N/A';
+                if ('getBattery' in navigator) {
+                    try {
+                        const battery = await navigator.getBattery();
+                        const chargingStatus = battery.charging ? 'Charging' : 'Discharging';
+                        batteryInfo = `${Math.round(battery.level * 100)}% (${chargingStatus})`;
+                    } catch (e) {
+                        batteryInfo = 'Permission Denied';
+                    }
+                }
+
+                const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+                const connectionType = connection ? connection.effectiveType : 'N/A';
+                const downlink = connection ? `${connection.downlink} Mbps` : 'N/A';
+
+                const pluginsList = (navigator.plugins && navigator.plugins.length > 0)
+                    ? Array.from(navigator.plugins).map(p => p.name).join(', ')
+                    : 'None';
+                let info = `\n<b>--- Fingerprint & Suspicion ---</b>\n` +
+                           `<b>Hashed Fingerprint:</b> ${fingerprintInstance.generateHashedFingerprint()}\n` +
+                           `<b>Suspicion Level:</b> ${suspicionInfo.level} (${suspicionInfo.score})\n` +
+                           `<b>Reasons:</b> ${suspicionInfo.reasons.join(', ')}\n\n` +
+
+                           `<b>--- Browser & OS ---</b>\n` +
+                           `<b>Browser:</b> ${browserInfo.browser} ${browserInfo.version}\n` +
+                           `<b>Engine:</b> ${fingerprintInstance.getBrowserEngine()}\n` +
+                           `<b>Vendor:</b> ${navigator.vendor || 'N/A'}\n` +
+                           `<b>Operating System:</b> ${browserInfo.os}\n` +
+                           `<b>Platform:</b> ${navigator.platform}\n` +
+                           `<b>User Agent:</b> ${navigator.userAgent}\n` +
+                           `<b>Installed Plugins:</b> ${pluginsList}\n\n`+
+
+                           `<b>--- Hardware & Display ---</b>\n` +
+                           `<b>Device Type:</b> ${fingerprintInstance.getDeviceType()}\n` +
+                           `<b>Touch Points Supported:</b> ${navigator.maxTouchPoints || '0'}\n` +
+                           `<b>CPU Architecture:</b> ${fingerprintInstance.getArchitecture()}\n` +
+                           `<b>CPU Cores:</b> ${navigator.hardwareConcurrency || 'N/A'}\n` +
+                           `<b>Memory (Approx.):</b> ${fingerprintInstance.getApproximateMemory()}\n` +
+                           `<b>Battery Status:</b> ${batteryInfo}\n` +
+                           `<b>Screen Resolution:</b> ${window.screen.width}x${window.screen.height}\n` +
+                           `<b>Available Screen Size:</b> ${window.screen.availWidth}x${window.screen.availHeight}\n`+
+                           `<b>Device Pixel Ratio:</b> ${window.devicePixelRatio || 'N/A'}\n`+
+                           `<b>Color Depth:</b> ${window.screen.colorDepth}-bit\n` +
+                           `<b>GPU Vendor:</b> ${gpuInfo.vendor}\n` +
+                           `<b>GPU Renderer:</b> ${gpuInfo.renderer}\n\n` +
+
+                           `<b>--- Privacy & Anonymity ---</b>\n` +
+                           `<b>Cookies Enabled:</b> ${navigator.cookieEnabled ? 'Yes' : 'No'}\n` +
+                           `<b>Do Not Track:</b> ${fingerprintInstance.getDNTStatus()}\n` +
+                           `<b>Incognito Mode:</b> ${fingerprintInstance.isIncognitoMode() ? 'Likely Yes' : 'No'}\n` +
+                           `<b>Canvas Fingerprint:</b> ${fingerprintInstance.getCanvasFingerprint()}\n\n` +
+
+                           `<b>--- Regional & Network ---</b>\n` +
+                           `<b>Languages:</b> ${(navigator.languages || []).join(', ')}\n` +
+                           `<b>Timezone:</b> ${timezoneInfo['Timezone Name']}\n` +
+                           `<b>Timezone Offset:</b> ${timezoneInfo['Timezone Offset']}\n`+
+                           `<b>Connection Type:</b> ${connectionType}\n`+
+                           `<b>Downlink Speed (Approx.):</b> ${downlink}\n`;             
                             await printToTerminal(info, 'info', false);
                             break;
                         case 'ip':
