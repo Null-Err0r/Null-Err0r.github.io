@@ -1668,86 +1668,142 @@ window.addEventListener('message', handleWindowMessage);
 </script>
    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
 <script>
+  <script>
+        document.addEventListener('DOMContentLoaded', () => {
+           
+            let particlesInstance = null; 
+            let mouseStopTimer;       
+            let lastMousePosition = { x: 0, y: 0 }; 
+            let isEyeFormationActive = false; 
 
-  tsParticles.load({
-  id: "tsparticles",
-  options: {
-    fullScreen: { enable: true, zIndex: -1 },
-    background: { color: "transparent"},
-    particles: {
-      number: { value: 100, density: { enable: true, area: 800 } },
-      color: { value: ["#ffffff", "#ffccdd", "#ccffdd"], animation: { enable: true, speed: 20, sync: false } },
-      shape: { type: ["circle", "triangle", "star"] },
-      opacity: {
-        value: { min: 0.3, max: 0.8 },
-        animation: { enable: true, speed: 1, minimumValue: 0.1 }
-      },
-      size: {
-        value: { min: 1, max: 5 },
-        animation: { enable: true, speed: 3, minimumValue: 0.5 }
-      },
-      links: { enable: true, distance: 150, color: "#ffffff", opacity: 0.5, width: 1 },
-      move: {
-        enable: true,
-        speed: { min: 1, max: 3 },
-        direction: "none",
-        random: true,
-        outModes: { default: "bounce" }
-      }
-    },
-interactivity: {
-  detectsOn: "window",
-  events: {
-    onHover: {
-      enable: true,
-      mode: "attract"
-    },
-    onClick: {
-      enable: true,
-      mode: "grab"
-    }
-  },
-  modes: {
-    attract: {
-      distance: 250,
-      duration: 0.4,
-      speed: 10
-    },
-    grab: {
-        distance: 200,
-        links: {
-            opacity: 1
-        }
-    },
-    push: {
-        quantity: 4
-    }
-  }
-},
-    detectRetina: true,
-    fpsLimit: 60
-  }
-});
+            const DEFAULT_OPTIONS = {
+                fpsLimit: 60,
+                particles: {
+                    number: {
+                        value: 80,
+                        density: { enable: true, area: 800 } 
+                    },
+                    color: { value: "#ffffff" },
+                    shape: { type: "circle" },
+                    opacity: { value: 0.5, random: true },
+                    size: { value: 3, random: true },
+                    links: {
+                        enable: true,
+                        distance: 150,
+                        color: "#ffffff",
+                        opacity: 0.4,
+                        width: 1,
+                    },
+                    move: {
+                        enable: true,
+                        speed: 2,
+                        direction: "none",
+                        outModes: { default: "out" }, 
+                        path: { enable: false }, 
+                    },
+                },
+                interactivity: {
+                    events: {
+                        onHover: {
+                            enable: true,
+                            mode: "attract", 
+                        },
+                    },
+                    modes: {
 
+                        attract: {
+                            distance: 200,
+                            duration: 0.4,
+                            factor: 5, 
+                        },
 
-document.addEventListener('DOMContentLoaded', () => {
-    const guiControls = document.getElementById('gui-controls');
-    if (guiControls) {
-        guiControls.addEventListener('mousemove', e => {
-            if (e.target.matches('.glass-btn')) {
-                const btn = e.target;
-                const rect = btn.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
+                        repulse: {
+                            distance: 150,
+                            factor: 100,
+                        },
+                    },
+                },
+                detectRetina: true,
+            };
 
-                btn.style.setProperty('--mouse-x', x - 75 + 'px');
-                btn.style.setProperty('--mouse-y', y - 75 + 'px');
+            function getEyeFormationOptions(mousePos) {
+                const eyeWidth = 250;
+                const eyeHeight = 120;
+
+                const svgPath = `M ${mousePos.x - eyeWidth / 2},${mousePos.y} A ${eyeWidth / 2},${eyeHeight / 2} 0 1,0 ${mousePos.x + eyeWidth / 2},${mousePos.y} A ${eyeWidth / 2},${eyeHeight / 2} 0 1,0 ${mousePos.x - eyeWidth / 2},${mousePos.y} Z`;
+
+                return {
+                    particles: {
+                        move: {
+                            path: {
+                                enable: true, 
+                                path: svgPath, 
+                            },
+                            speed: 3, 
+                            outModes: {
+                                default: "bounce" 
+                            }
+                        },
+                    },
+
+                    interactivity: {
+                        events: {
+                            onHover: {
+                                enable: false,
+                            },
+                        },
+                    },
+                };
             }
-        });
-    }
-});
+            
+            const DISPERSAL_OPTIONS = {
+                particles: {
+                    move: {
+                        path: { enable: false }, 
+                        outModes: { default: "out" }, 
+                    },
+                },
 
-</script>
+                interactivity: {
+                    events: {
+                        onHover: {
+                            enable: true,
+               
+                            mode: "repulse", 
+                        },
+                    },
+                },
+            };
+
+          
+            function activateEyeFormation() {
+                if (!particlesInstance || isEyeFormationActive) return;               
+                isEyeFormationActive = true;              
+                const options = getEyeFormationOptions(lastMousePosition);
+                particlesInstance.options.load(options);
+            }
+         
+            function deactivateAndDisperse() {
+                if (!particlesInstance || !isEyeFormationActive) return;
+                isEyeFormationActive = false;
+                particlesInstance.options.load(DISPERSAL_OPTIONS);
+            }
+
+            function handleMouseMove(event) {
+                clearTimeout(mouseStopTimer); 
+                deactivateAndDisperse(); 
+                if (particlesInstance) {
+                    lastMousePosition = particlesInstance.interactivity.mouse.position || { x: event.clientX, y: event.clientY };
+                }
+                
+                mouseStopTimer = setTimeout(activateEyeFormation, 400); 
+            }
+            tsParticles.load({ id: "tsparticles", options: DEFAULT_OPTIONS }).then(container => {
+                particlesInstance = container;
+                window.addEventListener('mousemove', handleMouseMove);
+            });
+        });
+    </script>
   
 <button id="ai-fab" class="fab-button" aria-label="دستیار هوش مصنوعی">
   <span class="icon-combo">
