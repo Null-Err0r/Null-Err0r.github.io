@@ -599,8 +599,8 @@
     padding: 1rem;
     background: rgba(255, 255, 255, 0.05);
     color: #fff;
-    border-radius: 0.5rem; /* 8px */
-    box-shadow: 0 0.125rem 0.5rem rgba(0,0,0,0.3); /* 2px 8px */
+    border-radius: 0.5rem; 
+    box-shadow: 0 0.125rem 0.5rem rgba(0,0,0,0.3); 
     transition: transform 0.2s ease, background 0.2s;
   }
   .bio-container .link-button:hover {
@@ -1032,7 +1032,7 @@ const aiAssistantContent = `
             html {
                 box-sizing: border-box;
                 font-size: 16px;
-                height: 100%; /* [FIX] Set html height to 100% */
+                height: 100%; 
             }
             *, *::before, *::after { box-sizing: inherit; }
 
@@ -1040,19 +1040,18 @@ const aiAssistantContent = `
                 margin: 0;
                 padding: 0;
                 width: 100%;
-                height: 100%; /* [FIX] Changed from var(--app-height) to 100% */
+                height: 100%; 
                 overflow: hidden;
                 background-color: var(--background);
                 color: var(--foreground);
                 font-family: var(--font-primary);
-                display: flex; /* [FIX] Make body a flex container */
+                display: flex; 
                 flex-direction: column;
             }
             #chat-window {
                 width: 100%;
                 max-width: 1000px;
                 background-color: var(--window-bg);
-                /* border properties can be simplified or removed if panel has border */
                 border: 1px solid var(--border-color);
                 border-radius: 8px;
                 box-shadow: 0 0 35px rgba(0, 255, 204, 0.2);
@@ -1061,8 +1060,8 @@ const aiAssistantContent = `
                 overflow: hidden;
                 position: relative;
                 margin: 0 auto;
-                flex-grow: 1; /* [FIX] Allow chat window to fill the flex body */
-                min-height: 0; /* [FIX] Prevent flexbox overflow bugs */
+                flex-grow: 1; 
+                min-height: 0; 
             }
             .title-bar { background-color: var(--title-bar); color: var(--foreground); padding: 8px 12px; font-weight: bold; border-bottom: 1px solid var(--border-color); text-align: center; cursor: default; flex-shrink: 0; font-family: var(--font-code); }
             #conversation-container { flex-grow: 1; padding: 20px; overflow-y: auto; scroll-behavior: smooth; display: flex; flex-direction: column; gap: 20px; min-height: 0; }
@@ -1699,7 +1698,7 @@ window.onload = () => {
 function handleWindowMessage(event) {
     console.log("Message received in parent page:", event.data);
     if (event.data && event.data.type === 'openProxynet') {
-        console.log("دریافت سیگنال برای باز کردن صفحه پروکسی...");
+        console.log("دریافت سیگنال ...");
         openPanel(`<iframe src="content/net.html"></iframe>`);
     }
 }
