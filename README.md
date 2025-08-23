@@ -19,9 +19,6 @@
   <img src="https://streak-stats.demolab.com/?user=null-err0r&theme=gruvbox" alt="GitHub Streak" />
 </div>
 
-<div align="center">
-  <img src="https://github-profile-trophy.vercel.app/?username=Null-Err0r&theme=gruvbox&no-frame=true&margin-w=15&margin-h=15&row=2&column=4" />
-</div>
 
 <div align="center">
   <br> </br>
