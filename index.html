@@ -1905,6 +1905,7 @@ button, [onclick] {
     let currentTrackIndex = 0;
     let isMuted = false;
     let lastVolume = 1;
+    let currentObjectUrl = null;
 
     fileInput.addEventListener('change', handleFileSelect);
     playPauseBtn.addEventListener('click', togglePlayPause);
@@ -1982,25 +1983,29 @@ button, [onclick] {
     musicPlayer.addEventListener('mousedown', onDragStart);
     musicPlayer.addEventListener('touchstart', onDragStart, { passive: true });
 
-    function handleFileSelect(event) {
-        const files = event.target.files;
-        if (files.length > 0) {
-            const audioExtensions = ['mp3', 'ogg', 'wav', 'flac', 'm4a'];
-            playlist = Array.from(files).filter(file => {
-                const extension = file.name.split('.').pop().toLowerCase();
-                return audioExtensions.includes(extension);
-            });
-            if (playlist.length > 0) {
-                currentTrackIndex = 0;
-                buildPlaylistUI();
-                playTrack(currentTrackIndex);
-                musicPlayer.classList.add('visible');
-            } else {
-                alert('هیچ فایل صوتی معتبری در پوشه انتخاب شده یافت نشد. (فایل‌های داخل زیرپوشه‌ها خوانده نمی‌شوند)');
-            }
+function handleFileSelect(event) {
+    const files = event.target.files;
+    if (files.length > 0) {
+        const audioExtensions = ['mp3', 'ogg', 'wav', 'flac', 'm4a'];
+        playlist = Array.from(files).filter(file => {
+            const extension = file.name.split('.').pop().toLowerCase();
+            return audioExtensions.includes(extension);
+        });
+        if (playlist.length > 0) {
+            currentTrackIndex = 0;
+            buildPlaylistUI();
+            playTrack(currentTrackIndex);
+            musicPlayer.classList.add('visible');
+        } else {
+            const errorMessage = 'فایل صوتی یافت نشد';
+            nowPlayingElement.textContent = errorMessage;
+            nowPlayingMobileElement.textContent = errorMessage;
+            playlistElement.innerHTML = ''; 
+            musicPlayer.classList.add('visible'); 
         }
-        event.target.value = null;
     }
+    event.target.value = null; 
+}
     
     function buildPlaylistUI() {
         playlistElement.innerHTML = '';
@@ -2012,21 +2017,29 @@ button, [onclick] {
         });
     }
     
-    function playTrack(index) {
-        if (index < 0 || index >= playlist.length) return;
-        currentTrackIndex = index;
-        const track = playlist[currentTrackIndex];
-        const trackName = track.name.replace(/\.[^/.]+$/, "");
-        const trackUrl = URL.createObjectURL(track);
-        audioPlayer.src = trackUrl;
-        audioPlayer.play().catch(e => console.error("Autoplay was prevented:", e));
-        
-        nowPlayingElement.textContent = trackName;
-        nowPlayingMobileElement.textContent = trackName;
-        
-        updatePlayPauseIcon(true);
-        updatePlaylistHighlight();
+function playTrack(index) {
+    if (index < 0 || index >= playlist.length) return;
+
+    if (currentObjectUrl) {
+        URL.revokeObjectURL(currentObjectUrl);
     }
+
+    currentTrackIndex = index;
+    const track = playlist[currentTrackIndex];
+    const trackName = track.name.replace(/\.[^/.]+$/, "");
+
+    const trackUrl = URL.createObjectURL(track);
+    currentObjectUrl = trackUrl; 
+    
+    audioPlayer.src = trackUrl;
+    audioPlayer.play().catch(e => console.error("Autoplay was prevented:", e));
+    
+    nowPlayingElement.textContent = trackName;
+    nowPlayingMobileElement.textContent = trackName;
+    
+    updatePlayPauseIcon(true);
+    updatePlaylistHighlight();
+}
 
     function togglePlayPause() {
         if (audioPlayer.paused) {
