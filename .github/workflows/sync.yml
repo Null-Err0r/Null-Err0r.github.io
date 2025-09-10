@@ -25,9 +25,9 @@ jobs:
       - name: Push to Backup Repo
         run: |
           cd main-repo-content
-          git init
-          git remote add origin https://x-access-token:${{ secrets.SYNC_TOKEN }}@github.com/Null-Err0r/mycopypage.git
-          git checkout -b main
+          git remote set-url origin https://x-access-token:${{ secrets.SYNC_TOKEN }}@github.com/Null-Err0r/mycopypage.git
+          git checkout -B main
           git add .
           git commit -m "Sync from main repo [$(date)]" || echo "No changes to commit"
           git push origin main --force
+
