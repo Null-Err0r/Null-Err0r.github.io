@@ -3,7 +3,8 @@ name: Sync to Backup Repo
 on:
   push:
     branches:
-      - main 
+      - main
+  workflow_dispatch: {}
 
 jobs:
   sync:
