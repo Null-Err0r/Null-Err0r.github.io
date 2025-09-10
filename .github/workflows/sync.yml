@@ -3,7 +3,7 @@ name: Sync to Backup Repo
 on:
   push:
     branches:
-      - main # Or your default branch
+      - main 
 
 jobs:
   sync:
@@ -12,7 +12,6 @@ jobs:
       - name: Checkout Main Repo
         uses: actions/checkout@v3
         with:
-          # This checks out the content of the main repo where the action runs
           path: main-repo-content
 
       - name: Find and Replace Domain Name
@@ -30,7 +29,7 @@ jobs:
         env:
           API_TOKEN_GITHUB: ${{ secrets.SYNC_TOKEN }}
         with:
-          source-directory: 'main-repo-content' # Specify the directory to sync from
-          destination-github-username: 'YOUR-USERNAME'
-          destination-repository-name: 'YOUR-BACKUP-REPO'
+          source-directory: 'main-repo-content'
+          destination-github-username: 'Null-Err0r'
+          destination-repository-name: 'mycopypage'
           target-branch: main
