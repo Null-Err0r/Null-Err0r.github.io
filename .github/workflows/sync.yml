@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch: {}
+  workflow_dispatch:
 
 jobs:
   sync:
@@ -20,14 +20,14 @@ jobs:
           cd main-repo-content
           OLD_DOMAIN="nullerror.ir"
           NEW_DOMAIN="ahrimani.ir"
-          
-          grep -rl "$OLD_DOMAIN" . | xargs sed -i "s/$OLD_DOMAIN/$NEW_DOMAIN/g"
-        
+          grep -rl "$OLD_DOMAIN" . | xargs -r -d '\n' sed -i "s/$OLD_DOMAIN/$NEW_DOMAIN/g"
+
       - name: Push to Backup Repo
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.SYNC_TOKEN }}
-          repository: Null-Err0r/mycopypage 
-          branch: main
-          directory: main-repo-content
-          force: true
+        run: |
+          cd main-repo-content
+          git init
+          git remote add origin https://x-access-token:${{ secrets.SYNC_TOKEN }}@github.com/Null-Err0r/mycopypage.git
+          git checkout -b main
+          git add .
+          git commit -m "Sync from main repo [$(date)]" || echo "No changes to commit"
+          git push origin main --force
