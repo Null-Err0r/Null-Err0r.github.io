@@ -18,19 +18,16 @@ jobs:
       - name: Find and Replace Domain Name
         run: |
           cd main-repo-content
-          # The domain you want to find and replace
           OLD_DOMAIN="nullerror.ir"
           NEW_DOMAIN="ahrimani.ir"
           
-          # This command finds all files containing the old domain and replaces it with the new one
           grep -rl "$OLD_DOMAIN" . | xargs sed -i "s/$OLD_DOMAIN/$NEW_DOMAIN/g"
         
       - name: Push to Backup Repo
-        uses: cpina/github-action-push-to-another-repo@main
-        env:
-          API_TOKEN_GITHUB: ${{ secrets.SYNC_TOKEN }}
+        uses: ad-m/github-push-action@master
         with:
-          source-directory: 'main-repo-content'
-          destination-github-username: 'Null-Err0r'
-          destination-repository-name: 'mycopypage'
-          target-branch: main
+          github_token: ${{ secrets.SYNC_TOKEN }}
+          repository: Null-Err0r/mycopypage 
+          branch: main
+          directory: main-repo-content
+          force: true
