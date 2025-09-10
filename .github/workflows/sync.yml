@@ -1,1 +1,36 @@
-hi
+name: Sync to Backup Repo
+
+on:
+  push:
+    branches:
+      - main # Or your default branch
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Main Repo
+        uses: actions/checkout@v3
+        with:
+          # This checks out the content of the main repo where the action runs
+          path: main-repo-content
+
+      - name: Find and Replace Domain Name
+        run: |
+          cd main-repo-content
+          # The domain you want to find and replace
+          OLD_DOMAIN="nullerror.ir"
+          NEW_DOMAIN="ahrimani.ir"
+          
+          # This command finds all files containing the old domain and replaces it with the new one
+          grep -rl "$OLD_DOMAIN" . | xargs sed -i "s/$OLD_DOMAIN/$NEW_DOMAIN/g"
+        
+      - name: Push to Backup Repo
+        uses: cpina/github-action-push-to-another-repo@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.SYNC_TOKEN }}
+        with:
+          source-directory: 'main-repo-content' # Specify the directory to sync from
+          destination-github-username: 'YOUR-USERNAME'
+          destination-repository-name: 'YOUR-BACKUP-REPO'
+          target-branch: main
