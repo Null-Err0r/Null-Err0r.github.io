@@ -28,7 +28,7 @@ jobs:
           cd main-repo-content
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git remote set-url origin https://x-access-token:${{ secrets.SYNC_TOKEN }}@github.com/Null-Err0r/mycopypage.git
+          git remote set-url origin https://x-access-token:${{ secrets.SYNC_PAT }}@github.com/Null-Err0r/mycopypage.git
           git checkout -B main
           git add .
           git commit -m "Sync from main repo [$(date)]" || echo "No changes to commit"
