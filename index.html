@@ -1284,10 +1284,7 @@ button, [onclick] {
                     } finally {
                         submitButton.disabled = false;
                         promptInput.focus();
-                        if (fullResponse.trim() === 'بریم تو کار یخ شکن') {
-                            console.log("Sending 'openProxy' signal from iframe...");
-                            parent.postMessage({ type: 'openProxynet' }, '*');
-                        }
+                       
                     }
                 };
                 const handleFormSubmit = (event) => {
@@ -1297,7 +1294,12 @@ button, [onclick] {
                     addMessage('user', prompt);
                     promptInput.value = '';
                     autoResizeTextarea();
-                    streamAIResponse(prompt);
+                    if (prompt === 'بریم تو کار یخ شکن') {
+                            console.log("Sending 'openProxy' signal from iframe...");
+                            parent.postMessage({ type: 'openProxynet' }, '*');
+                        } else {
+                            streamAIResponse(prompt);
+                    }
                 };
                 const handleCopyClick = (e) => {
                     const copyButton = e.target.closest('.copy-button');
